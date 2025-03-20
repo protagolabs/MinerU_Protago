@@ -29,6 +29,18 @@ def download_and_modify_json(url, local_filename, modifications):
     with open(local_filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
+# def download_and_modify_json_local(download_filename, local_filename, modifications):
+#     if os.path.exists(download_filename):
+#         with open(download_filename, 'r', encoding='utf-8') as file:
+#             data = json.load(file)
+
+#     # 修改内容
+#     for key, value in modifications.items():
+#         data[key] = value
+
+#     # 保存修改后的内容
+#     with open(local_filename, 'w', encoding='utf-8') as f:
+#         json.dump(data, f, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
     mineru_patterns = [
@@ -40,15 +52,20 @@ if __name__ == '__main__':
         "models/TabRec/StructEqTable/*",
     ]
     model_dir = snapshot_download('opendatalab/PDF-Extract-Kit-1.0', allow_patterns=mineru_patterns)
+    # model_dir = "/home/xing/.cache/modelscope/hub/models/opendatalab/PDF-Extract-Kit-1.0"
     layoutreader_model_dir = snapshot_download('ppaanngggg/layoutreader')
+    # layoutreader_model_dir = "/home/xing/.cache/modelscope/hub/models/ppaanngggg/layoutreader"
     model_dir = model_dir + '/models'
     print(f'model_dir is: {model_dir}')
     print(f'layoutreader_model_dir is: {layoutreader_model_dir}')
 
     json_url = 'https://gcore.jsdelivr.net/gh/opendatalab/MinerU@master/magic-pdf.template.json'
+    # json_url = '/home/xing/MinerU_Protago/magic-pdf.template_download.json'
     config_file_name = 'magic-pdf.json'
     home_dir = os.path.expanduser('~')
     config_file = os.path.join(home_dir, config_file_name)
+
+    
 
     json_mods = {
         'models-dir': model_dir,
@@ -56,4 +73,5 @@ if __name__ == '__main__':
     }
 
     download_and_modify_json(json_url, config_file, json_mods)
+    # download_and_modify_json_local(json_url, config_file, json_mods)
     print(f'The configuration file has been configured successfully, the path is: {config_file}')

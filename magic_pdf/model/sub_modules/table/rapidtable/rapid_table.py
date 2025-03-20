@@ -18,6 +18,8 @@ class RapidTableModel(object):
                 input_args = RapidTableInput(model_type=table_sub_model_name, use_cuda=True, device=get_device())
             else:
                 input_args = RapidTableInput(model_type=table_sub_model_name)
+                # input_args = RapidTableInput(model_type="slanet_plus", model_path="/home/xing/PaddleX/output/table_rec_dataset_examples_slanet_plus/best_accuracy.onnx")
+                # print("load slanet_plus model from %s" % "/home/xing/PaddleX/output/table_rec_dataset_examples_slanet_plus/best_accuracy.onnx")
         else:
             raise ValueError(f"Invalid table_sub_model_name: {table_sub_model_name}. It must be one of {sub_model_list}")
 

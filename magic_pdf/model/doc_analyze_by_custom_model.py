@@ -237,6 +237,8 @@ def doc_analyze(
             else:
                 result = []
 
+
+
             page_info = {'page_no': index, 'height': page_height, 'width': page_width}
             page_dict = {'layout_dets': result, 'page_info': page_info}
             model_json.append(page_dict)
