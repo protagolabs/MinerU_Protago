@@ -2,7 +2,13 @@
 
 ## Overview
 
-This repository contains the code for the MinerU Protago project, which is adopted from the [MinerU](https://github.com/opendatalab/MinerU) project. In this project, we aim to extract the tables from the PDF documents from Orbit dataset and convert them into the HTML format, which can be used for the further processing.
+This repository contains the code for the MinerU Protago project, which is adopted from the [MinerU](https://github.com/opendatalab/MinerU) project. In this project, we aim to extract the tables from the PDF documents from Orbit dataset and convert them into the HTML format, which can be used for the further processing. I personally use different python environments for MinerU and PaddleX.
+
+## Installation
+
+please check the [MinerU](https://github.com/opendatalab/MinerU) for the detailed installation. We use the this [tutorial](https://github.com/opendatalab/MinerU/blob/master/docs/README_Ubuntu_CUDA_Acceleration_en_US.md) to install the environment.
+
+
 
 ## Data Preparation
 
@@ -68,6 +74,32 @@ outputs/orbit_data
 ## Training and Inference
 
 In this section, we will use the extracted data to fine-tune the [slanet_plus](https://arxiv.org/pdf/2210.05391) by using [PaddleX](https://github.com/PaddlePaddle/PaddleX). But before that, make sure you have the folder `images` and  file `final_output.txt` in the `outputs/orbit_data` directory.
+
+
+```bash
+cd PaddleX
+```
+
+### Install PaddleX
+
+I follow the 2.2 自定义方式安装PaddleX [here](https://paddlepaddle.github.io/PaddleX/latest/installation/installation.html#21-dockerpaddlex) for detailed steps. In particular, I choose the `paddlex --install` option to install all the plugins. More details can be found in the [PaddleX](https://github.com/PaddlePaddle/PaddleX). 
+
+### Fine-tune the slanet_plus
+
+First of all, please copy the `final_output.txt` file and `images` folder to the `PaddleX/dataset/orbit_data_v1` directory. Then run the following command to fine-tune the slanet_plus:
+
+```bash
+run.sh
+```
+
+More details can be found in the comments of the `run.sh` file. Also, the paddleX [documents](https://github.com/PaddlePaddle/PaddleX/blob/release/3.0-beta1/docs/module_usage/tutorials/ocr_modules/table_structure_recognition.md) is very helpful for the fine-tuning.
+
+
+
+
+
+
+
 
 
 
