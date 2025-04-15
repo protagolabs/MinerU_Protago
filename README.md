@@ -12,9 +12,9 @@ please check the [MinerU](https://github.com/opendatalab/MinerU) for the detaile
 In this project, I use the `MinerU==1.3.3`
 
 ```
-conda create -n minerup133 python=3.10
+conda create -n minerup133 python=3.10 -y
 conda activate minerup133
-pip install -U magic-pdf[full]==1.3.3 --extra-index-url https://wheels.myhloli.com
+pip install -U "magic-pdf[full]==1.3.3"--extra-index-url https://wheels.myhloli.com
 magic-pdf --version # check the version, should be 1.3.3
 
 ```
@@ -30,8 +30,7 @@ all the downloaded models will be saved in the `models` directory.
 ### Understand the Location of the Configuration File
 After completing the "Download Models" step, the script will automatically generate a `magic-pdf.json` file in the user directory and configure the default model path. You can find the `magic-pdf.json` file in your user directory.
 > [!TIP]
-> The user directory for Linux is "/home/username".
-
+> The user directory for Linux is "/home/username". For Windows, it is "C:\Users\username".
 > You need to check the `magic-pdf.json` file to use the models in the right `models` directory.
 
 
@@ -40,7 +39,7 @@ After completing the "Download Models" step, the script will automatically gener
 Download a sample file from the repository and test it.
 
 ```sh
-magic-pdf -p demo/small_ocr.pdf -o ./output
+magic-pdf -p demo/pdfs/small_ocr.pdf -o ./output
 ```
 
 ###Test CUDA Acceleration
@@ -55,8 +54,15 @@ If your graphics card has at least **8GB** of VRAM, follow these steps to test C
    ```
 2. Test CUDA acceleration with the following command:
    ```sh
-   magic-pdf -p small_ocr.pdf -o ./output
+   magic-pdf -p demo/pdfs/small_ocr.pdf -o ./output
    ```
+
+If you meet the error " raise AssertionError("Torch not compiled with CUDA enabled") ", you can try the following command to install the torch and torchvision:
+
+```
+pip install torch==2.6.0 torchvision==0.21.0 --extra-index-url https://download.pytorch.org/whl/cu118
+```
+
 
 ### Enable CUDA Acceleration for OCR (Deprecated if you use the MinerU>=1.3.0)
 
