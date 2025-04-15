@@ -9,13 +9,13 @@ This repository contains the code for the MinerU Protago project, which is adopt
 please check the [MinerU](https://github.com/opendatalab/MinerU) for the detailed installation. We use the this [tutorial](https://github.com/opendatalab/MinerU/blob/master/docs/README_Ubuntu_CUDA_Acceleration_en_US.md) to install the environment.
 
 ### Install Applications
-In this project, I use the `MinerU==1.3.3`
+In this project, I use the `MinerU==1.2.2`
 
 ```
-conda create -n minerup133 python=3.10
-conda activate minerup133
-pip install -U magic-pdf[full]==1.3.3 --extra-index-url https://wheels.myhloli.com
-magic-pdf --version # check the version, should be 1.3.3
+conda create -n minerup122 python=3.10
+conda activate minerup122
+pip install -U magic-pdf[full]==1.2.2 --extra-index-url https://wheels.myhloli.com
+magic-pdf --version # check the version, should be 1.2.2
 
 ```
 
@@ -58,7 +58,7 @@ If your graphics card has at least **8GB** of VRAM, follow these steps to test C
    magic-pdf -p small_ocr.pdf -o ./output
    ```
 
-### Enable CUDA Acceleration for OCR (This step is deprecated, if you use the `MinerU>=1.3.0`.)
+### Enable CUDA Acceleration for OCR
 
 
 1. Download `paddlepaddle-gpu`. Installation will automatically enable OCR acceleration.
