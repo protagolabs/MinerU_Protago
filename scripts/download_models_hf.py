@@ -42,13 +42,13 @@ if __name__ == '__main__':
         # "models/TabRec/TableMaster/*",
         # "models/TabRec/StructEqTable/*",
     ]
-    model_dir = snapshot_download('opendatalab/PDF-Extract-Kit-1.0', allow_patterns=mineru_patterns)
+    model_dir = snapshot_download('opendatalab/PDF-Extract-Kit-1.0', local_dir='./models/PDF-Extract-Kit-1.0', allow_patterns=mineru_patterns)
 
     layoutreader_pattern = [
         "*.json",
         "*.safetensors",
     ]
-    layoutreader_model_dir = snapshot_download('hantian/layoutreader', allow_patterns=layoutreader_pattern)
+    layoutreader_model_dir = snapshot_download('hantian/layoutreader', local_dir='./models/layoutreader', allow_patterns=layoutreader_pattern)
 
     model_dir = model_dir + '/models'
     print(f'model_dir is: {model_dir}')
