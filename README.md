@@ -78,7 +78,7 @@ If your graphics card has at least **8GB** of VRAM, follow these steps to test C
 
 The Orbit dataset is a collection of PDF documents with tables. There are two versions, one is a small version with 176 PDF documents, and the other is the larger version with 1000 PDF documents. All the code is tested on the small version.
 
-You can download the small version dataset from [here](https://orbit-common-resources.s3.us-west-2.amazonaws.com/all_file_type_case/export_pdf.zip) and large one from [here](https://orbit-common-resources.s3.us-west-2.amazonaws.com/data4demo/pdf2.zip).
+You can download the small version dataset from [here](https://drive.google.com/file/d/1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct/view?usp=drive_link) and large one from [here](https://drive.google.com/file/d/11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ/view?usp=drive_link).
 
 
 After downloading the dataset, you can unzip the files and put them in the `inputs/export_pdf` directory. It should contains the following files:
