@@ -24,7 +24,7 @@ from magic_pdf.libs.convert_utils import dict_to_list
 from magic_pdf.libs.hash_utils import compute_md5
 from magic_pdf.libs.pdf_image_tools import cut_image_to_pil_image
 from magic_pdf.model.magic_model import MagicModel
-from magic_pdf.post_proc.llm_aided import llm_aided_formula, llm_aided_text, llm_aided_title
+from magic_pdf.post_proc.llm_aided import llm_aided_formula, llm_aided_text, llm_aided_title, llm_aided_table
 
 from magic_pdf.model.sub_modules.model_init import AtomModelSingleton
 from magic_pdf.post_proc.para_split_v3 import para_split
@@ -1029,6 +1029,14 @@ def pdf_parse_union(
                 llm_aided_title_start_time = time.time()
                 llm_aided_title(pdf_info_dict, title_aided_config)
                 logger.info(f'llm aided title time: {round(time.time() - llm_aided_title_start_time, 2)}')
+
+        """table 优化"""
+        table_aided_config = llm_aided_config.get('table_aided', None)
+        if table_aided_config is not None:
+            if table_aided_config.get('enable', False):
+                llm_aided_table_start_time = time.time()
+                llm_aided_table(pdf_info_dict, table_aided_config)
+                logger.info(f'llm aided table time: {round(time.time() - llm_aided_table_start_time, 2)}')
 
     """dict转list"""
     pdf_info_list = dict_to_list(pdf_info_dict)

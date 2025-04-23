@@ -6,8 +6,8 @@
 
 
 # Input and output directories
-INPUT_DIR="inputs/export_pdf/pdf"
-OUTPUT_DIR="./output133_orbit_default"
+INPUT_DIR="inputs/export_pdf1000/pdf"
+OUTPUT_DIR="./output133_orbit1000_default"
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
@@ -18,16 +18,17 @@ for pdf_file in "$INPUT_DIR"/*.pdf; do
     filename=$(basename "$pdf_file")
     
     echo "Processing $filename..."
-    
-    # Create a subdirectory for each PDF's output
-    file_output_dir="$OUTPUT_DIR/$(basename "$filename" .pdf)"
-    mkdir -p "$file_output_dir"
+
     
     # Process the individual PDF file
-    magic-pdf -p "$pdf_file" -o "$file_output_dir" -m auto
+    magic-pdf -p "$pdf_file" -o "$OUTPUT_DIR" -m ocr
     
     echo "Completed processing $filename"
     echo "------------------------"
 done
 
 echo "All PDF files have been processed."
+
+
+
+

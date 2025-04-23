@@ -50,13 +50,12 @@ debug_utils/
 _build/
 
 
-output/
+outputs/
 
 models/
 
 inputs/
 
-output122_orbit_default/
-output133_orbit_default/
+comparison
 
 

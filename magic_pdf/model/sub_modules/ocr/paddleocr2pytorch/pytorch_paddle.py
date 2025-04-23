@@ -180,7 +180,7 @@ class PytorchPaddleOCR(TextSystem):
 
 if __name__ == '__main__':
     pytorch_paddle_ocr = PytorchPaddleOCR()
-    img = cv2.imread("/Users/myhloli/Downloads/screenshot-20250326-194348.png")
+    img = cv2.imread("/home/xing/MinerU_Protago/inputs/export_pdf/tables_from_pkl_cell/f_Vq7Tc4xz/images/table_29_page_28.png")
     dt_boxes, rec_res = pytorch_paddle_ocr(img)
     ocr_res = []
     if not dt_boxes and not rec_res:

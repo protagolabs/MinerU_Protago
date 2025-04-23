@@ -70,6 +70,30 @@ def llm_aided_formula(pdf_info_dict, formula_aided_config):
 def llm_aided_text(pdf_info_dict, text_aided_config):
     pass
 
+def llm_aided_table(pdf_info_dict, table_aided_config):
+    # pass
+    table_dict = {}
+    origin_table_list = []
+    i = 0
+    for page_num, page in pdf_info_dict.items():
+        blocks = page["para_blocks"]
+        for block in blocks:
+            print(block["type"])
+            if block["type"] == "table":
+                origin_table_list.append(block)
+                table_text = merge_para_with_text(block)
+                page_line_height_list = []
+                for line in block['lines']:
+                    bbox = line['bbox']
+                    page_line_height_list.append(int(bbox[3] - bbox[1]))
+                if len(page_line_height_list) > 0:
+                    line_avg_height = sum(page_line_height_list) / len(page_line_height_list)
+                else:
+                    line_avg_height = int(block['bbox'][3] - block['bbox'][1])
+                table_dict[f"{i}"] = [table_text, line_avg_height, int(page_num[5:])+1]
+                i += 1
+
+
 def llm_aided_title(pdf_info_dict, title_aided_config):
     client = OpenAI(
         api_key=title_aided_config["api_key"],
