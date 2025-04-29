@@ -187,8 +187,19 @@ comparison_results
 bash comparison.sh
 ```
 
-Check the "comparison.sh" for output destination and more result details.
+Check the "comparison.sh" for output destination and more result details. The json file should contains something similar to the following:
 
+```json
+    "summary": {
+        "total_files_processed": 176,
+        "overall_average_similarity": 0.5377033703165067,
+        "overall_average_structure_similarity": 0.9299762187917149,
+        "files_with_tables": 176,
+        "overall_average_similarity_tables_only": 0.5377033703165067,
+        "overall_average_structure_similarity_tables_only": 0.9299762187917149,
+        "timestamp": "20250429_153454"
+    },
+```
 
 
 
