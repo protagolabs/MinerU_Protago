@@ -23,6 +23,7 @@ from tqdm import tqdm
 import numpy as np
 import multiprocessing
 from functools import partial
+import markdown
 
 class Logger:
     """Custom logger that writes to both console and file."""
@@ -79,53 +80,12 @@ def parse_html_to_tree(soup, ignore_text=False):
                    children=children, 
                    text="" if ignore_text else soup.get_text().strip())
 
-# def tree_edit_distance(tree1, tree2):
-#     """Computes the Tree Edit Distance (TED) using dynamic programming."""
-#     if tree1 is None:
-#         return sum(count_nodes(child) for child in tree2.children) + 1 if tree2 else 0
-#     if tree2 is None:
-#         return sum(count_nodes(child) for child in tree1.children) + 1 if tree1 else 0
-
-#     if tree1.tag == tree2.tag:  # Same node type
-#         cost = 0 if tree1.text == tree2.text else 1  # Text difference penalty
-#     else:
-#         cost = 1  # Different node type penalty
-
-#     dp = np.zeros((len(tree1.children) + 1, len(tree2.children) + 1))
-
-#     for i in range(len(tree1.children) + 1):
-#         for j in range(len(tree2.children) + 1):
-#             if i == 0:
-#                 dp[i][j] = j
-#             elif j == 0:
-#                 dp[i][j] = i
-#             else:
-#                 dp[i][j] = min(
-#                     dp[i - 1][j] + count_nodes(tree1.children[i - 1]),  # Deletion
-#                     dp[i][j - 1] + count_nodes(tree2.children[j - 1]),  # Insertion
-#                     dp[i - 1][j - 1] + tree_edit_distance(tree1.children[i - 1], tree2.children[j - 1])  # Substitution
-#                 )
-
-#     return dp[len(tree1.children)][len(tree2.children)] + cost
-
-def tree_edit_distance(tree1, tree2, memo=None):
-    """Computes the Tree Edit Distance (TED) using dynamic programming with memoization."""
-    if memo is None:
-        memo = {}
-    
-    # Create a unique key for the memoization dictionary
-    key = (id(tree1), id(tree2))
-    if key in memo:
-        return memo[key]
-        
+def tree_edit_distance(tree1, tree2):
+    """Computes the Tree Edit Distance (TED) using dynamic programming."""
     if tree1 is None:
-        result = sum(count_nodes(child) for child in tree2.children) + 1 if tree2 else 0
-        memo[key] = result
-        return result
+        return sum(count_nodes(child) for child in tree2.children) + 1 if tree2 else 0
     if tree2 is None:
-        result = sum(count_nodes(child) for child in tree1.children) + 1 if tree1 else 0
-        memo[key] = result
-        return result
+        return sum(count_nodes(child) for child in tree1.children) + 1 if tree1 else 0
 
     if tree1.tag == tree2.tag:  # Same node type
         cost = 0 if tree1.text == tree2.text else 1  # Text difference penalty
@@ -144,12 +104,10 @@ def tree_edit_distance(tree1, tree2, memo=None):
                 dp[i][j] = min(
                     dp[i - 1][j] + count_nodes(tree1.children[i - 1]),  # Deletion
                     dp[i][j - 1] + count_nodes(tree2.children[j - 1]),  # Insertion
-                    dp[i - 1][j - 1] + tree_edit_distance(tree1.children[i - 1], tree2.children[j - 1], memo)  # Substitution
+                    dp[i - 1][j - 1] + tree_edit_distance(tree1.children[i - 1], tree2.children[j - 1])  # Substitution
                 )
 
-    result = dp[len(tree1.children)][len(tree2.children)] + cost
-    memo[key] = result
-    return result
+    return dp[len(tree1.children)][len(tree2.children)] + cost
 
 def count_nodes(tree):
     """Counts the total nodes in a tree (used for normalization)."""
@@ -191,23 +149,14 @@ def clean_table_text(text):
     return text
 
 def normalize_table_html(html_str: str) -> str:
-    """Normalize table HTML string by removing extra whitespace, standardizing attributes,
-    and extracting just the table content.
+    """Normalize table HTML string by removing extra whitespace and standardizing attributes.
     
     Args:
         html_str: Input HTML table string
         
     Returns:
-        Normalized HTML table string containing only the table structure
+        Normalized HTML table string
     """
-    # Remove markdown code block markers
-    html_str = re.sub(r'```html\n?|```', '', html_str)
-    
-    # Extract just the table element and its contents
-    table_match = re.search(r'<table.*?</table>', html_str, re.DOTALL | re.IGNORECASE)
-    if table_match:
-        html_str = table_match.group(0)
-    
     # Remove newlines and extra whitespace
     html_str = re.sub(r'\s+', ' ', html_str)
     
@@ -224,19 +173,7 @@ def normalize_table_html(html_str: str) -> str:
     # Remove space after opening tags
     html_str = re.sub(r'<\s+', '<', html_str)
     
-    # Standardize common variations in table structure
-    html_str = re.sub(r'<tbody>|</tbody>', '', html_str)  # Remove tbody tags for consistency
-    
-    # Remove any remaining HTML document structure
-    html_str = re.sub(r'<!DOCTYPE[^>]*>', '', html_str, flags=re.IGNORECASE)
-    html_str = re.sub(r'<html[^>]*>|</html>', '', html_str, flags=re.IGNORECASE)
-    html_str = re.sub(r'<head[^>]*>.*?</head>', '', html_str, flags=re.IGNORECASE | re.DOTALL)
-    html_str = re.sub(r'<body[^>]*>|</body>', '', html_str, flags=re.IGNORECASE)
-    
-    # Normalize spaces in text content (e.g., "37, 985" to "37,985")
-    html_str = re.sub(r'(\d+),\s+(\d+)', r'\1,\2', html_str)
-    
-    return html_str.strip()
+    return html_str
 
 def calculate_similarity(text1: str, text2: str) -> float:
     """Calculate similarity ratio between two texts using SequenceMatcher.
@@ -250,12 +187,15 @@ def calculate_similarity(text1: str, text2: str) -> float:
     """
     return SequenceMatcher(None, text1, text2).ratio()
 
-def calculate_std_similarity(text1, text2):
+def calculate_std_similarity(text1, text2, refined=False):
     """Calculate both TED similarity and structural similarity efficiently."""
     # Cache the BeautifulSoup parsing and tree creation
     soup1, soup2 = BeautifulSoup(text1, "html.parser"), BeautifulSoup(text2, "html.parser")
     
-    # Create trees once for both calculations
+
+
+
+    # Create trees once for both calculations - fix the unpacking error
     tree1 = parse_html_to_tree(soup1, ignore_text=False)
     tree2 = parse_html_to_tree(soup2, ignore_text=False)
     tree1_struct = parse_html_to_tree(soup1, ignore_text=True)
@@ -277,6 +217,10 @@ def calculate_std_similarity(text1, text2):
 def compare_tables(gt_file, extracted_file):
     """Compare tables between Azure and extracted files with performance optimizations."""
     # Load both files
+
+
+    print(gt_file)
+    print(extracted_file)
     with open(gt_file, 'r', encoding='utf-8') as f:
         gt_tables = json.load(f)
     
@@ -297,7 +241,9 @@ def compare_tables(gt_file, extracted_file):
         extracted_tables_normalized.append({
             'original': table,
             'normalized': normalize_table_html(table['sentence']),
-            'page': table['page']
+            'page': table['page'],
+            'normalized_original': normalize_table_html(table['original_sentence']),
+            'refined': table["refined"]
         })
     
     # Group extracted tables by page for faster lookup
@@ -313,7 +259,8 @@ def compare_tables(gt_file, extracted_file):
     total_structure_similarity = 0
     matched_tables = 0
     detailed_matches = []
-    
+    refined_count = 0
+    good_refined_count = 0
     # Compare each GT table with extracted tables
     for i, gt_table_norm in enumerate(gt_tables_normalized, 1):
         gt_text = gt_table_norm['original']['sentence']
@@ -335,10 +282,24 @@ def compare_tables(gt_file, extracted_file):
             tables_to_compare = [(idx, table) for idx, table in enumerate(extracted_tables_normalized)]
         
         for j, (orig_idx, extracted_table_norm) in enumerate(tables_to_compare, 1):
-            extracted_text_norm = extracted_table_norm['normalized']
             
+            extracted_text_norm = extracted_table_norm['normalized_original']
+            similarity, structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=False)
+
+            refined_flag = extracted_table_norm['refined']
+            refined_flag = False
             # Calculate similarity metrics
-            similarity, structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm)
+            if refined_flag:
+
+                refined_count += 1
+                extracted_text_norm = extracted_table_norm['normalized']
+                refined_similarity, refined_structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=True)
+
+                if refined_structure_similarity >= structure_similarity:
+                    structure_similarity = refined_structure_similarity
+                    similarity = refined_similarity
+                    good_refined_count += 1
+            
             
             if structure_similarity > best_structure_similarity:
                 best_structure_similarity = structure_similarity
@@ -352,7 +313,6 @@ def compare_tables(gt_file, extracted_file):
             total_similarity += best_similarity
             total_structure_similarity += best_structure_similarity
             matched_tables += 1
-
             detailed_matches.append({
                 "azure_table_index": i,
                 "mineru_table_index": best_idx,
@@ -379,6 +339,8 @@ def compare_tables(gt_file, extracted_file):
         "total_structure_similarity": total_structure_similarity,
         "mineru_table_count": len(extracted_tables),
         "azure_table_count": len(gt_tables),
+        "refined_tables": refined_count,
+        "good_refined_tables": good_refined_count,
         "detailed_matches": detailed_matches,
         "file_stats": {
             "mineru_file": extracted_file,
@@ -390,12 +352,14 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
     """Process a single file comparison."""
     try:
         base_name = azure_file.replace('.pages.tables.json', '')
-        mineru_file = base_name + '.tables.refined.json'
+        mineru_file = base_name + '.tables.refined.json' 
         mineru_path = os.path.join(mineru_folder, mineru_file)
         azure_path = os.path.join(azure_folder, azure_file)
         
         if os.path.exists(mineru_path):
             try:
+                # print(mineru_path)
+                # print(azure_path)
                 results = compare_tables(azure_path, mineru_path)
                 return base_name, results
             except Exception as e:
@@ -448,8 +412,8 @@ def process_folders(mineru_folder: str,
     
     # Create partial function with fixed arguments
     process_file = partial(process_single_file, 
-                         mineru_folder=mineru_folder, 
-                         azure_folder=azure_folder)
+                         azure_folder=azure_folder,
+                         mineru_folder=mineru_folder)
     
     # Process files in parallel with progress bar
     all_results = {}
@@ -457,16 +421,31 @@ def process_folders(mineru_folder: str,
     total_files = 0
     total_avg_structure_similarity = 0
     
+    # Track files with tables specifically
+    files_with_tables = 0
+    total_similarity_with_tables = 0
+    total_structure_similarity_with_tables = 0
+    total_refined_tables = 0
+    total_tables = 0
+    total_good_refined_tables = 0
+
     with tqdm(total=len(azure_files), desc="Processing files", file=sys.stdout) as pbar:
         for result in pool.imap_unordered(process_file, azure_files):
             if result:
                 base_name, file_results = result
-                # Fix: Check if file_results has the key before using it
-                if 'average_structure_similarity' in file_results and file_results['average_structure_similarity'] > 0:
-                    all_results[base_name] = file_results
-                    total_avg_similarity += file_results['average_similarity']
-                    total_avg_structure_similarity += file_results['average_structure_similarity']
-                    total_files += 1
+                all_results[base_name] = file_results
+                total_avg_similarity += file_results['average_similarity']
+                total_avg_structure_similarity += file_results['average_structure_similarity']
+                total_files += 1
+                total_refined_tables += file_results['refined_tables']
+                total_tables += file_results['mineru_table_count']
+                total_good_refined_tables += file_results['good_refined_tables']
+                # Count only files that have tables in both Azure and MinerU
+                if file_results['azure_table_count'] > 0 and file_results['mineru_table_count'] > 0:
+                    files_with_tables += 1
+                    total_similarity_with_tables += file_results['average_similarity']
+                    total_structure_similarity_with_tables += file_results['average_structure_similarity']
+                
             pbar.update(1)
     
     pool.close()
@@ -475,10 +454,25 @@ def process_folders(mineru_folder: str,
     # Calculate overall statistics
     overall_stats = {
         "total_files_processed": total_files,
+        "total_tables": total_tables,
+        "total_refined_tables": total_refined_tables,
+        "total_good_refined_tables": total_good_refined_tables,
         "overall_average_similarity": total_avg_similarity / total_files if total_files > 0 else 0,
         "overall_average_structure_similarity": total_avg_structure_similarity / total_files if total_files > 0 else 0,
+        "files_with_tables": files_with_tables,
+        "overall_average_similarity_tables_only": total_similarity_with_tables / files_with_tables if files_with_tables > 0 else 0,
+        "overall_average_structure_similarity_tables_only": total_structure_similarity_with_tables / files_with_tables if files_with_tables > 0 else 0,
         "timestamp": timestamp
     }
+    
+    # Print summary statistics
+    print("\nSummary Statistics:")
+    print(f"Total files processed: {total_files}")
+    print(f"Files with tables in both Azure and MinerU: {files_with_tables}")
+    print(f"Overall average similarity (all files): {overall_stats['overall_average_similarity']:.4f}")
+    print(f"Overall average structure similarity (all files): {overall_stats['overall_average_structure_similarity']:.4f}")
+    print(f"Overall average similarity (files with tables only): {overall_stats['overall_average_similarity_tables_only']:.4f}")
+    print(f"Overall average structure similarity (files with tables only): {overall_stats['overall_average_structure_similarity_tables_only']:.4f}")
     
     # Save detailed results
     save_results(all_results, overall_stats, output_dir, timestamp)
