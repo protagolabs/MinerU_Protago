@@ -187,8 +187,64 @@ def calculate_similarity(text1: str, text2: str) -> float:
     """
     return SequenceMatcher(None, text1, text2).ratio()
 
+<<<<<<< HEAD
+=======
+def markdown_to_html(md_table: str) -> str:
+    """Convert a markdown table to HTML format.
+    
+    Args:
+        md_table: Markdown table string
+        
+    Returns:
+        HTML table string
+    """
+    # Split into lines and remove empty lines
+    lines = [line.strip() for line in md_table.split('\n') if line.strip()]
+    
+    # Create HTML table
+    html = ['<table>']
+    
+    # Process header and separator
+    header = lines[0].strip('|').split('|')
+    html.append('<tr>')
+    for cell in header:
+        html.append(f'<th>{cell.strip()}</th>')
+    html.append('</tr>')
+    
+    # Process data rows
+    for line in lines[2:]:  # Skip header and separator
+        cells = line.strip('|').split('|')
+        html.append('<tr>')
+        for cell in cells:
+            html.append(f'<td>{cell.strip()}</td>')
+        html.append('</tr>')
+    
+    html.append('</table>')
+    return ''.join(html)
+
+def normalize_table_text(text: str) -> str:
+    """Normalize table text by converting to HTML if needed and cleaning.
+    
+    Args:
+        text: Input table text (HTML or Markdown)
+        
+    Returns:
+        Normalized HTML table string
+    """
+    # Check if input is markdown table
+    if text.strip().startswith('|'):
+        text = markdown_to_html(text)
+    
+    # Normalize HTML
+    return normalize_table_html(text)
+
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
 def calculate_std_similarity(text1, text2, refined=False):
     """Calculate both TED similarity and structural similarity efficiently."""
+    # Normalize both inputs to HTML
+    text1 = normalize_table_text(text1)
+    text2 = normalize_table_text(text2)
+    
     # Cache the BeautifulSoup parsing and tree creation
     soup1, soup2 = BeautifulSoup(text1, "html.parser"), BeautifulSoup(text2, "html.parser")
     
@@ -213,7 +269,6 @@ def calculate_std_similarity(text1, text2, refined=False):
     return (1 - (ted_distance / max_nodes) if max_nodes > 0 else 1,
             1 - (struct_distance / max_struct_nodes) if max_struct_nodes > 0 else 1)
 
-
 def compare_tables(gt_file, extracted_file):
     """Compare tables between Azure and extracted files with performance optimizations."""
     # Load both files
@@ -230,20 +285,33 @@ def compare_tables(gt_file, extracted_file):
     # Pre-normalize all tables once to avoid repeated normalization
     gt_tables_normalized = []
     for table in gt_tables:
+        gt_text = table['sentence']
+        is_markdown = gt_text.strip().startswith('|')
         gt_tables_normalized.append({
             'original': table,
-            'normalized': normalize_table_html(table['sentence']),
-            'page': table['page']
+            'normalized': normalize_table_text(gt_text),
+            'page': table['page'],
+            'format': 'markdown' if is_markdown else 'html'
         })
     
     extracted_tables_normalized = []
     for table in extracted_tables:
+        extracted_text = table['sentence']
+        is_markdown = extracted_text.strip().startswith('|')
         extracted_tables_normalized.append({
             'original': table,
+<<<<<<< HEAD
             'normalized': normalize_table_html(table['sentence']),
             'page': table['page'],
             'normalized_original': normalize_table_html(table['original_sentence']),
             'refined': table["refined"]
+=======
+            'normalized': normalize_table_text(extracted_text),
+            'page': table['page'],
+            'format': 'markdown' if is_markdown else 'html',
+            'normalized_original': normalize_table_text(table.get('original_sentence', extracted_text)),
+            'refined': table.get("refined", False)
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
         })
     
     # Group extracted tables by page for faster lookup
@@ -261,11 +329,16 @@ def compare_tables(gt_file, extracted_file):
     detailed_matches = []
     refined_count = 0
     good_refined_count = 0
+<<<<<<< HEAD
+=======
+    
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
     # Compare each GT table with extracted tables
     for i, gt_table_norm in enumerate(gt_tables_normalized, 1):
         gt_text = gt_table_norm['original']['sentence']
         gt_page = gt_table_norm['page']
         gt_text_norm = gt_table_norm['normalized']
+        gt_format = gt_table_norm['format']
         
         # Find best matching extracted table
         best_match = None
@@ -282,15 +355,23 @@ def compare_tables(gt_file, extracted_file):
             tables_to_compare = [(idx, table) for idx, table in enumerate(extracted_tables_normalized)]
         
         for j, (orig_idx, extracted_table_norm) in enumerate(tables_to_compare, 1):
+<<<<<<< HEAD
             
+=======
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
             extracted_text_norm = extracted_table_norm['normalized_original']
             similarity, structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=False)
 
             refined_flag = extracted_table_norm['refined']
+<<<<<<< HEAD
             refined_flag = False
             # Calculate similarity metrics
             if refined_flag:
 
+=======
+            # Calculate similarity metrics
+            if refined_flag:
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
                 refined_count += 1
                 extracted_text_norm = extracted_table_norm['normalized']
                 refined_similarity, refined_structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=True)
@@ -299,7 +380,10 @@ def compare_tables(gt_file, extracted_file):
                     structure_similarity = refined_structure_similarity
                     similarity = refined_similarity
                     good_refined_count += 1
+<<<<<<< HEAD
             
+=======
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
             
             if structure_similarity > best_structure_similarity:
                 best_structure_similarity = structure_similarity
@@ -324,6 +408,8 @@ def compare_tables(gt_file, extracted_file):
                 "azure_text_preview": gt_text[:200] + "..." if gt_text and len(gt_text) > 200 else gt_text,
                 "normalized_mineru_text": best_match['normalized'][:200] + "..." if len(best_match['normalized']) > 200 else best_match['normalized'],
                 "normalized_azure_text": gt_text_norm[:200] + "..." if gt_text_norm and len(gt_text_norm) > 200 else gt_text_norm,
+                "azure_format": gt_format,
+                "mineru_format": best_match['format']
             })
         else:
             print(f"No matching table found for GT table #{i} on page {gt_page}!")
@@ -352,6 +438,7 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
     """Process a single file comparison."""
     try:
         base_name = azure_file.replace('.pages.tables.json', '')
+<<<<<<< HEAD
         mineru_file = base_name + '.tables.refined.json' 
         mineru_path = os.path.join(mineru_folder, mineru_file)
         azure_path = os.path.join(azure_folder, azure_file)
@@ -379,8 +466,42 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
                         "mineru_file": mineru_path,
                         "azure_file": azure_path,
                     }
+=======
+        mineru_file = base_name + '.tables.refined_md.json' 
+        mineru_path = os.path.join(mineru_folder, mineru_file)
+        azure_path = os.path.join(azure_folder, azure_file)
+        
+        # Check if both files exist
+        if not os.path.exists(azure_path):
+            print(f"Azure file not found: {azure_path}")
+            return None
+            
+        if not os.path.exists(mineru_path):
+            print(f"MinerU file not found: {mineru_path}")
+            return None
+        
+        try:
+            results = compare_tables(azure_path, mineru_path)
+            return base_name, results
+        except Exception as e:
+            print(f"Error comparing tables in {azure_file}: {str(e)}")
+            # Return a placeholder result instead of None to avoid breaking the pipeline
+            return base_name, {
+                "error": str(e),
+                "total_matched_tables": 0,
+                "average_similarity": 0,
+                "average_structure_similarity": 0,
+                "total_similarity": 0,
+                "total_structure_similarity": 0,
+                "mineru_table_count": 0,
+                "azure_table_count": 0,
+                "detailed_matches": [],
+                "file_stats": {
+                    "mineru_file": mineru_path,
+                    "azure_file": azure_path,
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
                 }
-        return None
+            }
     except Exception as e:
         print(f"Error processing {azure_file}: {str(e)}")
         return None
@@ -388,7 +509,8 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
 def process_folders(mineru_folder: str, 
                    azure_folder: str, 
                    output_dir: str,
-                   num_processes: int = None) -> Dict[str, Any]:
+                   num_processes: int = None,
+                   timeout: int = 300) -> Dict[str, Any]:  # 5 minutes timeout
     """Process and compare all corresponding files in both folders."""
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -397,13 +519,28 @@ def process_folders(mineru_folder: str,
     log_file = os.path.join(output_dir, f"comparison_log_{timestamp}.txt")
     sys.stdout = Logger(log_file)
     
-    # Get all JSON files
-    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.json')]
+    # Get all JSON files from Azure folder
+    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.pages.tables.json')]
+    
+    # Find matching MinerU files
+    matching_pairs = []
+    for azure_file in azure_files:
+        base_name = azure_file.replace('.pages.tables.json', '')
+        mineru_file = base_name + '.tables.refined_md.json'
+        mineru_path = os.path.join(mineru_folder, mineru_file)
+        
+        if os.path.exists(mineru_path):
+            matching_pairs.append(azure_file)
+        else:
+            print(f"Skipping {azure_file} - no corresponding MinerU refined file found")
     
     print(f"\nComparison started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"MinerU folder: {mineru_folder}")
     print(f"Azure folder: {azure_folder}")
-    print(f"\nProcessing {len(azure_files)} files in parallel...")
+    print(f"Total Azure files: {len(azure_files)}")
+    print(f"Files with matching MinerU counterparts: {len(matching_pairs)}")
+    print(f"Timeout set to {timeout} seconds per file")
+    print(f"\nProcessing {len(matching_pairs)} matching file pairs in parallel...")
 
     # Set up multiprocessing
     if num_processes is None:
@@ -428,6 +565,7 @@ def process_folders(mineru_folder: str,
     total_refined_tables = 0
     total_tables = 0
     total_good_refined_tables = 0
+<<<<<<< HEAD
 
     with tqdm(total=len(azure_files), desc="Processing files", file=sys.stdout) as pbar:
         for result in pool.imap_unordered(process_file, azure_files):
@@ -447,16 +585,54 @@ def process_folders(mineru_folder: str,
                     total_structure_similarity_with_tables += file_results['average_structure_similarity']
                 
             pbar.update(1)
+=======
+    timed_out_files = 0
+
+    with tqdm(total=len(matching_pairs), desc="Processing files", file=sys.stdout) as pbar:
+        for azure_file in matching_pairs:
+            try:
+                # Apply timeout to each file processing
+                result = pool.apply_async(process_file, (azure_file,))
+                result = result.get(timeout=timeout)  # Wait for timeout seconds
+                
+                if result:
+                    base_name, file_results = result
+                    all_results[base_name] = file_results
+                    total_avg_similarity += file_results['average_similarity']
+                    total_avg_structure_similarity += file_results['average_structure_similarity']
+                    total_files += 1
+                    total_refined_tables += file_results['refined_tables']
+                    total_tables += file_results['mineru_table_count']
+                    total_good_refined_tables += file_results['good_refined_tables']
+                    # Count only files that have tables in both Azure and MinerU
+                    if file_results['azure_table_count'] > 0 and file_results['mineru_table_count'] > 0:
+                        files_with_tables += 1
+                        total_similarity_with_tables += file_results['average_similarity']
+                        total_structure_similarity_with_tables += file_results['average_structure_similarity']
+            except multiprocessing.TimeoutError:
+                print(f"\nTimeout processing {azure_file} - skipping")
+                timed_out_files += 1
+            except Exception as e:
+                print(f"\nError processing {azure_file}: {str(e)}")
+            finally:
+                pbar.update(1)
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
     
     pool.close()
     pool.join()
     
     # Calculate overall statistics
     overall_stats = {
+        "total_azure_files": len(azure_files),
+        "total_matching_pairs": len(matching_pairs),
         "total_files_processed": total_files,
         "total_tables": total_tables,
         "total_refined_tables": total_refined_tables,
         "total_good_refined_tables": total_good_refined_tables,
+<<<<<<< HEAD
+=======
+        "timed_out_files": timed_out_files,
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
         "overall_average_similarity": total_avg_similarity / total_files if total_files > 0 else 0,
         "overall_average_structure_similarity": total_avg_structure_similarity / total_files if total_files > 0 else 0,
         "files_with_tables": files_with_tables,
@@ -467,7 +643,14 @@ def process_folders(mineru_folder: str,
     
     # Print summary statistics
     print("\nSummary Statistics:")
+<<<<<<< HEAD
     print(f"Total files processed: {total_files}")
+=======
+    print(f"Total Azure files: {overall_stats['total_azure_files']}")
+    print(f"Files with matching MinerU counterparts: {overall_stats['total_matching_pairs']}")
+    print(f"Total files processed: {total_files}")
+    print(f"Files timed out: {timed_out_files}")
+>>>>>>> b0777bf7020fbba541bf16dc797d4397aa5a6d37
     print(f"Files with tables in both Azure and MinerU: {files_with_tables}")
     print(f"Overall average similarity (all files): {overall_stats['overall_average_similarity']:.4f}")
     print(f"Overall average structure similarity (all files): {overall_stats['overall_average_structure_similarity']:.4f}")
@@ -506,6 +689,150 @@ def save_results(results: Dict[str, Any],
     
     print(f"\nResults saved to: {output_file}")
 
+def compare_tables_in_file(extracted_file: str, gt_file: str) -> Dict[str, Any]:
+    """Compare tables between an extracted file and its ground truth file.
+    
+    Args:
+        extracted_file: Path to the extracted tables JSON file
+        gt_file: Path to the ground truth tables JSON file
+        
+    Returns:
+        Dictionary containing comparison results
+    """
+    # Load both files
+    with open(extracted_file, 'r', encoding='utf-8') as f:
+        extracted_tables = json.load(f)
+    
+    with open(gt_file, 'r', encoding='utf-8') as f:
+        gt_tables = json.load(f)
+    
+    # Pre-normalize all tables
+    gt_tables_normalized = []
+    for table in gt_tables:
+        gt_text = table['sentence']
+        is_markdown = gt_text.strip().startswith('|')
+        gt_tables_normalized.append({
+            'original': table,
+            'normalized': normalize_table_text(gt_text),
+            'page': table['page'],
+            'format': 'markdown' if is_markdown else 'html'
+        })
+    
+    extracted_tables_normalized = []
+    for table in extracted_tables:
+        extracted_text = table['sentence']
+        is_markdown = extracted_text.strip().startswith('|')
+        extracted_tables_normalized.append({
+            'original': table,
+            'normalized': normalize_table_text(extracted_text),
+            'page': table['page'],
+            'format': 'markdown' if is_markdown else 'html',
+            'normalized_original': normalize_table_text(table.get('original_sentence', extracted_text)),
+            'refined': table.get("refined", False)
+        })
+    
+    # Group extracted tables by page for faster lookup
+    extracted_by_page = {}
+    for idx, table in enumerate(extracted_tables_normalized):
+        page = table['page']
+        if page not in extracted_by_page:
+            extracted_by_page[page] = []
+        extracted_by_page[page].append((idx, table))
+    
+    # Track comparisons
+    comparisons = []
+    total_similarity = 0
+    total_structure_similarity = 0
+    matched_tables = 0
+    refined_count = 0
+    good_refined_count = 0
+    
+    # Compare each GT table with extracted tables
+    for i, gt_table_norm in enumerate(gt_tables_normalized, 1):
+        gt_text = gt_table_norm['original']['sentence']
+        gt_page = gt_table_norm['page']
+        gt_text_norm = gt_table_norm['normalized']
+        gt_format = gt_table_norm['format']
+        
+        # Find best matching extracted table
+        best_match = None
+        best_similarity = 0
+        best_structure_similarity = 0
+        best_idx = None
+        best_match_original = None
+
+        # Only compare with tables on the same page if available
+        tables_to_compare = extracted_by_page.get(gt_page, [])
+        
+        # If no tables on this page, compare with all tables (fallback)
+        if not tables_to_compare:
+            tables_to_compare = [(idx, table) for idx, table in enumerate(extracted_tables_normalized)]
+        
+        for j, (orig_idx, extracted_table_norm) in enumerate(tables_to_compare, 1):
+            extracted_text_norm = extracted_table_norm['normalized_original']
+            similarity, structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=False)
+
+            refined_flag = extracted_table_norm['refined']
+            # Calculate similarity metrics
+            if refined_flag:
+                refined_count += 1
+                extracted_text_norm = extracted_table_norm['normalized']
+                refined_similarity, refined_structure_similarity = calculate_std_similarity(gt_text_norm, extracted_text_norm, refined=True)
+
+                if refined_structure_similarity >= structure_similarity:
+                    structure_similarity = refined_structure_similarity
+                    similarity = refined_similarity
+                    good_refined_count += 1
+            
+            if structure_similarity > best_structure_similarity:
+                best_structure_similarity = structure_similarity
+                best_similarity = similarity
+                best_match = extracted_table_norm
+                best_idx = orig_idx + 1  # +1 because enumeration starts at 1
+                best_match_original = extracted_table_norm['original']
+
+        if best_match:
+            # Add to totals
+            total_similarity += best_similarity
+            total_structure_similarity += best_structure_similarity
+            matched_tables += 1
+            comparisons.append({
+                "gt_table_index": i,
+                "extracted_table_index": best_idx,
+                "gt_table_page": gt_page,
+                "extracted_table_page": best_match_original.get('page', 'N/A'),
+                "similarity_score": best_similarity,
+                "structure_similarity_score": best_structure_similarity,
+                "extracted_text_preview": best_match_original['sentence'][:200] + "..." if len(best_match_original['sentence']) > 200 else best_match_original['sentence'],
+                "gt_text_preview": gt_text[:200] + "..." if gt_text and len(gt_text) > 200 else gt_text,
+                "normalized_extracted_text": best_match['normalized'][:200] + "..." if len(best_match['normalized']) > 200 else best_match['normalized'],
+                "normalized_gt_text": gt_text_norm[:200] + "..." if gt_text_norm and len(gt_text_norm) > 200 else gt_text_norm,
+                "gt_format": gt_format,
+                "extracted_format": best_match['format']
+            })
+        else:
+            print(f"No matching table found for GT table #{i} on page {gt_page}!")
+
+    average_similarity = total_similarity / matched_tables if matched_tables > 0 else 0
+    average_structure_similarity = total_structure_similarity / matched_tables if matched_tables > 0 else 0
+    
+    return {
+        "total_matched_tables": matched_tables,
+        "average_similarity": average_similarity,
+        "average_structure_similarity": average_structure_similarity,
+        "total_similarity": total_similarity,
+        "total_structure_similarity": total_structure_similarity,
+        "extracted_table_count": len(extracted_tables),
+        "gt_table_count": len(gt_tables),
+        "refined_tables": refined_count,
+        "good_refined_tables": good_refined_count,
+        "comparisons": comparisons,
+        "file_stats": {
+            "extracted_file": extracted_file,
+            "gt_file": gt_file,
+        }
+    }
+
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments.
     
@@ -513,7 +840,7 @@ def parse_args() -> argparse.Namespace:
         Parsed command line arguments
     """
     parser = argparse.ArgumentParser(
-        description="Compare table structures between MinerU and Azure JSON files."
+        description="Compare table structures between files or within a single file."
     )
     parser.add_argument(
         "--mineru-tables",
@@ -539,23 +866,81 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Number of parallel processes to use (default: number of CPU cores)"
     )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=300,
+        help="Timeout in seconds for processing each file (default: 300)"
+    )
+    parser.add_argument(
+        "--mineru-file",
+        type=str,
+        help="Path to the extracted tables JSON file"
+    )
+    parser.add_argument(
+        "--azure-file",
+        type=str,
+        help="Path to the ground truth tables JSON file"
+    )
     return parser.parse_args()
 
 def main() -> None:
     try:
         args = parse_args()
         
-        # Validate input folders
+        # Handle single file pair comparison
+        if args.mineru_file and args.azure_file:
+            if not os.path.isfile(args.mineru_file):
+                raise ValueError(f"Extracted file not found: {args.mineru_file}")
+            if not os.path.isfile(args.azure_file):
+                raise ValueError(f"Ground truth file not found: {args.azure_file}")
+            
+            # Create output directory if it doesn't exist
+            Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Set up logging
+            log_file = os.path.join(args.output_dir, f"file_pair_comparison_log_{timestamp}.txt")
+            sys.stdout = Logger(log_file)
+            
+            print(f"\nFile pair comparison started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"Processing extracted file: {args.mineru_file}")
+            print(f"Processing ground truth file: {args.azure_file}")
+            
+            results = compare_tables_in_file(args.mineru_file, args.azure_file)
+            
+            # Save results
+            output_file = os.path.join(args.output_dir, f"file_pair_comparison_results_{timestamp}.json")
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent=4, ensure_ascii=False)
+            
+            print(f"\nResults saved to: {output_file}")
+            print(f"Total GT tables: {results['gt_table_count']}")
+            print(f"Total extracted tables: {results['extracted_table_count']}")
+            print(f"Total matched tables: {results['total_matched_tables']}")
+            print(f"Average similarity: {results['average_similarity']:.4f}")
+            print(f"Average structure similarity: {results['average_structure_similarity']:.4f}")
+            print(f"Refined tables: {results['refined_tables']}")
+            print(f"Good refined tables: {results['good_refined_tables']}")
+            
+            # Restore original stdout and close log file
+            if isinstance(sys.stdout, Logger):
+                sys.stdout.close()
+                sys.stdout = sys.stdout.terminal
+            
+            sys.exit(0)
+        
+        # Handle dual file comparison (original functionality)
         for folder in [args.mineru_tables, args.azure_tables]:
             if not os.path.isdir(folder):
                 raise ValueError(f"Directory not found: {folder}")
         
-        # Run comparison
         results = process_folders(
             args.mineru_tables,
             args.azure_tables,
             args.output_dir,
-            args.processes
+            args.processes,
+            args.timeout
         )
         
         sys.exit(0)
