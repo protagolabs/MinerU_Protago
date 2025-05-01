@@ -18,7 +18,7 @@ from pathlib import Path
 from datetime import datetime
 from difflib import SequenceMatcher
 from bs4 import BeautifulSoup
-from typing import Dict, Any, Optional, Set, List
+from typing import Dict, Any, Optional, Set, List, Tuple
 from tqdm import tqdm
 import numpy as np
 import multiprocessing
@@ -322,22 +322,20 @@ def compare_tables(gt_file, extracted_file):
         }
     }
 
-def process_single_file(azure_file, mineru_folder, azure_folder):
+def process_single_file(azure_file, mineru_file, mineru_folder, azure_folder):
     """Process a single file comparison."""
     try:
-        base_name = azure_file.replace('.pages.tables.json', '')
-        mineru_file = base_name + '.tables.json'
         mineru_path = os.path.join(mineru_folder, mineru_file)
         azure_path = os.path.join(azure_folder, azure_file)
         
         if os.path.exists(mineru_path):
             try:
                 results = compare_tables(azure_path, mineru_path)
-                return base_name, results
+                return azure_file.replace('.pages.tables.json', ''), results
             except Exception as e:
                 print(f"Error comparing tables in {azure_file}: {str(e)}")
                 # Return a placeholder result instead of None to avoid breaking the pipeline
-                return base_name, {
+                return azure_file.replace('.pages.tables.json', ''), {
                     "error": str(e),
                     "total_matched_tables": 0,
                     "average_similarity": 0,
@@ -357,6 +355,41 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
         print(f"Error processing {azure_file}: {str(e)}")
         return None
     
+def check_file_pairs(mineru_folder: str, azure_folder: str) -> List[Tuple[str, str]]:
+    """Check and return pairs of MinerU and Azure files that will be compared.
+    
+    Args:
+        mineru_folder: Path to folder containing MinerU table JSON files
+        azure_folder: Path to folder containing Azure table JSON files
+        
+    Returns:
+        List of tuples containing (azure_file, mineru_file) pairs
+    """
+    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.json')]
+    mineru_files = [f for f in os.listdir(mineru_folder) if f.endswith('.json')]
+    
+    pairs = []
+    for azure_file in azure_files:
+        base_name = azure_file.replace('.pages.tables.json', '')
+        mineru_file = base_name + '.tables.json'
+        if mineru_file in mineru_files:
+            pairs.append((azure_file, mineru_file))
+        else:
+            print(f"Warning: No matching MinerU file found for Azure file {azure_file}")
+    
+    return pairs
+
+def process_pair(pair, mineru_folder, azure_folder):
+    """Wrapper function to process a single file pair.
+    
+    Args:
+        pair: Tuple of (azure_file, mineru_file)
+        mineru_folder: Path to folder containing MinerU table JSON files
+        azure_folder: Path to folder containing Azure table JSON files
+    """
+    azure_file, mineru_file = pair
+    return process_single_file(azure_file, mineru_file, mineru_folder, azure_folder)
+
 def process_folders(mineru_folder: str, 
                    azure_folder: str, 
                    output_dir: str,
@@ -369,13 +402,18 @@ def process_folders(mineru_folder: str,
     log_file = os.path.join(output_dir, f"comparison_log_{timestamp}.txt")
     sys.stdout = Logger(log_file)
     
-    # Get all JSON files
-    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.json')]
+    # Check and print file pairs
+    print("\nChecking file pairs...")
+    file_pairs = check_file_pairs(mineru_folder, azure_folder)
+    print(f"\nFound {len(file_pairs)} matching file pairs:")
+    for azure_file, mineru_file in file_pairs[:3]:
+        azure_path = os.path.join(azure_folder, azure_file)
+        mineru_path = os.path.join(mineru_folder, mineru_file)
+        print(f"Azure sample path: {azure_path}")
+        print(f"MinerU sample path: {mineru_path}")
     
     print(f"\nComparison started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"MinerU folder: {mineru_folder}")
-    print(f"Azure folder: {azure_folder}")
-    print(f"\nProcessing {len(azure_files)} files in parallel...")
+
 
     # Set up multiprocessing
     if num_processes is None:
@@ -383,9 +421,9 @@ def process_folders(mineru_folder: str,
     pool = multiprocessing.Pool(processes=num_processes)
     
     # Create partial function with fixed arguments
-    process_file = partial(process_single_file, 
-                         mineru_folder=mineru_folder, 
-                         azure_folder=azure_folder)
+    process_pair_with_folders = partial(process_pair, 
+                                      mineru_folder=mineru_folder, 
+                                      azure_folder=azure_folder)
     
     # Process files in parallel with progress bar
     all_results = {}
@@ -398,8 +436,8 @@ def process_folders(mineru_folder: str,
     total_similarity_with_tables = 0
     total_structure_similarity_with_tables = 0
     
-    with tqdm(total=len(azure_files), desc="Processing files", file=sys.stdout) as pbar:
-        for result in pool.imap_unordered(process_file, azure_files):
+    with tqdm(total=len(file_pairs), desc="Processing files", file=sys.stdout) as pbar:
+        for result in pool.imap_unordered(process_pair_with_folders, file_pairs):
             if result:
                 base_name, file_results = result
                 all_results[base_name] = file_results
