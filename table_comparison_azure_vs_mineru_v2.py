@@ -220,22 +220,21 @@ def compare_tables(gt_file, extracted_file):
     with open(extracted_file, 'r', encoding='utf-8') as f:
         extracted_tables = json.load(f)
     
-    # Pre-normalize all tables once to avoid repeated normalization
     gt_tables_normalized = []
     for table in gt_tables:
         gt_tables_normalized.append({
             'original': table,
-            'normalized': normalize_table_html(table['sentence']),
             'page': table['page']
         })
-    
+
     extracted_tables_normalized = []
     for table in extracted_tables:
         extracted_tables_normalized.append({
             'original': table,
-            'normalized': normalize_table_html(table['sentence']),
             'page': table['page']
         })
+
+
     
     # Group extracted tables by page for faster lookup
     extracted_by_page = {}
@@ -324,37 +323,16 @@ def compare_tables(gt_file, extracted_file):
     }
 
 def process_single_file(azure_file, mineru_file, mineru_folder, azure_folder):
-    """Process a single file comparison."""
-    try:
-        mineru_path = os.path.join(mineru_folder, mineru_file)
-        azure_path = os.path.join(azure_folder, azure_file)
-        
-        if os.path.exists(mineru_path):
-            try:
-                results = compare_tables(azure_path, mineru_path)
-                return azure_file.replace('.pages.tables.json', ''), results
-            except Exception as e:
-                print(f"Error comparing tables in {azure_file}: {str(e)}")
-                # Return a placeholder result instead of None to avoid breaking the pipeline
-                return azure_file.replace('.pages.tables.json', ''), {
-                    "error": str(e),
-                    "total_matched_tables": 0,
-                    "average_similarity": 0,
-                    "average_structure_similarity": 0,
-                    "total_similarity": 0,
-                    "total_structure_similarity": 0,
-                    "mineru_table_count": 0,
-                    "azure_table_count": 0,
-                    "detailed_matches": [],
-                    "file_stats": {
-                        "mineru_file": mineru_path,
-                        "azure_file": azure_path,
-                    }
-                }
-        return None
-    except Exception as e:
-        print(f"Error processing {azure_file}: {str(e)}")
-        return None
+    mineru_path = os.path.join(mineru_folder, mineru_file)
+    azure_path = os.path.join(azure_folder, azure_file)
+
+    results = compare_tables(azure_path, mineru_path)
+    base_name = os.path.basename(azure_file).replace('.pages.tables.json', '')
+    return base_name, results
+
+
+
+
     
 def check_file_pairs(mineru_folder: str, azure_folder: str) -> List[Tuple[str, str]]:
     """Check and return pairs of MinerU and Azure files that will be compared.
@@ -366,30 +344,26 @@ def check_file_pairs(mineru_folder: str, azure_folder: str) -> List[Tuple[str, s
     Returns:
         List of tuples containing (azure_file, mineru_file) pairs
     """
-    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.json')]
-    mineru_files = [f for f in os.listdir(mineru_folder) if f.endswith('.json')]
+    # Get all files in the directories
+    azure_files = [f for f in os.listdir(azure_folder) if f.endswith('.pages.tables.json')]
+    mineru_files = [f for f in os.listdir(mineru_folder) if f.endswith('.tables.json')]
+    
+    print(f"Found {len(azure_files)} Azure files and {len(mineru_files)} MinerU files")
     
     pairs = []
     for azure_file in azure_files:
+        # Extract the base name (e.g., 'f_0AibR1dz' from 'f_0AibR1dz.pages.tables.json')
         base_name = azure_file.replace('.pages.tables.json', '')
         mineru_file = base_name + '.tables.json'
+        
         if mineru_file in mineru_files:
             pairs.append((azure_file, mineru_file))
         else:
             print(f"Warning: No matching MinerU file found for Azure file {azure_file}")
     
+    print(f"Found {len(pairs)} matching file pairs")
     return pairs
 
-def process_pair(pair, mineru_folder, azure_folder):
-    """Wrapper function to process a single file pair.
-    
-    Args:
-        pair: Tuple of (azure_file, mineru_file)
-        mineru_folder: Path to folder containing MinerU table JSON files
-        azure_folder: Path to folder containing Azure table JSON files
-    """
-    azure_file, mineru_file = pair
-    return process_single_file(azure_file, mineru_file, mineru_folder, azure_folder)
 
 def process_folders(mineru_folder: str, 
                    azure_folder: str, 
@@ -406,7 +380,6 @@ def process_folders(mineru_folder: str,
     # Check and print file pairs
     print("\nChecking file pairs...")
     file_pairs = check_file_pairs(mineru_folder, azure_folder)
-    print(f"\nFound {len(file_pairs)} matching file pairs:")
     for azure_file, mineru_file in file_pairs[:3]:
         azure_path = os.path.join(azure_folder, azure_file)
         mineru_path = os.path.join(mineru_folder, mineru_file)
@@ -414,19 +387,11 @@ def process_folders(mineru_folder: str,
         print(f"MinerU sample path: {mineru_path}")
     
     print(f"\nComparison started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"MinerU folder: {mineru_folder}")
+    print(f"Azure folder: {azure_folder}")
+    print(f"Total file pairs to process: {len(file_pairs)}")
 
-
-    # Set up multiprocessing
-    if num_processes is None:
-        num_processes = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=num_processes)
-    
-    # Create partial function with fixed arguments
-    process_pair_with_folders = partial(process_pair, 
-                                      mineru_folder=mineru_folder, 
-                                      azure_folder=azure_folder)
-    
-    # Process files in parallel with progress bar
+    # Process files sequentially
     all_results = {}
     total_avg_similarity = 0
     total_files = 0
@@ -438,7 +403,8 @@ def process_folders(mineru_folder: str,
     total_structure_similarity_with_tables = 0
     
     with tqdm(total=len(file_pairs), desc="Processing files", file=sys.stdout) as pbar:
-        for result in pool.imap_unordered(process_pair_with_folders, file_pairs):
+        for azure_file, mineru_file in file_pairs:
+            result = process_single_file(azure_file, mineru_file, mineru_folder, azure_folder)
             if result:
                 base_name, file_results = result
                 all_results[base_name] = file_results
@@ -451,11 +417,8 @@ def process_folders(mineru_folder: str,
                     files_with_tables += 1
                     total_similarity_with_tables += file_results['average_similarity']
                     total_structure_similarity_with_tables += file_results['average_structure_similarity']
-                
+            
             pbar.update(1)
-    
-    pool.close()
-    pool.join()
     
     # Calculate overall statistics
     overall_stats = {
@@ -521,13 +484,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mineru-tables",
         type=str,
-        default="inputs/export_pdf/azure_tables",
+        default="comparison/orbit_v1_mineru133_outputs_tables",
         help="Path to folder containing MinerU table JSON files"
     )
     parser.add_argument(
         "--azure-tables",
         type=str,
-        default="azure_outputs_tables",
+        default="comparison/orbit_v1_azure_outputs_tables",
         help="Path to folder containing Azure table JSON files"
     )
     parser.add_argument(
@@ -540,7 +503,7 @@ def parse_args() -> argparse.Namespace:
         "--processes",
         type=int,
         default=None,
-        help="Number of parallel processes to use (default: number of CPU cores)"
+        help="Number of processes to use for parallel processing"
     )
     return parser.parse_args()
 
@@ -555,8 +518,8 @@ def main() -> None:
         
         # Run comparison
         results = process_folders(
-            args.mineru_tables,
-            args.azure_tables,
+            args.mineru_tables,  # e.g., "comparison/orbit_v1_mineru133_outputs_tables"
+            args.azure_tables,   # e.g., "comparison/orbit_v1_azure_outputs_tables"
             args.output_dir,
             args.processes
         )

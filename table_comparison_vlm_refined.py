@@ -188,38 +188,6 @@ def calculate_similarity(text1: str, text2: str) -> float:
     """
     return SequenceMatcher(None, text1, text2).ratio()
 
-def markdown_to_html(md_table: str) -> str:
-    """Convert a markdown table to HTML format.
-    
-    Args:
-        md_table: Markdown table string
-        
-    Returns:
-        HTML table string
-    """
-    # Split into lines and remove empty lines
-    lines = [line.strip() for line in md_table.split('\n') if line.strip()]
-    
-    # Create HTML table
-    html = ['<table>']
-    
-    # Process header and separator
-    header = lines[0].strip('|').split('|')
-    html.append('<tr>')
-    for cell in header:
-        html.append(f'<th>{cell.strip()}</th>')
-    html.append('</tr>')
-    
-    # Process data rows
-    for line in lines[2:]:  # Skip header and separator
-        cells = line.strip('|').split('|')
-        html.append('<tr>')
-        for cell in cells:
-            html.append(f'<td>{cell.strip()}</td>')
-        html.append('</tr>')
-    
-    html.append('</table>')
-    return ''.join(html)
 
 def normalize_table_text(text: str) -> str:
     """Normalize table text by converting to HTML if needed and cleaning.
@@ -230,10 +198,7 @@ def normalize_table_text(text: str) -> str:
     Returns:
         Normalized HTML table string
     """
-    # Check if input is markdown table
-    if text.strip().startswith('|'):
-        text = markdown_to_html(text)
-    
+
     # Normalize HTML
     return normalize_table_html(text)
 

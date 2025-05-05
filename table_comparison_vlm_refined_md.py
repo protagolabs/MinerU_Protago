@@ -25,6 +25,7 @@ import multiprocessing
 from functools import partial
 import markdown
 import gc
+from metric import TEDS
 
 class Logger:
     """Custom logger that writes to both console and file."""
@@ -197,29 +198,30 @@ def markdown_to_html(md_table: str) -> str:
     Returns:
         HTML table string
     """
-    # Split into lines and remove empty lines
-    lines = [line.strip() for line in md_table.split('\n') if line.strip()]
+    # # Split into lines and remove empty lines
+    # lines = [line.strip() for line in md_table.split('\n') if line.strip()]
     
-    # Create HTML table
-    html = ['<table>']
+    # # Create HTML table
+    # html = ['<table>']
     
-    # Process header and separator
-    header = lines[0].strip('|').split('|')
-    html.append('<tr>')
-    for cell in header:
-        html.append(f'<th>{cell.strip()}</th>')
-    html.append('</tr>')
+    # # Process header and separator
+    # header = lines[0].strip('|').split('|')
+    # html.append('<tr>')
+    # for cell in header:
+    #     html.append(f'<th>{cell.strip()}</th>')
+    # html.append('</tr>')
     
-    # Process data rows
-    for line in lines[2:]:  # Skip header and separator
-        cells = line.strip('|').split('|')
-        html.append('<tr>')
-        for cell in cells:
-            html.append(f'<td>{cell.strip()}</td>')
-        html.append('</tr>')
+    # # Process data rows
+    # for line in lines[2:]:  # Skip header and separator
+    #     cells = line.strip('|').split('|')
+    #     html.append('<tr>')
+    #     for cell in cells:
+    #         html.append(f'<td>{cell.strip()}</td>')
+    #     html.append('</tr>')
     
-    html.append('</table>')
-    return ''.join(html)
+    # html.append('</table>')
+    # return ''.join(html)
+    return markdown.markdown(md_table)
 
 def normalize_table_text(text: str) -> str:
     """Normalize table text by converting to HTML if needed and cleaning.
@@ -239,30 +241,25 @@ def normalize_table_text(text: str) -> str:
 
 def calculate_std_similarity(text1, text2, refined=False):
     """Calculate both TED similarity and structural similarity efficiently."""
-    # Normalize both inputs to HTML
-    text1 = normalize_table_text(text1)
-    text2 = normalize_table_text(text2)
+    # Create TEDS instances
+    teds = TEDS()
+    teds_structure = TEDS(structure_only=True)
     
-    # Cache the BeautifulSoup parsing and tree creation
-    soup1, soup2 = BeautifulSoup(text1, "html.parser"), BeautifulSoup(text2, "html.parser")
+    # Clean and normalize HTML structure
+    def clean_html(html_str):
+        # Remove extra table wrapping if present
+        if html_str.startswith('<table>') and html_str.endswith('</table>'):
+            # Find the inner table
+            inner_html = html_str[7:-8]  # Remove outer <table> and </table>
+            if '<html>' in inner_html and '<body>' in inner_html:
+                return inner_html
+        return html_str
     
-    # Create trees once for both calculations
-    tree1 = parse_html_to_tree(soup1, ignore_text=False)
-    tree2 = parse_html_to_tree(soup2, ignore_text=False)
-    tree1_struct = parse_html_to_tree(soup1, ignore_text=True)
-    tree2_struct = parse_html_to_tree(soup2, ignore_text=True)
+    # Clean the HTML structure
+    text1 = clean_html(text1)
+    text2 = clean_html(text2)
     
-    # Calculate distances
-    ted_distance = tree_edit_distance(tree1, tree2)
-    struct_distance = tree_edit_distance(tree1_struct, tree2_struct)
-    
-    # Calculate node counts once
-    max_nodes = max(count_nodes(tree1), count_nodes(tree2))
-    max_struct_nodes = max(count_nodes(tree1_struct), count_nodes(tree2_struct))
-    
-    # Return normalized scores
-    return (1 - (ted_distance / max_nodes) if max_nodes > 0 else 1,
-            1 - (struct_distance / max_struct_nodes) if max_struct_nodes > 0 else 1)
+    return teds.evaluate(text1, text2), teds_structure.evaluate(text1, text2)
 
 def compare_tables(gt_file, extracted_file):
     """Compare tables between Azure and extracted files with performance optimizations."""
