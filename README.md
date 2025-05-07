@@ -14,6 +14,7 @@ This repository contains the code for the MinerU Protago project, which is adopt
 | ~176 (v1)        | 1.3.3 + vlm (md2html)   | **61.24%** | **94.71%**     |
 | ~1063 (v2)       | 1.2.2   | 45.77%  | 92.17%         |
 | ~1063 (v2)     | 1.3.3   | **52.97%** | **92.39%**     |
+| ~1063 (v2)     | 1.3.10   | 52.16% | 92.20%     |
 
 
 
