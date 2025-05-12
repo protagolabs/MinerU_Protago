@@ -101,8 +101,9 @@ pip install torch==2.6.0 torchvision==0.21.0 --extra-index-url https://download.
 The Orbit dataset is a collection of PDF documents with tables. There are two versions, one is a small version with 176 PDF documents, and the other is the larger version with 1000 PDF documents. All the code is tested on the small version.
 
 You can download the datasets from Google Drive (requires sign-in):
-- Small version: [Download here](https://drive.google.com/file/d/1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct/view?usp=drive_link)
-- Large version: [Download here](https://drive.google.com/file/d/11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ/view?usp=drive_link)
+- v1 version: [Download here](https://drive.google.com/file/d/1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct/view?usp=drive_link)
+- v2 version: [Download here](https://drive.google.com/file/d/11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ/view?usp=drive_link)
+- v3 version: [Download here](https://drive.google.com/file/d/1Uyb-ImPfH6UirS33mSHGkAyC836pwrgf/view?usp=drive_link)
 
 Alternatively, you can use gdown to download the datasets (requires Google Drive access):
 
@@ -110,27 +111,33 @@ Alternatively, you can use gdown to download the datasets (requires Google Drive
 # Install gdown if you haven't already
 pip install gdown
 
-# Download small version dataset "export_pdf.zip"
+
 gdown "https://drive.google.com/uc?id=1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct"
 
-# Download large version dataset
-gdown "https://drive.google.com/uc?id=11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ"
-
 # Unzip the datasets
-mkdir -p inputs
 unzip export_pdf.zip -d inputs/
 mv inputs/export_pdf inputs/orbit_v1
 rm -r inputs/__MACOSX # clean up
+rm export_pdf.zip
+
+gdown "https://drive.google.com/uc?id=11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ"
 mkdir -p inputs/raw_orbit_v2
 unzip pdf4.zip -d inputs/raw_orbit_v2
-
 cd inputs
 bash preprocess_raw_orbit_v2.sh
 cd ..
 rm -r inputs/raw_orbit_v2
-
 rm pdf4.zip
-rm export_pdf.zip
+
+gdown "https://drive.google.com/uc?id=1Uyb-ImPfH6UirS33mSHGkAyC836pwrgf"
+unzip raw_pdf5000.zip -d inputs/
+mv inputs/raw_pdf5000 inputs/raw_orbit_v3
+cd inputs
+bash preprocess_raw_orbit_v3.sh
+cd ..
+rm -r inputs/raw_orbit_v3
+rm raw_pdf5000.zip
+
 ```
 
 > [!NOTE]
