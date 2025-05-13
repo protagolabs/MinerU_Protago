@@ -167,7 +167,7 @@ inputs/orbit_v1/
 ```bash
 mkdir -p outputs/
 mkdir -p logs/
-magic-pdf -p inputs/orbit_v1/pdf -o outputs/orbit_v1_mineru133_outputs -m ocr 
+magic-pdf -p inputs/orbit_v1/pdf -o outputs/orbit_v1_mineru133_outputs -m ocr > logs/orbit_v1_mineru133_outputs.log 2>&1
 ```
 
 If you meet the error "MemoryError", you can try to change the following in "magic_pdf/tools/cli.py". This will disable the batch processing and process the file one by one.

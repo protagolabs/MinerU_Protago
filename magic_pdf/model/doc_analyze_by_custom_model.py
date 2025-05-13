@@ -261,10 +261,10 @@ def may_batch_image_analyze(
     if str(device).startswith('npu') or str(device).startswith('cuda'):
         vram = get_vram(device)
 
-        print(f'vram: {vram}')
+        # print(f'vram: {vram}')
         if vram is not None:
             gpu_memory = int(os.getenv('VIRTUAL_VRAM_SIZE', round(vram)))
-            print(f'gpu_memory: {gpu_memory}')
+            # print(f'gpu_memory: {gpu_memory}')
             if gpu_memory >= 16:
                 batch_ratio = 16
             elif gpu_memory >= 12:
