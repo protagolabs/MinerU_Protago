@@ -4,7 +4,16 @@
 
 This repository contains the code for the MinerU Protago project, which is adopted from the [MinerU](https://github.com/opendatalab/MinerU) project. In this project, we aim to extract the tables from the PDF documents from Orbit dataset and convert them into the HTML format, which can be used for the further processing. I personally use different python environments for MinerU and PaddleX.
 
-## Dev Log
+
+## Devlog
+we update the TED and TED structure calculation based on the official code in [PubTabNet](https://github.com/ibm-aur-nlp/PubTabNet). Further evaluations will be conducted on this.
+
+| Sample Size  | Tools (version)  |    TED     | TED structure |
+|------------- |------------------|------------|---------------|
+| ~176 (v1)    |  MinerU (1.3.3)  |    64.51%  |    81.06%     |
+| ~176 (v1)    |  Marker (1.3.3)  |    64.51%  |    81.06%     |
+
+## Devlog (Deprecated)
 
 | Sample Size | Version | TED     | TED structure |
 |-------------|---------|---------|----------------|
@@ -15,8 +24,6 @@ This repository contains the code for the MinerU Protago project, which is adopt
 | ~1063 (v2)       | 1.2.2   | 45.77%  | 92.17%         |
 | ~1063 (v2)     | 1.3.3   | **52.97%** | **92.39%**     |
 | ~1063 (v2)     | 1.3.10   | 52.16% | 92.20%     |
-
-
 
 
 
