@@ -141,7 +141,8 @@ class TEDS(object):
         '''
         samples = true_json.keys()
         if self.n_jobs == 1:
-            scores = [self.evaluate(pred_json.get(filename, ''), true_json[filename]['html']) for filename in tqdm(samples)]
+            # scores = [self.evaluate(pred_json.get(filename, ''), true_json[filename]['html']) for filename in tqdm(samples)]
+            scores = [self.evaluate(pred_json.get(filename, ''), true_json[filename]['html']) for filename in samples]
         else:
             inputs = [{'pred': pred_json.get(filename, ''), 'true': true_json[filename]['html']} for filename in samples]
             scores = parallel_process(inputs, self.evaluate, use_kwargs=True, n_jobs=self.n_jobs, front_num=1)
