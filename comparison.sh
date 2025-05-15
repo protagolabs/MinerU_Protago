@@ -1,7 +1,7 @@
 python table_comparison_mj_v3.py \
-    --mineru-tables /home/xinyaoh/comparison_results/mineru_xyh_1.3.10_tables \
-    --azure-tables /home/xinyaoh/comparison_results/azure_export_pdf_tables \
-    --output-dir /home/xinyaoh/comparison_results/azure_and_mineru_1.3.10_compare \
+    --mineru-tables /home/xinyaoh/comparison_results_1.3.10_small/orbit_v1_marker_outputs_tables \
+    --azure-tables /home/xinyaoh/comparison_results_1.3.10_small/azure_export_pdf_tables \
+    --output-dir /home/xinyaoh/comparison_results_1.3.10_small/azure_marker_export_pdf_tables \
     --processes 8
 
 
