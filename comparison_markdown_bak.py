@@ -5,7 +5,6 @@ import re
 from datetime import datetime
 import concurrent.futures
 from typing import Dict, Any, List, Tuple
-import argparse
 
 def find_matching_files(dir1, dir2):
     """Find files that exist in both directories."""
@@ -29,10 +28,10 @@ def split_by_page_numbers(content: str) -> List[str]:
 def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
     """Compare a single pair of markdown files."""
     try:
-        # Read the files with explicit encoding
-        with open(gt_file, 'r', encoding='utf-8') as f:
+        # Read the files
+        with open(gt_file, 'r') as f:
             gt_content = f.read()
-        with open(method_file, 'r', encoding='utf-8') as f:
+        with open(method_file, 'r') as f:
             method_content = f.read()
         
         # Compare using the existing function
@@ -41,7 +40,7 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         
         # Split content by page numbers
         gt_blocks = split_by_page_numbers(gt_content)
-        print(len(gt_blocks))
+        # print(len(gt_blocks))
         
         # Skip if only one block is found
         if len(gt_blocks) == 1:
@@ -55,6 +54,7 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         print(f"Overall Score: {result['score']:.2f}")
         print(f"Order Score: {result['specific_scores']['order']:.2f}")
 
+        
         return result
         
     except Exception as e:
@@ -128,26 +128,24 @@ def batch_compare_directories(gt_dir: str, method_dir: str, output_file: str = N
         print(f"\nResults saved to {output_file}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Compare markdown files or directories.")
-    parser.add_argument('--gt_path', type=str, help="Path to the ground truth file or directory.")
-    parser.add_argument('--method_path', type=str, help="Path to the method file or directory.")
-    parser.add_argument('--output_file', type=str, help="Optional output file for results.")
-    parser.add_argument('--max_workers', type=int, help="Optional number of workers for parallel processing.")
+    if len(sys.argv) < 3 or len(sys.argv) > 5:
+        print("Usage:")
+        print("For single file comparison:")
+        print("  python batch_compare_markdown.py <ground_truth_file> <method_file>")
+        print("For directory comparison:")
+        print("  python batch_compare_markdown.py <ground_truth_dir> <method_dir> [output_file] [max_workers]")
+        sys.exit(1)
     
-    args = parser.parse_args()
+    gt_path = sys.argv[1]
+    method_path = sys.argv[2]
+    output_file = sys.argv[3] if len(sys.argv) > 3 else None
+    max_workers = int(sys.argv[4]) if len(sys.argv) > 4 else None
     
     # Check if paths are files or directories
-    if not os.path.exists(args.gt_path):
-        print(f"Error: Ground truth path '{args.gt_path}' does not exist.")
-        sys.exit(1)
-    if not os.path.exists(args.method_path):
-        print(f"Error: Method path '{args.method_path}' does not exist.")
-        sys.exit(1)
-
-    if os.path.isfile(args.gt_path) and os.path.isfile(args.method_path):
-        compare_single_file(args.gt_path, args.method_path)
-    elif os.path.isdir(args.gt_path) and os.path.isdir(args.method_path):
-        batch_compare_directories(args.gt_path, args.method_path, args.output_file, args.max_workers)
+    if os.path.isfile(gt_path) and os.path.isfile(method_path):
+        compare_single_file(gt_path, method_path)
+    elif os.path.isdir(gt_path) and os.path.isdir(method_path):
+        batch_compare_directories(gt_path, method_path, output_file, max_workers)
     else:
         print("Error: Both paths must be either files or directories")
-        sys.exit(1)
+        sys.exit(1) 

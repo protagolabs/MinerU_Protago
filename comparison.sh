@@ -6,7 +6,7 @@
 
 
 python comparison_markdown.py \
-    comparison/orbit_v1_azure_outputs_markdowns \
-    comparison/orbit_v1_maker_outputs_markdowns \
-    comparison/azure_marker_md_comparison \
-    8
+    --gt_path ./comparison/orbit_v1_azure_outputs_md_small \
+    --method_path ./comparison/orbit_v1_maker_outputs_md_small \
+    --output_file ./comparison/azure_marker_md_comparison_small \
+    --max_workers 8
