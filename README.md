@@ -10,8 +10,10 @@ we update the TED and TED structure calculation based on the official code in [P
 
 | Sample Size  | Tools (version)  |    TED     | TED structure |
 |------------- |------------------|------------|---------------|
-| ~176 (v1)    |  MinerU (1.3.3)  |    64.51  |    81.06     |
-| ~176 (v1)    |  Marker (1.3.3)  |    55.49  |    65.78    |
+| 176 (v1)    |  MinerU (1.3.3)  |    64.51  |    81.06    |
+| 174* (v1)    |  Marker (1.6.2)  |    55.49  |    65.79     |
+
+* Marker fails on two pdf files, due to the cuda memory limitation.
 
 ## Devlog (Deprecated)
 
@@ -19,7 +21,6 @@ we update the TED and TED structure calculation based on the official code in [P
 |-------------|---------|---------|----------------|
 | ~176 (v1)        | 1.2.2   | 48.36  | 92.66         |
 | ~176 (v1)        | 1.3.3   | **53.77** | **92.99**     |
-| ~176 (v1)        | marker   | 72.85 | 66.43     |
 | ~176 (v1)        | 1.3.10   | 53.48 | 92.84     |
 | ~176 (v1)        | 1.3.3 + vlm (md2html)   | **61.24** | **94.71**     |
 | ~1063 (v2)       | 1.2.2   | 45.77  | 92.17         |
