@@ -14,17 +14,18 @@ def find_matching_files(dir1, dir2):
     return files1.intersection(files2)
 
 def split_by_page_numbers(content: str) -> List[str]:
-    """Split content by page numbers in formats like '1', '2' or '1/40', '2/40'."""
-    # Pattern to match page numbers in formats like "1", "2" or "1/40", "2/40"
-    page_pattern = r'(?:^|\n)(?:\d+(?:/\d+)?)\s*\n'
+    """Split content by page endings marked with "*Page X ends*" format."""
+    # Pattern to match page endings in format "*Page X ends*"
+    page_pattern = r'\n\*Page \d+ ends\*\n'
     
-    # Split content by page numbers
+    # Split content by page endings
     blocks = re.split(page_pattern, content)
     
     # Filter out empty blocks and strip whitespace
     blocks = [block.strip() for block in blocks if block.strip()]
     
     return blocks
+    
 
 def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
     """Compare a single pair of markdown files."""
@@ -43,17 +44,37 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         gt_blocks = split_by_page_numbers(gt_content)
         print(len(gt_blocks))
         
+        # method_blocks = split_by_page_numbers(method_content)
+        # print(len(method_blocks))
+
         # Skip if only one block is found
         if len(gt_blocks) == 1:
             print(f"Skipping {os.path.basename(gt_file)} - only one block found")
             return {'skipped': True, 'reason': 'Only one block found'}
         
         result = scorer(None, gt_blocks, method_content)
-        
+        general_result = result['score']
+        order_result = result['specific_scores']['order']
+        print(f"Overall Score: {general_result:.2f}")
+        print(f"Order Score: {order_result:.2f}")        
+
+        # general_result = 0
+        # order_result = 0
+        # if len(method_blocks) == 1:
+        #     result = scorer(None, gt_blocks, method_content)
+        #     general_result = result['score']
+        #     order_result = result['specific_scores']['order']
+        # else:
+        #     for block in method_blocks:
+        #         result = scorer(None, gt_blocks, block)
+        #         general_result += result['score']
+        #         order_result += result['specific_scores']['order']
+        #     general_result /= len(method_blocks)
+        #     order_result /= len(method_blocks)
+
         # Print results
-        print(f"\nResults for {os.path.basename(gt_file)}:")
-        print(f"Overall Score: {result['score']:.2f}")
-        print(f"Order Score: {result['specific_scores']['order']:.2f}")
+        print(f"Overall Score: {general_result:.2f}")
+        print(f"Order Score: {order_result:.2f}")
 
         return result
         
@@ -64,6 +85,7 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
 def process_file_pair(args: Tuple[str, str, str]) -> Tuple[str, Dict[str, Any]]:
     """Process a single file pair for parallel execution."""
     filename, gt_file, method_file = args
+    print(f"\nProcessing for {os.path.basename(filename)}:")
     result = compare_single_file(gt_file, method_file)
     return filename, result
 

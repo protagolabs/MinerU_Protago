@@ -8,10 +8,10 @@ This repository contains the code for the MinerU Protago project, which is adopt
 ## Devlog
 we update the TED and TED structure calculation based on the official code in [PubTabNet](https://github.com/ibm-aur-nlp/PubTabNet). Further evaluations will be conducted on this.
 
-| Sample Size  | Tools (version)  |    TED     | TED structure |
-|------------- |------------------|------------|---------------|
-| 176 (v1)    |  MinerU (1.3.3)  |    64.51  |    81.06        |
-| 174* (v1)    |  Marker (1.6.2)  |    55.49  |    65.79       |
+| Sample Size  | Tools (version)  |    TED     | TED-struct | Heristic |
+|------------- |------------------|------------|---------------|----------|
+| ～176 (v1)    |  MinerU (1.3.3)  |    64.51  |       81.06        |    61.16       |
+| ～176 (v1)    |  Marker (1.6.2)  |    55.49*  |      65.79*       |    80.42  |
 
 * Marker fails on two pdf files, due to the cuda memory limitation.
 
