@@ -68,10 +68,28 @@ def normalize_and_format_table_html(html_str: str) -> str:
     return html_str
 
 def calculate_std_similarity(text1, text2):
-    """Calculate TED similarity and structural similarity using TEDS."""
+    """Calculate TED similarity and structural similarity using TEDS.
+    
+    Args:
+        text1 (str): First HTML table text
+        text2 (str): Second HTML table text
+        
+    Returns:
+        tuple: (similarity_score, structure_similarity_score)
+    """
+    # Initialize TEDS with different configurations
     teds = TEDS(structure_only=False, n_jobs=1)
     teds_struct = TEDS(structure_only=True, n_jobs=1)
-    return teds.evaluate(text1, text2), teds_struct.evaluate(text1, text2)
+    
+    # Normalize HTML strings - this will handle the HTML wrapping if needed
+    text1 = normalize_and_format_table_html(text1)
+    text2 = normalize_and_format_table_html(text2)
+    
+    # Calculate both regular and structure-only similarity scores
+    similarity = teds.evaluate(text1, text2)
+    structure_similarity = teds_struct.evaluate(text1, text2)
+    
+    return similarity, structure_similarity
 
 def compare_tables(gt_file, extracted_file):
     """Compare tables between Azure and extracted files."""
@@ -106,8 +124,8 @@ def compare_tables(gt_file, extracted_file):
         
         # Find best match
         for j, (orig_idx, ext) in enumerate(tables_to_compare, 1):
-            sim, struct_sim = calculate_std_similarity(gt['normalized'], ext['normalized'])
-
+            # sim, struct_sim = calculate_std_similarity(gt['normalized'], ext['normalized'])
+            sim, struct_sim = calculate_std_similarity(gt['original']['sentence'], ext['original']['sentence'])
 
             if struct_sim > best_struct_sim:
                 best_struct_sim = struct_sim

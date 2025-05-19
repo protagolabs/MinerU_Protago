@@ -46,7 +46,7 @@ def convert_azure_to_extracted_format(azure_file):
                             inner_table = inner_table + '</table>'
                             
                         # Add HTML body tags to match extracted format
-                        formatted_table = f"<table><html><body>{inner_table}</body></html></table>"
+                        formatted_table = f"<html><body>{inner_table}</body></html>"
                         
                         converted_table = {
                             "page": data['page'],

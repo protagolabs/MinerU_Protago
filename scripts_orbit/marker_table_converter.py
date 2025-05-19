@@ -67,7 +67,7 @@ def extract_tables(data):
                 "page": page_num,
                 "img_path": "",  # Empty image path as we don't have image information
                 "types": "table",
-                "sentence": f"<table>{node.get('html', '')}</table>"
+                "sentence": f"<html><body>{node.get('html', '')}</body></html>"
             }
             formatted_output.append(table_info)
         

@@ -75,7 +75,7 @@ def extract_tables_images(base_folder, filename, data):
                                 "page": current_page,
                                 "img_path": os.path.join(base_folder, filename, 'ocr/images', span['image_path']),
                                 "types": span['type'],
-                                "sentence": f"<table>{span['html']}</table>"
+                                "sentence": f"{span['html']}"
                             })
 
         for image in images:
