@@ -56,14 +56,37 @@ class Logger:
 
 def normalize_and_format_table_html(html_str: str) -> str:
     """Normalize and format table HTML string for comparison."""
-    # Normalize HTML
-    html_str = re.sub(r'\s+', ' ', html_str)  # Remove extra whitespace
-    html_str = re.sub(r'\s+colspan="1"|\s+rowspan="1"', '', html_str)  # Remove default attributes
-    html_str = re.sub(r'>\s+<|<\s+|\s+>', lambda m: '><' if '><' in m.group() else m.group().strip(), html_str)
     
-    # Format HTML structure if needed
-    if not html_str.strip().startswith('<html>'):
-        html_str = f"""<html><head><meta charset="UTF-8"><style>table,th,td{{border:1px solid black;font-size:10px}}</style></head><body>{html_str}</body></html>"""
+    # Remove any existing HTML wrapper if present
+    html_str = html_str.strip()
+    if html_str.startswith('<html>'):
+        html_str = re.sub(r'<html>.*?<body>(.*?)</body>.*?</html>', r'\1', html_str, flags=re.DOTALL)
+    
+    # Handle multiple table tags
+    if '<table>' in html_str:
+        # Count opening and closing table tags
+        open_count = html_str.count('<table>')
+        close_count = html_str.count('</table>')
+        
+        if open_count > close_count:
+            # Remove extra opening table tags
+            html_str = re.sub(r'<table>(?=<table>)', '', html_str)
+            # If no closing tag, add one at the end
+            if close_count == 0:
+                html_str = html_str + '</table>'
+        elif open_count > 1 and close_count > 1:
+            # Extract all table content
+            tables = re.findall(r'<table>(.*?)</table>', html_str, re.DOTALL)
+            # Combine all tables into one
+            combined_table = '<table>' + ''.join(tables) + '</table>'
+            html_str = combined_table
+    
+    # Ensure proper table structure
+    if not html_str.strip().startswith('<table>'):
+        html_str = f'<table>{html_str}</table>'
+    
+    # Add HTML wrapper with proper styling
+    html_str = f"""<html><body>{html_str}</body></html>"""
     
     return html_str
 
@@ -86,6 +109,9 @@ def calculate_std_similarity(text1, text2):
     text2 = normalize_and_format_table_html(text2)
     
     # Calculate both regular and structure-only similarity scores
+
+    # print(text1)
+    # print(text2)
     similarity = teds.evaluate(text1, text2)
     structure_similarity = teds_struct.evaluate(text1, text2)
     
@@ -127,7 +153,8 @@ def compare_tables(gt_file, extracted_file):
             # sim, struct_sim = calculate_std_similarity(gt['normalized'], ext['normalized'])
             sim, struct_sim = calculate_std_similarity(gt['original']['sentence'], ext['original']['sentence'])
 
-            if struct_sim > best_struct_sim:
+            # if struct_sim > best_struct_sim:
+            if sim > best_sim:
                 best_struct_sim = struct_sim
                 best_sim = sim
                 best_match = ext

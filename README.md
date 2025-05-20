@@ -10,8 +10,8 @@ we update the TED and TED structure calculation based on the official code in [P
 
 | Sample Size  | Tools (version)  |    TED     | TED-struct | Heristic |
 |------------- |------------------|------------|---------------|----------|
-| ～176 (v1)    |  MinerU (1.3.3)  |    64.51  |       81.06        |    61.16       |
-| ～176 (v1)    |  Marker (1.6.2)  |    55.49*  |      65.79*       |    80.42  |
+| ～176 (v1)    |  MinerU (1.3.3)  |    65.87  |       79.73       |    61.16       |
+| ～176 (v1)    |  Marker (1.6.2)  |    56.65*  |      63.91*       |    80.42  |
 
 * Marker fails on two pdf files, due to the cuda memory limitation.
 
