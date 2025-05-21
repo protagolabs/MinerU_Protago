@@ -1,3 +1,72 @@
+Metadata-Version: 2.2
+Name: magic_pdf
+Version: 1.3.3
+Summary: A practical tool for converting PDF to Markdown
+License: AGPL-3.0
+Project-URL: Home, https://mineru.net/
+Project-URL: Repository, https://github.com/opendatalab/MinerU
+Keywords: magic-pdf, mineru, MinerU, convert, pdf, markdown
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Python: >=3.10,<4
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+Requires-Dist: boto3>=1.28.43
+Requires-Dist: Brotli>=1.1.0
+Requires-Dist: click>=8.1.7
+Requires-Dist: fast-langdetect<0.3.0,>=0.2.3
+Requires-Dist: loguru>=0.6.0
+Requires-Dist: numpy>=1.21.6
+Requires-Dist: pydantic<2.11,>=2.7.2
+Requires-Dist: PyMuPDF<1.25.0,>=1.24.9
+Requires-Dist: scikit-learn>=1.0.2
+Requires-Dist: torch!=2.5.0,!=2.5.1,>=2.2.2
+Requires-Dist: torchvision
+Requires-Dist: transformers!=4.51.0,<5.0.0,>=4.49.0
+Requires-Dist: pdfminer.six==20231228
+Requires-Dist: tqdm>=4.67.1
+Provides-Extra: lite
+Requires-Dist: paddleocr==2.7.3; extra == "lite"
+Requires-Dist: paddlepaddle==3.0.0b1; platform_system == "Linux" and extra == "lite"
+Requires-Dist: paddlepaddle==2.6.1; (platform_system == "Windows" or platform_system == "Darwin") and extra == "lite"
+Provides-Extra: full
+Requires-Dist: matplotlib<4,>=3.10; extra == "full"
+Requires-Dist: ultralytics<9,>=8.3.48; extra == "full"
+Requires-Dist: doclayout_yolo==0.0.2b1; extra == "full"
+Requires-Dist: dill<1,>=0.3.8; extra == "full"
+Requires-Dist: rapid_table<2.0.0,>=1.0.5; extra == "full"
+Requires-Dist: PyYAML<7,>=6.0.2; extra == "full"
+Requires-Dist: ftfy<7,>=6.3.1; extra == "full"
+Requires-Dist: openai<2,>=1.70.0; extra == "full"
+Requires-Dist: shapely<3,>=2.0.7; extra == "full"
+Requires-Dist: pyclipper<2,>=1.3.0; extra == "full"
+Requires-Dist: omegaconf<3,>=2.3.0; extra == "full"
+Provides-Extra: full-old-linux
+Requires-Dist: matplotlib<=3.10.1,>=3.10; extra == "full-old-linux"
+Requires-Dist: ultralytics<=8.3.104,>=8.3.48; extra == "full-old-linux"
+Requires-Dist: doclayout_yolo==0.0.2b1; extra == "full-old-linux"
+Requires-Dist: dill==0.3.8; extra == "full-old-linux"
+Requires-Dist: PyYAML==6.0.2; extra == "full-old-linux"
+Requires-Dist: ftfy==6.3.1; extra == "full-old-linux"
+Requires-Dist: openai==1.71.0; extra == "full-old-linux"
+Requires-Dist: shapely==2.1.0; extra == "full-old-linux"
+Requires-Dist: pyclipper==1.3.0.post6; extra == "full-old-linux"
+Requires-Dist: omegaconf==2.3.0; extra == "full-old-linux"
+Requires-Dist: albumentations==1.4.20; extra == "full-old-linux"
+Requires-Dist: rapid_table==1.0.3; extra == "full-old-linux"
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: keywords
+Dynamic: license
+Dynamic: project-url
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
 # MinerU Protago
 
 ## Overview
@@ -13,9 +82,7 @@ This repository contains the code for the MinerU Protago project, which is adopt
 | Sample Size  | Tools (version)  |    TED ↑     | TED-struct ↑ | Heuristic ↑ | 
 |------------- |------------------|------------|---------------|----------| 
 | ～176 (v1)    |  MinerU (1.3.3)  |    65.87  |       79.73       |    61.95       | 
-| ～176 (v1)    |  Marker (1.6.2) + olmocr |    63.60  |      74.17       |    TBD  | 
-| ～176 (v1)    |  Marker (1.6.2)  |    56.65  |      63.91       |    80.15  | 
-
+| ～176 (v1)    |  Marker (1.6.2)  |    56.65*  |      63.91*       |    80.15  | 
 
 
 

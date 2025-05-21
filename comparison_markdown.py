@@ -42,7 +42,7 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         
         # Split content by page numbers
         gt_blocks = split_by_page_numbers(gt_content)
-        print(len(gt_blocks))
+        # print(len(gt_blocks))
         
         # method_blocks = split_by_page_numbers(method_content)
         # print(len(method_blocks))
@@ -55,8 +55,8 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         result = scorer(None, gt_blocks, method_content)
         general_result = result['score']
         order_result = result['specific_scores']['order']
-        print(f"Overall Score: {general_result:.2f}")
-        print(f"Order Score: {order_result:.2f}")        
+        print(f"\n Overall Score: {general_result:.2f}")
+        print(f"\n Order Score: {order_result:.2f}")        
 
         # general_result = 0
         # order_result = 0
@@ -73,8 +73,8 @@ def compare_single_file(gt_file: str, method_file: str) -> Dict[str, Any]:
         #     order_result /= len(method_blocks)
 
         # Print results
-        print(f"Overall Score: {general_result:.2f}")
-        print(f"Order Score: {order_result:.2f}")
+        # print(f"Overall Score: {general_result:.2f}")
+        # print(f"Order Score: {order_result:.2f}")
 
         return result
         
@@ -104,6 +104,10 @@ def batch_compare_directories(gt_dir: str, method_dir: str, output_file: str = N
         for filename in matching_files
     ]
     
+    # Initialize progress counter
+    processed_files = 0
+    total_files = len(matching_files)
+    
     # Use ThreadPoolExecutor for parallel processing
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all tasks and get futures
@@ -118,18 +122,29 @@ def batch_compare_directories(gt_dir: str, method_dir: str, output_file: str = N
             try:
                 _, result = future.result()
                 results[filename] = result
+                # Update and display progress
+                processed_files += 1
+                print(f"\rProgress: {processed_files}/{total_files} files processed ({(processed_files/total_files)*100:.1f}%)", end="")
             except Exception as e:
-                print(f"Error processing {filename}: {str(e)}")
+                print(f"\nError processing {filename}: {str(e)}")
                 results[filename] = {'error': str(e)}
+                processed_files += 1
+                print(f"\rProgress: {processed_files}/{total_files} files processed ({(processed_files/total_files)*100:.1f}%)", end="")
+    
+    print("\n")  # Add newline after progress counter
     
     # Calculate and print summary statistics
     valid_scores = [r['score'] for r in results.values() if 'score' in r]
+    valid_order_scores = [r['specific_scores']['order'] for r in results.values() if 'specific_scores' in r and 'order' in r['specific_scores']]
     if valid_scores:
         avg_score = sum(valid_scores) / len(valid_scores)
         print(f"\nSummary:")
         print(f"Total files compared: {len(matching_files)}")
         print(f"Average overall score: {avg_score:.2f}")
-    
+        
+    if valid_order_scores:
+        avg_order_score = sum(valid_order_scores) / len(valid_order_scores)
+        print(f"Average order score: {avg_order_score:.2f}")
     # Save results if output file specified
     if output_file:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -141,6 +156,7 @@ def batch_compare_directories(gt_dir: str, method_dir: str, output_file: str = N
             'summary': {
                 'total_files': len(matching_files),
                 'average_score': avg_score if valid_scores else 0,
+                'average_order_score': avg_order_score if valid_order_scores else 0,
                 'timestamp': timestamp
             }
         }
