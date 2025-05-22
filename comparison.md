@@ -9,7 +9,13 @@ MinerU:
 <html><body><table><tr><td colspan=\"2\"></td><td colspan=\"3\">全体</td></tr><tr><td colspan=\"2\"></td><td></td><td>女性</td><td>中途用者</td></tr><tr><td rowspan=\"2\">社員</td><td></td><td>2,623人</td><td>1,575人（60.0%）</td><td>2,408人（91.8%）</td></tr><tr><td>管理職</td><td>362人</td><td>67人（18.5%）</td><td>300人（82.8%）</td></tr><tr><td colspan=\"2\">取役</td><td>9人</td><td>2人（22.2%）</td><td>9人（100.0%）</td></tr></table></body></html>
 
 MinerU + OlmOCR:
-<html><body><table><tr><td colspan="2"></td><td colspan="3">全体</td></tr><tr><td colspan="2"></td><td></td><td>女性</td><td>中途用者</td></tr><tr><td rowspan="2">社員</td><td></td><td>2,623人</td><td>1,575人（60.0%）</td><td>2,408人（91.8%）</td></tr><tr><td>管理職</td><td>362人</td><td>67人（18.5%）</td><td>300人（82.8%）</td></tr><tr><td colspan="2">取役</td><td>9人</td><td>2人（22.2%）</td><td>9人（100.0%）</td></tr></table></body></html>
+
+|            | 全体          | 女性       | 中途採用者 |
+|------------|--------------|-----------|-----------|
+| 社員       | 2,623人      | 1,575人（60.0%） | 2,408人（91.8%） |
+| 管理職     | 362人        | 67人（18.5%）  | 300人（82.8%）  |
+| 取締役     | 9人          | 2人（22.2%）   | 9人（100.0%）   |
+
 
 ## page 33
 Azure:
@@ -22,17 +28,14 @@ MinerU:
 <html><body><table><tr><td colspan=\"2\">项目</td><td>1.5℃于才</td><td>4</td></tr><tr><td colspan=\"2\">对象曲</td><td colspan=\"2\">海外速結子会社</td></tr><tr><td colspan=\"2\">对象年</td><td colspan=\"2\">移行：2030年,物理：2050年</td></tr><tr><td rowspan=\"2\">主参照先</td><td>移行面</td><td>I EA NZE*</td><td>I EA STEPS*</td></tr><tr><td>物理面</td><td>I PCC SSP1 - 1. 9*</td><td>I PCC RCP8.5*</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table>
-<thead>
-<tr><th>項目</th><th colspan="2">1.5℃シナリオ</th><th>4℃シナリオ</th></tr>
-</thead>
-<tbody>
-<tr><td>対象範囲</td><td></td><td>海外連結子会社まで</td><td></td></tr>
-<tr><td>対象年</td><td></td><td>移行リスク：2030年, 物理リスク：2050年</td><td></td></tr>
-<tr><td>主な参照先</td><td>移行面</td><td>IEA NZE*</td><td>IEA STEPS*</td></tr>
-<tr><td></td><td>物理面</td><td>IPCC SSP1 - 1.9*</td><td>IPCC RCP8.5*</td></tr>
-</tbody>
-</table></body></html>
+| 項目       | 1.5℃シナリオ                                                                 | 4℃シナリオ                                                                 |
+|------------|------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| 対象範囲   | 海外連結子会社まで                                                              |                                                                           |
+| 対象年     | 移行リスク：2030年, 物理リスク：2050年                                             |                                                                           |
+| 主な参照先 | 移行面 I EA NZE*                                                              | I EA STEPS*                                                               |
+|           | 物理面 IPCC SSP1 - 1.9*                                                       | IPCC RCP8.5*                                                             |
+
+    
 
 ## page 34
 Azure:
@@ -45,7 +48,15 @@ MinerU:
 <html><body><table><tr><td>/機会</td><td>项目</td><td>業</td><td>1.5℃</td><td>4℃</td></tr><tr><td>移行</td><td>炭素俩格</td><td>炭素税導伴、自社消費課税 、操業增加</td><td>中</td><td></td></tr><tr><td>移行</td><td>制</td><td>制石油由来 ·再生可能于利用必要生、調達 增</td><td></td><td>中小</td></tr><tr><td>移行</td><td></td><td>（電源成）の变化、電力格 上昇、操業增加（炭素税再工の比率 高）</td><td>中</td><td>小</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、人毛髪等の取引先の製造点被 炎の影響、商品供給支障出</td><td></td><td>小大</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、の製造点被の影響 、商品製造·供給支障出</td><td></td><td>小大</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、配送点被の影響、在庫被害 商品供の支障出</td><td></td><td>小中</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td>/機会</td><td>项目</td><td>業</td><td>1.5℃</td><td>4℃</td></tr><tr><td>移行</td><td>炭素俩格</td><td>炭素税導伴、自社消費課税 、操業增加</td><td>中</td><td></td></tr><tr><td>移行</td><td>制</td><td>制石油由来 ·再生可能于利用必要生、調達 增</td><td></td><td>中小</td></tr><tr><td>移行</td><td></td><td>（電源成）の变化、電力格 上昇、操業增加（炭素税再工の比率 高）</td><td>中</td><td>小</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、人毛髪等の取引先の製造点被 炎の影響、商品供給支障出</td><td></td><td>小大</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、の製造点被の影響 、商品製造·供給支障出</td><td></td><td>小大</td></tr><tr><td>物理</td><td>常気象の激甚化</td><td>常気象の激甚化、配送点被の影響、在庫被害 商品供の支障出</td><td></td><td>小中</td></tr></table></body></html>
+| リスク/機会 | 項目 | 事業インパクト |
+|------------|-------|----------------|
+| 移行リスク | 炭素価格 | 炭素税導入に伴い、自社におけるエネルギー消費に課税され、操業コストが増加する |
+| 移行リスク | プラスチック規制 | プラスチック規制によって石油由来プラスチックではなくバイオ・再生可能プラスチックを利用する必要が発生し、調達コストが増加する |
+| 移行リスク | エネルギーミックス | エネルギーミックス（電源構成）の変化によって、電力価格が上昇し、操業コストが増加する（炭素税+再エネの比率が高まる） |
+| 物理リスク | 異常気象の激甚化 | 異常気象の激甚化による、人工毛髪等の取引先の製造拠点被災の影響で、商品供給に支障が出る |
+| 物理リスク | 異常気象の激甚化 | 異常気象の激甚化による、ウィッグの製造拠点被災の影響で、商品製造・供給に支障が出る |
+| 物理リスク | 異常気象の激甚化 | 異常気象の激甚化による、配送拠点被災の影響で、在庫被害や商品供給への支障が出る |
+
 
 ## page 44
 Azure:
@@ -58,7 +69,16 @@ MinerU:
 <html><body><table><tr><td rowspan=\"2\">事業所名 (所在地)</td><td rowspan=\"2\">事業部門の 名称</td><td rowspan=\"2\">設備の内容</td><td colspan=\"5\">簿仙额</td><td rowspan=\"2\">業員数 (人)</td></tr><tr><td>建物及 横物）</td><td>機械装置 及</td><td>土地 (面)</td><td>の他 (百万)</td><td>合計 (百万)</td></tr><tr><td>本京都谷区)</td><td>事髪關</td><td>括业務</td><td>1, 323</td><td></td><td>( 1, 153.79)</td><td>140</td><td>2, 944</td><td>287</td></tr><tr><td>(新温鼎村上市) 商品物流</td><td>髪</td><td>物流食库</td><td>77</td><td></td><td>( 8, 896. 54)</td><td>35</td><td>168</td><td>199</td></tr><tr><td>2一專 門店1店铺 東信越</td><td>合毛髪 連事業</td><td>壳設備</td><td>70</td><td></td><td>268 ( 135. 23)</td><td>２</td><td>341</td><td>10 ( 0)</td></tr><tr><td>西 計3店铺 内専 門店1店舖</td><td>合毛髪 連事業</td><td>壳設備</td><td>210</td><td>1</td><td>299 (355. 58)</td><td>２</td><td>512</td><td>25 ( 1)</td></tr><tr><td>中四国 計專</td><td>事髪</td><td>壳設備</td><td>94</td><td></td><td>( 144.71)</td><td>１</td><td>768</td><td>15</td></tr><tr><td>門店1店舖</td><td>髪</td><td>業務施設</td><td>44</td><td></td><td>( 623.12)</td><td>２</td><td>659</td><td>(57</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td rowspan="2">事業所名 (所在地)</td><td rowspan="2">事業部門の 名称</td><td rowspan="2">設備の内容</td><td colspan="5">簿価額</td><td rowspan="2">業員数 (人)</td></tr><tr><td>建物及 横物）</td><td>機械装置 及</td><td>土地 (面)</td><td>の他 (百万)</td><td>合計 (百万)</td></tr><tr><td>本京都谷区)</td><td>事髪関</td><td>括業務</td><td>1, 323</td><td></td><td>( 1, 153.79)</td><td>140</td><td>2, 944</td><td>287</td></tr><tr><td>(新温鼎村上市) 商品物流</td><td>髪</td><td>物流食庫</td><td>77</td><td></td><td>( 8, 896. 54)</td><td>35</td><td>168</td><td>199</td></tr><tr><td>2一専 門店1店舗 東信越</td><td>合毛髪 連事業</td><td>殻設備</td><td>70</td><td></td><td>268 ( 135. 23)</td><td>２</td><td>341</td><td>10 ( 0)</td></tr><tr><td>西 計3店舗 内専 門店1店舗</td><td>合毛髪 連事業</td><td>殻設備</td><td>210</td><td>1</td><td>299 (355. 58)</td><td>２</td><td>512</td><td>25 ( 1)</td></tr><tr><td>中四国 計専</td><td>事髪</td><td>殻設備</td><td>94</td><td></td><td>( 144.71)</td><td>１</td><td>768</td><td>15</td></tr><tr><td>門店1店舗</td><td>髪</td><td>業務施設</td><td>44</td><td></td><td>( 623.12)</td><td>２</td><td>659</td><td>(57</td></tr></table></body></html>
+| 事業所名 (所在地) | 事業部門の名称 | 設備の内容 | 帳簿価額 |
+|------------------|---------------|------------|----------|
+|                  |               | 建物及び構築物 (百万円) | 機械装置及び運搬具 (百万円) | 土地 (百万円) (面積m²) | その他 (百万円) | 合計 (百万円) | 従業員数 (人) |
+| 本社 (東京都渋谷区) | 総合毛髪関連事業 | 総括業務施設 | 1,323 | - | 1,479 (1,153.28) | 140 | 2,944 | 287 (50) |
+| 商品物流センター (新潟県村上市) | 総合毛髪関連事業 | 物流倉庫 | 77 | - | 54 (8,896.41) | 35 | 168 | 19 (9) |
+| 関東信越ブロック計2店舗内レディース専門店1店舗 | 総合毛髪関連事業 | 販売設備 | 70 | - | 268 (135.23) | 2 | 341 | 10 (0) |
+| 関西ブロック計3店舗内レディース専門店1店舗 | 総合毛髪関連事業 | 販売設備 | 210 | 1 | 299 (355.58) | 2 | 512 | 25 (1) |
+| 中四国ブロック計2店舗内レディース専門店1店舗 | 総合毛髪関連事業 | 販売設備 | 94 | - | 671 (144.46) | 1 | 768 | 15 (1) |
+| A N第2別館 (東京都渋谷区) | 総合毛髪関連事業 | 業務施設 | 44 | - | 612 (623.83) | 2 | 659 | 57 (37) |
+
 
 ## page 49
 Azure:
@@ -71,7 +91,9 @@ MinerU:
 <html><body><table><tr><td>年月日</td><td>凳行济株式 数增减数 (株)</td><td>凳行济株式 数残高 (株)</td><td>資本金增减额 (百万)</td><td>資本金残高 (百万)</td><td>資本備金 增减额 (百万)</td><td>資本備金 残高 (百万)</td></tr><tr><td>2015年4月1日～ 2016年3月31日 (注)</td><td>51, 600</td><td>34, 393, 200</td><td>3</td><td>3, 667</td><td>3</td><td>3, 554</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td>年月日</td><td>償却済株式 数増減数 (株)</td><td>償却済株式 数残高 (株)</td><td>資本金増減額 (百万)</td><td>資本金残高 (百万)</td><td>資本準備金 増減額 (百万)</td><td>資本準備金 残高 (百万)</td></tr><tr><td>2015年4月1日～ 2016年3月31日 (注)</td><td>51, 600</td><td>34, 393, 200</td><td>3</td><td>3, 667</td><td>3</td><td>3, 554</td></tr></table></body></html>
+| 年月日       | 発行済株式総数増減数 (株) | 発行済株式総数残高 (株) | 資本金増減額 (百万円) | 資本金残高 (百万円) | 資本準備金増減額 (百万円) | 資本準備金残高 (百万円) |
+|-------------|-------------------------|------------------------|---------------------|-------------------|------------------------|------------------------|
+| 2015年4月1日～2016年3月31日 (注) | 51,600                  | 34,393,200             | 3                   | 3,667             | 3                      | 3,554                  |
 
 ## page 18 f_0tzQVDOgPR6BPci3U5SmQj
 
@@ -85,7 +107,17 @@ MinerU:
 <html><body><table><tr><td>细分 行业</td><td>主要治 疗领域</td><td>药 (产) 品名称</td><td>注册分 类</td><td>适应症或 功能主治</td><td>是 否 处 方 药</td><td>是否属 于中药 保护品 种（如 涉及)</td><td>发明专利起止期 限(如适用)</td><td>是否属于 报告期内 推出的新 药 (产) 品</td><td>是否 纳入 国家 基药 目录</td><td>是否 纳入 国家 医保 目录</td><td>是否 纳入 省级 医保 目录</td></tr><tr><td>化学剂</td><td>泌类系</td><td>爱普列特</td><td>化品学药</td><td>前列腺增</td><td>是</td><td>否</td><td>2009.08.28- 2029. 08. 287- 2026.07.27</td><td>否</td><td>否</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗生素 类</td><td>盐酸多西 环素片</td><td></td><td>抗感染</td><td>是</td><td>香</td><td>2010.04.15-</td><td>否</td><td>是</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗过敏 类</td><td>依巴斯汀 片</td><td>化学药 品2类</td><td>抗过敏</td><td>是</td><td>否</td><td>2030.04.15; 2014.08.01- 2034.08.01 2019.01.23— 2039.01.23</td><td>否</td><td>否</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗生素 类</td><td>硫酸黏菌 素片</td><td></td><td>抗感染</td><td>是</td><td>香</td><td></td><td></td><td>香</td><td>是</td><td></td></tr><tr><td>化学 制剂 化学</td><td>泌尿系 统类</td><td>盐酸达泊 西汀片</td><td>化学药 品4类</td><td>治疗早泄 药物 血管保护</td><td>是</td><td>否</td><td></td><td></td><td>否</td><td>否</td><td></td></tr><tr><td>原料 药</td><td>毛细血 管类 胃肠解</td><td>地奥司明</td><td></td><td>和毛细血 管稳定剂 用于胃肠</td><td>否</td><td>否</td><td></td><td>否</td><td>否</td><td>香</td><td>否</td></tr><tr><td>针剂</td><td>痊药， 抗胆碱 药和胃 动力药</td><td>盐酸屈他 维林注射 液</td><td></td><td>道痉挛、 应激性肠 道综合症 泌尿系结 石等</td><td>是</td><td>否</td><td>2016.12.26- 2036.12.26</td><td>否</td><td>否</td><td>否</td><td>是</td></tr><tr><td>化学 制剂</td><td>抗过敏 类</td><td>敏那定特 片）</td><td>化学药 品2类</td><td>抗过敏</td><td>是</td><td>否</td><td></td><td>否</td><td>否</td><td>否</td><td>是</td></tr><tr><td>化学 制剂</td><td>心血管 类</td><td>联环尔定 （非洛地 平片)</td><td>化学药 品4类</td><td>抗高血压</td><td>是</td><td>否</td><td></td><td>否</td><td>是</td><td>是</td><td>否</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td>细分 行业</td><td>主要治 疗领域</td><td>药 (产) 品名称</td><td>注册分 类</td><td>适应症或 功能主治</td><td>是否 处 方 药</td><td>是否属 于中药 保护品 种（如 涉及)</td><td>发明专利起止期 限(如适用)</td><td>是否属于 报告期内 推出的新 药 (产) 品</td><td>是否 纳入 国家 基药 目录</td><td>是否 纳入 国家 医保 目录</td><td>是否 纳入 省级 医保 目录</td></tr><tr><td>化学剂</td><td>泌类系</td><td>爱普列特</td><td>化品学药</td><td>前列腺增</td><td>是</td><td>否</td><td>2009.08.28- 2029. 08. 287- 2026.07.27</td><td>否</td><td>否</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗生素 类</td><td>盐酸多西 环素片</td><td></td><td>抗感染</td><td>是</td><td>香</td><td>2010.04.15-</td><td>否</td><td>是</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗过敏 类</td><td>依巴斯汀 片</td><td>化学药 品2类</td><td>抗过敏</td><td>是</td><td>否</td><td>2030.04.15; 2014.08.01- 2034.08.01 2019.01.23— 2039.01.23</td><td>否</td><td>否</td><td>是</td><td>否</td></tr><tr><td>化学 制剂</td><td>抗生素 类</td><td>琥酸粘菌 素片</td><td></td><td>抗感染</td><td>是</td><td>香</td><td></td><td></td><td>香</td><td>是</td><td></td></tr><tr><td>化学 制剂 化学</td><td>泌尿系 统类</td><td>盐酸达泊 西汀片</td><td>化学药 品4类</td><td>治疗早泄 药物 血管保护</td><td>是</td><td>否</td><td></td><td></td><td>否</td><td>否</td><td></td></tr><tr><td>原料 药</td><td>毛细血 管类 胃肠解</td><td>地奥司明</td><td></td><td>和毛细血 管稳定剂 用于胃肠</td><td>否</td><td>否</td><td></td><td>否</td><td>否</td><td>香</td><td>否</td></tr><tr><td>针剂</td><td>医药， 抗胆碱 药和胃 动力药</td><td>盐酸曲他 维林注射 液</td><td></td><td>道痉挛、 应激性肠 道综合症 泌尿系结 石等</td><td>是</td><td>否</td><td>2016.12.26- 2036.12.26</td><td>否</td><td>否</td><td>否</td><td>是</td></tr><tr><td>化学 制剂</td><td>抗过敏 类</td><td>敏那定特 片）</td><td>化学药 品2类</td><td>抗过敏</td><td>是</td><td>否</td><td></td><td>否</td><td>否</td><td>否</td><td>是</td></tr><tr><td>化学 制剂</td><td>心血管 类</td><td>联环尔定 （非洛地 平片)</td><td>化学药 品4类</td><td>抗高血压</td><td>是</td><td>否</td><td></td><td>否</td><td>是</td><td>是</td><td>否</td></tr></table></body></html>
+| 细分行业 | 主要治疗领域 | 药（产）品名称 | 注册分类 | 适应症或功能主治 | 是否处方药 | 是否属于中药保护品种（如涉及） | 发明专利起止期限（如适用） | 是否属于报告期内推出的新药（产品） | 是否纳入国家基药目录 | 是否纳入国家医保目录 | 是否纳入省级医保目录 |
+|--------|--------------|---------------|----------|-----------------|-----------|---------------------------------|-----------------------------|---------------------------------|----------------|----------------|----------------|
+| 化学制剂 | 泌尿系统类 | 爱普列特片 | 化学药品1类 | 前列腺增生 | 是 | 否 | 2009.08.28-2029.08.28；2006.07.27-2026.07.27 | 否 | 否 | 是 |
+| 化学制剂 | 抗生素类 | 盐酸多西环素片 | | 抗感染 | 是 | 否 | | 否 | 是 | 是 |
+| 化学制剂 | 抗过敏类 | 依巴斯汀片 | 化学药品2类 | 抗过敏 | 是 | 否 | 2030.04.15；2014.08.01-2034.08.01；2019.01.23—2039.01.23 | 否 | 否 | 是 |
+| 化学制剂 | 抗生素类 | 硫酸黏菌素片 | | 抗感染 | 是 | 否 | | | 否 | 是 |
+| 化学制剂 | 泌尿系统类 | 盐酸达泊西汀片 | 化学药品4类 | 治疗早泄药物 | 是 | 否 | | | 否 | 否 |
+| 化学原料药 | 毛细血管类 | 地奥司明 | | 血管保护和毛细血管稳定剂 | 否 | 否 | | | 否 | 否 |
+| 针剂 | 胃肠解痉药，抗胆碱药和胃动力药 | 盐酸屈他维林注射液 | | 用于胃肠道痉挛、应激性肠道综合症、泌尿系统结石等 | 是 | 否 | 2016.12.26-2036.12.26 | 否 | 否 | 是 |
+| 化学制剂 | 抗过敏类 | 敏迪（特非那定片） | 化学药品2类 | 抗过敏 | 是 | 否 | | | 否 | 否 |
+| 化学制剂 | 心血管类 | 联环尔定（非洛地平片） | 化学药品4类 | 抗高血压 | 是 | 否 | | | 否 | 是 |
 
 ## page 6 f_2XrmrF5l
 Azure:
@@ -98,7 +130,19 @@ MinerU:
 <html><body><table><tr><td>Current Year ended</td><td>Previous Year ended</td></tr><tr><td>31.03.2010</td><td>31.03.2009</td></tr><tr><td>21108.23</td><td>24010.23</td></tr><tr><td>380.22</td><td>1034.68</td></tr><tr><td>611.13</td><td>594.33</td></tr><tr><td>(230.91)</td><td>440.35</td></tr><tr><td>0.80</td><td>0.08</td></tr><tr><td>(0.15)</td><td>0.01</td></tr><tr><td>(231.56)</td><td>440.26</td></tr><tr><td>(69.22)</td><td>364.75</td></tr><tr><td>(162.34)</td><td>75.51</td></tr><tr><td>3722.47</td><td>3646.96</td></tr><tr><td>3560.13</td><td>3722.47</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td>Current Year ended</td><td>Previous Year ended</td></tr><tr><td>31.03.2010</td><td>31.03.2009</td></tr><tr><td>21108.23</td><td>24010.23</td></tr><tr><td>380.22</td><td>1034.68</td></tr><tr><td>611.13</td><td>594.33</td></tr><tr><td>(230.91)</td><td>440.35</td></tr><tr><td>0.80</td><td>0.08</td></tr><tr><td>(0.15)</td><td>0.01</td></tr><tr><td>(231.56)</td><td>440.26</td></tr><tr><td>(69.22)</td><td>364.75</td></tr><tr><td>(162.34)</td><td>75.51</td></tr><tr><td>3722.47</td><td>3646.96</td></tr><tr><td>3560.13</td><td>3722.47</td></tr></table></body></html>
+| Current Year ended 31.03.2010 | Previous Year ended 31.03.2009 |
+|-----------------------------|--------------------------------|
+| 21108.23                   | 24010.23                       |
+| 380.22                     | 1034.68                        |
+| 611.13                     | 594.33                         |
+| **(230.91)**               | **440.35**                     |
+| 0.80                       | 0.08                           |
+| **(0.15)**                 | **0.01**                       |
+| **(231.56)**               |                                |
+| **(69.22)**                |                                |
+| **(162.34)**               |                                |
+| 3722.47                    | 3646.96                        |
+| **3560.13**                | **3722.47**                    |
 
 ## page 43 f_2XrmrF5l
 
@@ -112,4 +156,36 @@ MinerU:
 <html><body><table><tr><td colspan=\"2\"> Description</td><td colspan=\"2\">2009-10 Gratuity</td><td colspan=\"2\">2008-09 Gratuity</td></tr><tr><td colspan=\"2\"></td><td>Funded (Rs. in lacs)</td><td>Unfunded (Rs. in lacs)</td><td>Funded (Rs. in lacs)</td><td>Unfunded (Rs. in lacs)</td></tr><tr><td colspan=\"2\">1. Reconciliation of opening and closing balance of obligation</td><td></td><td></td><td></td><td></td></tr><tr><td>a.</td><td>Obligation as at 01.04.2009</td><td>32.94</td><td>84.49</td><td></td><td>101.40</td></tr><tr><td>b. C.</td><td>Current service cost</td><td>2.18</td><td>14.65</td><td></td><td>15.61</td></tr><tr><td>d.</td><td>Interest cost</td><td>2.69</td><td>6.76</td><td></td><td>8.24</td></tr><tr><td></td><td>Actuarial (gain)/loss</td><td>0.01</td><td>(3.07)</td><td></td><td>16.79</td></tr><tr><td>e. f.</td><td>Benefits paid</td><td>(0.90)</td><td>(6.41)</td><td></td><td>(24.61)</td></tr><tr><td>2.</td><td>Obligation as at 31.03.2010</td><td>36.92</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td>a. b.</td><td>Change in fair value of plan assets Fair value of plan assets as at 01.04.2009</td><td></td><td></td><td></td><td></td></tr><tr><td>c. d.</td><td>Expected return on plan assets Actuarial gain / (loss) Contributions / refunds made by / to the company</td><td>0.70</td><td></td><td></td><td></td></tr><tr><td>e. f.</td><td>Benefits paid Fair value of plan assets as at 31.03.2010</td><td>10.38 (0.90) 10.18</td><td></td><td></td><td></td></tr><tr><td>3.</td><td>Reconciliation of fair value of plan assets and obligations</td><td></td><td></td><td></td><td></td></tr><tr><td>a.</td><td>Fair value of plan assets as at 31.03.2010</td><td>10.18</td><td></td><td></td><td></td></tr><tr><td></td><td>b. Present value of obligation as at 31.03.2010</td><td>(36.92)</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td></td><td>C. Amount recognized in the balance sheet</td><td>26.74</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td>4.</td><td>Expenses recognised during the year</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>2.18</td><td></td><td></td><td></td></tr><tr><td></td><td>a. Current service cost</td><td></td><td>14.65</td><td></td><td>15.61</td></tr><tr><td></td><td>b. Interest cost</td><td>2.69</td><td>6.76</td><td></td><td>8.24</td></tr><tr><td></td><td>c. Expected return on plan assets</td><td>(0.70)</td><td></td><td></td><td></td></tr><tr><td></td><td>d. Actuarial (gains) / loss</td><td>0.01</td><td>(3.07)</td><td></td><td>16.79</td></tr><tr><td></td><td>e. Expenses recognised during the year</td><td>4.18</td><td>18.34</td><td></td><td>40.64</td></tr><tr><td>5.</td><td>Investment details</td><td></td><td></td><td></td><td></td></tr><tr><td>a.</td><td>Others (fund with Life Insurance</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Corpn. of India)</td><td>10.18</td><td></td><td></td><td></td></tr><tr><td>6.</td><td>Assumptions</td><td></td><td></td><td></td><td></td></tr><tr><td>a.</td><td>Discount rate (per annum)</td><td>8.00%</td><td>8%</td><td></td><td>7.67%</td></tr><tr><td>b.</td><td>Estimated rate of return of</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>plan assets (per annum)</td><td>9.00%</td><td></td><td></td><td></td></tr><tr><td>C.</td><td>Rate of escalation in salary</td><td>5.00%</td><td>5.%</td><td></td><td>5.%</td></tr></table></body></html>
 
 MinerU+OlmOCR:
-<html><body><table><tr><td colspan=\"2\">Description</td><td colspan=\"2\">2009-10 Gratuity</td><td colspan=\"2\">2008-09 Gratuity</td></tr><tr><td colspan=\"2\"></td><td>Funded (Rs. in lacs)</td><td>Unfunded (Rs. in lacs)</td><td>Funded (Rs. in lacs)</td><td>Unfunded (Rs. in lacs)</td></tr><tr><td colspan=\"2\">1. Reconciliation of opening and closing balance of obligation</td><td></td><td></td><td></td><td></td></tr><tr><td>a.</td><td>Obligation as at 01.04.2009</td><td>32.94</td><td>84.49</td><td></td><td>101.40</td></tr><tr><td>b. Current service cost</td><td>2.18</td><td>14.65</td><td></td><td>15.61</td></tr><tr><td>c. Interest cost</td><td>2.69</td><td>6.76</td><td></td><td>8.24</td></tr><tr><td>d. Actuarial (gain)/loss</td><td>0.01</td><td>(3.07)</td><td></td><td>16.79</td></tr><tr><td>e. Benefits paid</td><td>(0.90)</td><td>(6.41)</td><td></td><td>(24.61)</td></tr><tr><td>f. Obligation as at 31.03.2010</td><td>36.92</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td>2. Change in fair value of plan assets</td><td></td><td></td><td></td><td></td></tr><tr><td>a. Fair value of plan assets as at 01.04.2009</td><td></td><td></td><td></td><td></td></tr><tr><td>b. Expected return on plan assets</td><td>0.70</td><td></td><td></td><td></td></tr><tr><td>c. Actuarial gain / (loss)</td><td></td><td></td><td></td><td></td></tr><tr><td>d. Contributions / refunds made by / to the company</td><td>10.38</td><td></td><td></td><td></td></tr><tr><td>e. Benefits paid</td><td>(0.90)</td><td></td><td></td><td></td></tr><tr><td>f. Fair value of plan assets as at 31.03.2010</td><td>10.18</td><td></td><td></td><td></td></tr><tr><td>3. Reconciliation of fair value of plan assets and obligations</td><td></td><td></td><td></td><td></td></tr><tr><td>a. Fair value of plan assets as at 31.03.2010</td><td>10.18</td><td></td><td></td><td></td></tr><tr><td>b. Present value of obligation as at 31.03.2010</td><td>(36.92)</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td>c. Amount recognized in the balance sheet</td><td>26.74</td><td>96.42</td><td></td><td>117.43</td></tr><tr><td>4. Expenses recognised during the year</td><td></td><td></td><td></td><td></td></tr><tr><td>a. Current service cost</td><td>2.18</td><td>14.65</td><td></td><td>15.61</td></tr><tr><td>b. Interest cost</td><td>2.69</td><td>6.76</td><td></td><td>8.24</td></tr><tr><td>c. Expected return on plan assets</td><td>(0.70)</td><td></td><td></td><td></td></tr><tr><td>d. Actuarial (gains) / loss</td><td>0.01</td><td>(3.07)</td><td></td><td>16.79</td></tr><tr><td>e. Expenses recognised during the year</td><td>4.18</td><td>18.34</td><td></td><td>40.64</td></tr><tr><td>5. Investment details</td><td></td><td></td><td></td><td></td></tr><tr><td>a. Others (fund with Life Insurance Corpn. of India)</td><td>10.18</td><td></td><td></td><td></td></tr><tr><td>6. Assumptions</td><td></td><td></td><td></td><td></td></tr><tr><td>a. Discount rate (per annum)</td><td>8.00%</td><td>8%</td><td></td><td>7.67%</td></tr><tr><td>b. Estimated rate of return of plan assets (per annum)</td><td>9.00%</td><td></td><td></td><td></td></tr><tr><td>c. Rate of escalation in salary</td><td>5.00%</td><td>5. %</td><td></td><td>5.%</td></tr></table></body></html>
+| Description                                                                 | 2009-10 Gratuity | 2008-09 Gratuity |
+|-----------------------------------------------------------------------------|------------------|------------------|
+|                                                                             | Funded (Rs. in lacs) | Unfunded (Rs. in lacs) | Funded (Rs. in lacs) | Unfunded (Rs. in lacs) |
+| 1. Reconciliation of opening and closing balance of obligation               |                  |                  |                  |                  |
+| a. Obligation as at 01.04.2009                                              | 32.94            | 84.49            | —                | 101.40             |
+| b. Current service cost                                                     | 2.18             | 14.65            | —                | 15.61              |
+| c. Interest cost                                                            | 2.69             | 6.76             | —                | 8.24               |
+| d. Actuarial (gain)/loss                                                    | 0.01             | (3.07)           | —                | 16.79              |
+| e. Benefits paid                                                            | (0.90)           | (6.41)           | —                | (24.61)            |
+| f. Obligation as at 31.03.2010                                              | 36.92            | 96.42            | —                | 117.43             |
+| 2. Change in fair value of plan assets                                      |                  |                  |                  |                  |
+| a. Fair value of plan assets as at 01.04.2009                               |                  |                  | —                | —                  |
+| b. Expected return on plan assets                                           | 0.70             | —                | —                | —                  |
+| c. Actuarial gain / (loss)                                                  | —                | —                | —                | —                  |
+| d. Contributions / refunds made by / to the company                          | 10.38            | —                | —                | —                  |
+| e. Benefits paid                                                            | (0.90)           | —                | —                | —                  |
+| f. Fair value of plan assets as at 31.03.2010                               | 10.18            | —                | —                | —                  |
+| 3. Reconciliation of fair value of plan assets and obligations               |                  |                  |                  |                  |
+| a. Fair value of plan assets as at 31.03.2010                               | 10.18            | —                | —                | —                  |
+| b. Present value of obligation as at 31.03.2010                             | (36.92)          | 96.42            | —                | 117.43             |
+| c. Amount recognized in the balance sheet                                   | 26.74            | 96.42            | —                | 117.43             |
+| 4. Expenses recognised during the year                                      |                  |                  |                  |                  |
+| a. Current service cost                                                     | 2.18             | 14.65            | —                | 15.61              |
+| b. Interest cost                                                            | 2.69             | 6.76             | —                | 8.24               |
+| c. Expected return on plan assets                                           | (0.70)           | —                | —                | —                  |
+| d. Actuarial (gains) / loss                                                 | 0.01             | (3.07)           | —                | 16.79              |
+| e. Expenses recognised during the year                                      | 4.18             | 18.34            | —                | 40.64              |
+| 5. Investment details                                                       |                  |                  |                  |                  |
+| a. Others (fund with Life Insurance Corpn. of India)                        | 10.18            | —                | —                | —                  |
+| 6. Assumptions                                                             |                  |                  |                  |                  |
+| a. Discount rate (per annum)                                                | 8.00%            | 8%               | —                | 7.67%              |
+| b. Estimated rate of return of plan assets (per annum)                      | 9.00%            | —                | —                | —                  |
+| c. Rate of escalation in salary                                            | 5.00%            | 5.0%             | —                | 5.0%               |
