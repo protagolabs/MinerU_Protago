@@ -14,9 +14,10 @@ This repository contains the code for the MinerU Protago project, which is adopt
 |------------- |------------------|------------|---------------|----------| 
 | ～176 (v1)    |  MinerU (1.3.3)  |    65.87  |       79.73       |    61.95       | 
 | ～176 (v1)    |  Marker (1.6.2) + olmocr |    63.60  |      74.17       |    TBD  | 
-| ～176 (v1)    |  Marker (1.6.2)  |    56.65  |      63.91       |    80.15  | 
+| ～176 (v1)    |  Marker (1.6.2)  |    56.65  |      63.91       |    80.15  |
+| ～176 (v1)    |  OlmOCR  |    TBD  |      TBD       |    TBD  |
 
-
+More cherry-pick samples can be found in [here](./comparison.md)
 
 
 ## Devlog (Deprecated)
