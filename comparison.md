@@ -1,0 +1,63 @@
+Azure:
+
+<html><body><table>\n\t<tr>\n\t\t<td colspan=\"2\" rowspan=\"1\"></td>\n\t\t<td colspan=\"3\" rowspan=\"1\">全体 女性 中途採用者</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"2\">社員</td>\n\t\t<td colspan=\"1\" rowspan=\"1\"></td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2,623人</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1,575人 (60.0%)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2,408人 (91.8%)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">管理職</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">362人</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">67人 (18.5%)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">300人(82.8%)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"2\" rowspan=\"1\">取締役</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">9人</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2人 (22.2%)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">9人 (100.0%)</td>\n\t</tr>\n</table></body></html>
+
+Marker:
+
+<html><body><table><tbody><tr><th></th><th></th><th colspan=2>全体</th></tr><tr><td></td><th></th><td></td><td>女性</td><td>中途採用者</td></tr><tr><td colspan=2></td><td>2,623人</td><td>1,575人(60.0%)</td><td>2,408人(91.8%)</td></tr><tr><td>社員</td><th>管理職</th><td>362人</td><td>67人(18.5%)</td><td>300人(82.8%)</td></tr><tr><td colspan=2>取締役</td><td>9人</td><td>2人(22.2%)</td><td>9人(100.0%)</td></tr></tbody></table></body></html>
+
+MinerU:
+
+<html><body><table><tr><td colspan=\"2\"></td><td colspan=\"3\">全体</td></tr><tr><td colspan=\"2\"></td><td></td><td>女性</td><td>中途用者</td></tr><tr><td rowspan=\"2\">社員</td><td></td><td>2,623人</td><td>1,575人（60.0%）</td><td>2,408人（91.8%）</td></tr><tr><td>管理職</td><td>362人</td><td>67人（18.5%）</td><td>300人（82.8%）</td></tr><tr><td colspan=\"2\">取役</td><td>9人</td><td>2人（22.2%）</td><td>9人（100.0%）</td></tr></table></body></html>
+
+MinerU + OlmOCR:
+<html><body>
+<table>
+  <tr><td colspan="2"></td><td colspan="3">全体</td></tr>
+  <tr><td colspan="2"></td><td></td><td>女性</td><td>中途用者</td></tr>
+  <tr><td rowspan="2">社員</td><td></td><td>2,623人</td><td>1,575人（60.0%）</td><td>2,408人（91.8%）</td></tr>
+  <tr><td>管理職</td><td>362人</td><td>67人（18.5%）</td><td>300人（82.8%）</td></tr>
+  <tr><td colspan="2">取役</td><td>9人</td><td>2人（22.2%）</td><td>9人（100.0%）</td></tr>
+</table>
+</body></html>
+
+
+Azure:
+
+<html><body><table>\n\t<tr>\n\t\t<td colspan=\"2\" rowspan=\"1\">項目</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1.5℃シナリオ</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">4℃シナリオ</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"2\" rowspan=\"1\">対象範囲</td>\n\t\t<td colspan=\"2\" rowspan=\"1\">海外連結子会社まで</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"2\" rowspan=\"1\">対象年</td>\n\t\t<td colspan=\"2\" rowspan=\"1\">移行リスク:2030年,物理リスク:2050年</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"2\">主な参照先</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">移行面</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">IEA NZE*</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">IEA STEPS*</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">物理面</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">IPCC SSP1-1.9*</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">IPCC RCP8.5*</td>\n\t</tr>\n</table></body></html>
+
+Marker:
+<html><body><table><tbody><tr><th colspan=2>項目</th><th>1.5℃シナリオ</th><th>4℃シナリオ</th></tr><tr><th colspan=2>対象範囲</th><th colspan=3>海外連結子会社まで</th></tr><tr><th colspan=2>対象年</th><th colspan=3>移行リスク:2030年,物理リスク:2050年</th></tr><tr><th rowspan=2>主な参照先</th><th>移行面</th><th>IEA NZE*</th><th colspan=2>IEA STEPS*</th></tr><tr><td>物理面</td><td>IPCC SSP1-1.9*</td><td>IPCC RCP8.5*</td></tr></tbody></table></body></html>
+
+MinerU:
+<html><body><table><tr><td colspan=\"2\">项目</td><td>1.5℃于才</td><td>4</td></tr><tr><td colspan=\"2\">对象曲</td><td colspan=\"2\">海外速結子会社</td></tr><tr><td colspan=\"2\">对象年</td><td colspan=\"2\">移行：2030年,物理：2050年</td></tr><tr><td rowspan=\"2\">主参照先</td><td>移行面</td><td>I EA NZE*</td><td>I EA STEPS*</td></tr><tr><td>物理面</td><td>I PCC SSP1 - 1. 9*</td><td>I PCC RCP8.5*</td></tr></table></body></html>
+
+MinerU+OlmOCR:
+<html><body><table>
+<thead>
+<tr><th>項目</th><th colspan="2">1.5℃シナリオ</th><th>4℃シナリオ</th></tr>
+</thead>
+<tbody>
+<tr><td>対象範囲</td><td></td><td>海外連結子会社まで</td><td></td></tr>
+<tr><td>対象年</td><td></td><td>移行リスク：2030年, 物理リスク：2050年</td><td></td></tr>
+<tr><td>主な参照先</td><td>移行面</td><td>IEA NZE*</td><td>IEA STEPS*</td></tr>
+<tr><td></td><td>物理面</td><td>IPCC SSP1 - 1.9*</td><td>IPCC RCP8.5*</td></tr>
+</tbody>
+</table></body></html>
+
+Azure:
+
+<html><body><table>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"2\">事業所名 (所在地)</td>\n\t\t<td colspan=\"1\" rowspan=\"2\">事業部門の 名称</td>\n\t\t<td colspan=\"1\" rowspan=\"2\">設備の内容</td>\n\t\t<td colspan=\"5\" rowspan=\"1\">帳簿価額</td>\n\t\t<td colspan=\"1\" rowspan=\"2\">従業員数 (人)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">建物及び 構築物 (百万円)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">機械装置 及び運搬具 (百万円)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">土地 (百万円) (面積m2)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">その他 (百万円)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">合計 (百万円)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">本社 (東京都渋谷区)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総括業務 施設</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1,323</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">-</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1,479 (1,153.28)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">140</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2,944</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">287 (50)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">商品物流セン ター (新潟県村上市)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">物流倉庫</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">77</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">-</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">54 (8,896.41)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">35</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">168</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">19 (9)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">関東信越ブロッ ク 計2店舗 内レディース専 門店 1店舗</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">販売設備</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">70</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">-</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">268 (135.23)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">341</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">10 (0)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">関西ブロック 計3店舗 内レディース専 門店 1店舗</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">販売設備</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">210</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">299 (355.58)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">512</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">25 (1)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">中四国ブロック 計2店舗 内レディース専 門店1店舗</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">販売設備</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">94</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">-</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">671 (144.46)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">1</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">768</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">15 (1)</td>\n\t</tr>\n\t<tr>\n\t\t<td colspan=\"1\" rowspan=\"1\">AN第2別館 (東京都渋谷区)\n:selected:</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">総合毛髮関 連事業</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">業務施設</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">44</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">-</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">612 (623.83)</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">2</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">659</td>\n\t\t<td colspan=\"1\" rowspan=\"1\">57 (37)</td>\n\t</tr>\n</table></body></html>
+
+Marker:
+<html><body><table><tbody><tr><th></th><th rowspan=2>事業部門の<br>名称</th><th rowspan=2>設備の内容</th><th colspan=7>帳簿価額</th></tr><tr><td>事業所名<br>(所在地)</td><td>建物及び<br>構築物<br>(百万円)</td><td>機械装置<br>及び運搬具<br>(百万円)</td><td>土地<br>(百万円)<br>(面積㎡)</td><td>その他<br>(百万円)</td><td>合計<br>(百万円)</td><td colspan=2>従業員数<br>(人)</td></tr><tr><td>本社<br>(東京都渋谷区)</td><td>総合毛髪関<br>連事業</td><td>総 括 業 務<br>施設</td><td>1,323</td><td></td><td>1,479<br>(1,153.28)</td><td>140</td><td>2,944</td><td>287<br>(50)</td></tr><tr><td>商 品 物 流 セ ン<br>ター<br>(新潟県村上市)</td><td>総合毛髪関<br>連事業</td><td>物流倉庫</td><td>77</td><td></td><td>54<br>(8,896.41)</td><td>35</td><td>168</td><td>19<br>(9)</td></tr><tr><td>関東信越ブロッ<br>ク<br>計2店舗<br>内レディース専<br>門店1店舗</td><td>総合毛髪関<br>連事業</td><td>販売設備</td><td>70</td><td></td><td>268<br>(135.23)</td><td></td><td>341</td><td>10<br>(0)</td></tr><tr><td>関西ブロック<br>計3店舗<br>内レディース専<br>門店1店舗</td><td>総合毛髪関<br>連事業</td><td>販売設備</td><td>210</td><td></td><td>299<br>(355.58)</td><td></td><td>512</td><td>25<br>(1)</td></tr><tr><td>中四国ブロック<br>計2店舗<br>内レディース専<br>門店1店舗</td><td>総合毛髪関<br>連事業</td><td>販売設備</td><td>94</td><td></td><td>671<br>(144.46)</td><td></td><td>768</td><td>15<br>(1)</td></tr><tr><td>AN第2別館<br>(東京都渋谷区)</td><td>総合毛髪関<br>連事業</td><td>業務施設</td><td>44</td><td></td><td>612<br>(623.83)</td><td></td><td>659</td><td>57<br>(37)</td></tr></tbody></table></body></html>
+
+MinerU:
+<html><body><table><tr><td rowspan=\"2\">事業所名 (所在地)</td><td rowspan=\"2\">事業部門の 名称</td><td rowspan=\"2\">設備の内容</td><td colspan=\"5\">簿仙额</td><td rowspan=\"2\">業員数 (人)</td></tr><tr><td>建物及 横物）</td><td>機械装置 及</td><td>土地 (面)</td><td>の他 (百万)</td><td>合計 (百万)</td></tr><tr><td>本京都谷区)</td><td>事髪關</td><td>括业務</td><td>1, 323</td><td></td><td>( 1, 153.79)</td><td>140</td><td>2, 944</td><td>287</td></tr><tr><td>(新温鼎村上市) 商品物流</td><td>髪</td><td>物流食库</td><td>77</td><td></td><td>( 8, 896. 54)</td><td>35</td><td>168</td><td>199</td></tr><tr><td>2一專 門店1店铺 東信越</td><td>合毛髪 連事業</td><td>壳設備</td><td>70</td><td></td><td>268 ( 135. 23)</td><td>２</td><td>341</td><td>10 ( 0)</td></tr><tr><td>西 計3店铺 内専 門店1店舖</td><td>合毛髪 連事業</td><td>壳設備</td><td>210</td><td>1</td><td>299 (355. 58)</td><td>２</td><td>512</td><td>25 ( 1)</td></tr><tr><td>中四国 計專</td><td>事髪</td><td>壳設備</td><td>94</td><td></td><td>( 144.71)</td><td>１</td><td>768</td><td>15</td></tr><tr><td>門店1店舖</td><td>髪</td><td>業務施設</td><td>44</td><td></td><td>( 623.12)</td><td>２</td><td>659</td><td>(57</td></tr></table></body></html>
+
+MinerU+OlmOCR:
+
+| \u4e8b\u696d\u6240\u540d\uff08\u6240\u5728\u5730\uff09 | \u4e8b\u696d\u90e8\u9580\u306e\u540d\u79f0 | \u8a2d\u5099\u306e\u5185\u5bb9 | \u5e33\u7c3f\u4fa1\u984d | \u5f93\u696d\u54e1\u6570\uff08\u4eba\uff09 |\\n|------------------|----------------|-----------|-----------|----------------|\\n| \u672c\u793e\uff08\u6771\u4eac\u90fd\u6e0b\u8c37\u533a\uff09 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u7dcf\u62ec\u696d\u52d9\u65bd\u8a2d | \u5efa\u7269\u53ca\u3073\u69cb\u7bc9\u7269\uff08\u767e\u4e07\u5186\uff091,323 | 1,479\uff081,153.28\uff09 | 140 | 2,944 | 287\uff0850\uff09 |\\n| \u5546\u54c1\u7269\u6d41\u30bb\u30f3\u30bf\u30fc\uff08\u65b0\u6f5f\u770c\u6751\u4e0a\u5e02\uff09 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u7269\u6d41\u5009\u5eab | \u6a5f\u68b0\u88c5\u7f6e\u53ca\u3073\u904b\u642c\u5177\uff08\u767e\u4e07\u5186\uff09 | 77 | 54\uff088,896.41\uff09 | 35 | 168 | 19\uff089\uff09 |\\n| \u95a2\u6771\u4fe1\u8d8a\u30d6\u30ed\u30c3\u30af | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u8ca9\u58f2\u8a2d\u5099 | \u571f\u5730\uff08\u767e\u4e07\u5186\uff09 | 70 | 268\uff08135.23\uff09 | 2 | 341 | 10\uff080\uff09 |\\n| \u8a082\u5e97\u8217\u5185\u30ec\u30c7\u30a3\u30fc\u30b9\u5c02\u9580\u5e971\u5e97\u8217 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u8ca9\u58f2\u8a2d\u5099 | \u305d\u306e\u4ed6\uff08\u767e\u4e07\u5186\uff09 | 210 | 299\uff08355.58\uff09 | 2 | 512 | 25\uff081\uff09 |\\n| \u95a2\u897f\u30d6\u30ed\u30c3\u30af | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u8ca9\u58f2\u8a2d\u5099 | \u5408\u8a08\uff08\u767e\u4e07\u5186\uff09 | 94 | 671\uff08144.46\uff09 | 1 | 768 | 15\uff081\uff09 |\\n| \u8a083\u5e97\u8217\u5185\u30ec\u30c7\u30a3\u30fc\u30b9\u5c02\u9580\u5e971\u5e97\u8217 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u8ca9\u58f2\u8a2d\u5099 | \u4e8b\u696d\u6240\u540d\uff08\u6240\u5728\u5730\uff09 | 44 | 612\uff08623.83\uff09 | 2 | 659 | 57\uff0837\uff09 |\\n| \u4e2d\u56db\u56fd\u30d6\u30ed\u30c3\u30af | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u696d\u52d9\u65bd\u8a2d | \u5e33\u7c3f\u4fa1\u984d | | | | | |\\n| \u8a082\u5e97\u8217\u5185\u30ec\u30c7\u30a3\u30fc\u30b9\u5c02\u9580\u5e971\u5e97\u8217 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u696d\u52d9\u65bd\u8a2d | | | | | | |\\n| A N\u7b2c2\u5225\u9928\uff08\u6771\u4eac\u90fd\u6e0b\u8c37\u533a\uff09 | \u7dcf\u5408\u6bdb\u9aea\u95a2\u9023\u4e8b\u696d | \u696d\u52d9\u65bd\u8a2d | | | | | | |\"}
+
+
+
