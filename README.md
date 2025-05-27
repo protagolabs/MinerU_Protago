@@ -13,7 +13,7 @@ This repository contains the code for the MinerU Protago project, which is adopt
 | Sample Size  | Tools (version)  |    TED ↑     | TED-struct ↑ | Heuristic ↑ | 
 |------------- |------------------|------------|---------------|----------| 
 | ～176 (v1)    |  MinerU (1.3.3)  |    65.87  |       79.73       |    61.95       | 
-| ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    66.75  |      80.23       |      | 
+| ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    62.18  |      74.59       |      | 
 | ～176 (v1)    |  Marker (1.6.2)  |    56.65  |      63.91       |    80.15  |
 | ～176 (v1)    |  Marker (1.6.2) + vlm |      |             |      |
 | ～176 (v1)    |  OlmOCR  |      |             |      |

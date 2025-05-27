@@ -105,8 +105,8 @@ def calculate_std_similarity(text1, text2):
     teds_struct = TEDS(structure_only=True, n_jobs=1)
     
     # Normalize HTML strings - this will handle the HTML wrapping if needed
-    text1 = normalize_and_format_table_html(text1)
-    text2 = normalize_and_format_table_html(text2)
+    # text1 = normalize_and_format_table_html(text1)
+    # text2 = normalize_and_format_table_html(text2)
     
     # Calculate both regular and structure-only similarity scores
 
@@ -126,31 +126,25 @@ def compare_tables(gt_file, extracted_file):
         extracted_tables = json.load(f)
     
     # Normalize tables
-    gt_tables_norm = [{'original': t, 'normalized': normalize_and_format_table_html(t['sentence']), 'page': t['page']} 
-                     for t in gt_tables]
-    extracted_tables_norm = [{'original': t, 'normalized': normalize_and_format_table_html(t['sentence']), 'page': t['page']} 
-                           for t in extracted_tables]
+    gt_tables = [{'original': t, 'page': t['page']} for t in gt_tables]
+    extracted_tables = [{'original': t, 'page': t['page']} for t in extracted_tables]
     
-    # Group by page
-    extracted_by_page = {}
-    for idx, table in enumerate(extracted_tables_norm):
-        extracted_by_page.setdefault(table['page'], []).append((idx, table))
     
     # Compare tables
     total_sim = total_struct_sim = matched = 0
     detailed_matches = []
     
-    for i, gt in enumerate(gt_tables_norm, 1):
+    for i, gt in enumerate(gt_tables, 1):
         best_match = None
         best_sim = best_struct_sim = 0
         best_idx = None
         
         # Get tables to compare
-        tables_to_compare = extracted_by_page.get(gt['page'], []) or [(idx, t) for idx, t in enumerate(extracted_tables_norm)]
+        tables_to_compare = [(idx, t) for idx, t in enumerate(extracted_tables) if t['page'] == gt['page']]
         
         # Find best match
         for j, (orig_idx, ext) in enumerate(tables_to_compare, 1):
-            # sim, struct_sim = calculate_std_similarity(gt['normalized'], ext['normalized'])
+
             sim, struct_sim = calculate_std_similarity(gt['original']['sentence'], ext['original']['sentence'])
 
             # if struct_sim > best_struct_sim:
@@ -175,9 +169,6 @@ def compare_tables(gt_file, extracted_file):
                 # Full original text
                 "mineru_text": best_match['original']['sentence'],
                 "azure_text": gt['original']['sentence'],
-                # Full normalized HTML
-                "mineru_normalized_html": best_match['normalized'],
-                "azure_normalized_html": gt['normalized']
             })
     
     return {
