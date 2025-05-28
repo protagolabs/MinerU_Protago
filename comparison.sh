@@ -4,11 +4,11 @@ python comparison_tables.py \
     --output-dir comparison/comparison_orbit_v1_marker_azure_original \
     --processes 8
 
-# python comparison_tables.py \
-#     --mineru-tables comparison/orbit_v1_mineru133_outputs_tables \
-#     --azure-tables comparison/orbit_v1_azure_outputs_tables \
-#     --output-dir comparison/comparison_orbit_v1_mineru133_azure_original \
-#     --processes 8
+python comparison_tables.py \
+    --mineru-tables comparison/orbit_v1_mineru133_outputs_tables \
+    --azure-tables comparison/orbit_v1_azure_outputs_tables \
+    --output-dir comparison/comparison_orbit_v1_mineru133_azure_original \
+    --processes 8
 
 # python comparison_refined_tables.py \
 #     --mineru-tables comparison/orbit_v1_mineru133_outputs_refined_tables \

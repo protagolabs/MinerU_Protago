@@ -17,7 +17,6 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from difflib import SequenceMatcher
-from bs4 import BeautifulSoup
 from typing import Dict, Any, Optional, Set, List
 from tqdm import tqdm
 import numpy as np
