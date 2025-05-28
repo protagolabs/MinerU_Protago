@@ -12,13 +12,14 @@ This repository contains the code for the MinerU Protago project, which is adopt
 
 | Sample Size  | Tools (version)  |    TED ↑     | TED-struct ↑ | Heuristic ↑ | 
 |------------- |------------------|------------|---------------|----------| 
-| ～176 (v1)    |  MinerU (1.3.3)  |    68.08  |       80.08       |    61.95       | 
-| ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    62.18  |      74.59       |      | 
-| ～176 (v1)    |  Marker (1.6.2)  |    57.39  |      63.99       |    80.15  |
+| ～176 (v1)    |  MinerU (1.3.3)  |    69.71  |       82.18       |    61.95       | 
+| ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    69.64  |      79.67       |      | 
+| ～176 (v1)    |  Marker (1.6.2)  |    67.19  |      78.89       |    80.15  |
 | ～176 (v1)    |  Marker (1.6.2) + vlm |      |             |      |
 | ～176 (v1)    |  OlmOCR  |      |             |      |
 
 [^1]: MinerU (1.3.3) + OlmOCR refers to refine the HTML output of MinerU by [OlmOCR](https://github.com/allenai/olmocr). The output is in Markdown format and the score calculation is based on an HTML2Markdown transformation.
+
 
 * More cherry-pick samples can be found in [here](./comparison.md)
 

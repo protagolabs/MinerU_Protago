@@ -11,19 +11,16 @@ Date: 2024-01-20
 
 import os
 import json
-import re
 import sys
 import argparse
 from pathlib import Path
 from datetime import datetime
-from difflib import SequenceMatcher
-from bs4 import BeautifulSoup
 from typing import Dict, Any, Optional, Set, List
 from tqdm import tqdm
-import numpy as np
 import multiprocessing
 from functools import partial
 from utils.metric import TEDS
+from lxml import html, etree
 
 class Logger:
     """Custom logger that writes to both console and file."""
@@ -53,42 +50,51 @@ class Logger:
         self.log.flush()
         self.log.close()
 
+def preprocess_html_for_ted(html_string):
+    """Normalize HTML using lxml, preserving structural compatibility with TEDS."""
+    parser = html.HTMLParser(remove_comments=True, encoding='utf-8')
+    root = html.fromstring(html_string, parser=parser)
 
-def normalize_and_format_table_html(html_str: str) -> str:
-    """Normalize and format table HTML string for comparison."""
-    
-    # Remove any existing HTML wrapper if present
-    html_str = html_str.strip()
-    if html_str.startswith('<html>'):
-        html_str = re.sub(r'<html>.*?<body>(.*?)</body>.*?</html>', r'\1', html_str, flags=re.DOTALL)
-    
-    # Handle multiple table tags
-    if '<table>' in html_str:
-        # Count opening and closing table tags
-        open_count = html_str.count('<table>')
-        close_count = html_str.count('</table>')
-        
-        if open_count > close_count:
-            # Remove extra opening table tags
-            html_str = re.sub(r'<table>(?=<table>)', '', html_str)
-            # If no closing tag, add one at the end
-            if close_count == 0:
-                html_str = html_str + '</table>'
-        elif open_count > 1 and close_count > 1:
-            # Extract all table content
-            tables = re.findall(r'<table>(.*?)</table>', html_str, re.DOTALL)
-            # Combine all tables into one
-            combined_table = '<table>' + ''.join(tables) + '</table>'
-            html_str = combined_table
-    
-    # Ensure proper table structure
-    if not html_str.strip().startswith('<table>'):
-        html_str = f'<table>{html_str}</table>'
-    
-    # Add HTML wrapper with proper styling
-    html_str = f"""<html><body>{html_str}</body></html>"""
-    
-    return html_str
+    # 1. Remove unwanted tags
+    etree.strip_elements(root, 'script', 'style', 'meta', 'link', 'head', 'noscript', with_tail=False)
+
+    # 2. Normalize <th> to <td>
+    for th in root.xpath('//th'):
+        th.tag = 'td'
+
+    # 3. Flatten <br> by replacing it with spaces
+    for br in root.xpath('//br'):
+        parent = br.getparent()
+        if parent is not None:
+            index = parent.index(br)
+            # Insert a space text node before removing <br>
+            if index > 0 and parent[index - 1].tail:
+                parent[index - 1].tail += ' '
+            else:
+                br.tail = ' ' + (br.tail or '')
+            parent.remove(br)
+
+    # 4. Remove <tbody> (auto-inserted in some renderers)
+    for tbody in root.xpath('//tbody'):
+        tbody.drop_tag()
+
+    # 5. Strip all attributes from all tags
+    for elem in root.iter():
+        elem.attrib.clear()
+
+    # 6. Normalize text and tail spacing
+    def normalize_text(s):
+        if s:
+            return ' '.join(s.split())
+        return ''
+
+    for elem in root.iter():
+        elem.text = normalize_text(elem.text)
+        elem.tail = normalize_text(elem.tail)
+
+    # 7. Return cleaned HTML string
+    return html.tostring(root, encoding='unicode', method='html')
+
 
 def calculate_std_similarity(text1, text2):
     """Calculate TED similarity and structural similarity using TEDS.
@@ -105,17 +111,17 @@ def calculate_std_similarity(text1, text2):
     teds_struct = TEDS(structure_only=True, n_jobs=1)
     
     # Normalize HTML strings - this will handle the HTML wrapping if needed
-    text1 = normalize_and_format_table_html(text1)
-    text2 = normalize_and_format_table_html(text2)
+    morlized_text1 = preprocess_html_for_ted(text1)
+    morlized_text2 = preprocess_html_for_ted(text2)
     
     # Calculate both regular and structure-only similarity scores
 
     # print(text1)
     # print(text2)
-    similarity = teds.evaluate(text1, text2)
-    structure_similarity = teds_struct.evaluate(text1, text2)
+    similarity = teds.evaluate(morlized_text1, morlized_text2)
+    structure_similarity = teds_struct.evaluate(morlized_text1, morlized_text2)
     
-    return similarity, structure_similarity
+    return similarity, structure_similarity, morlized_text1, morlized_text2
 
 def compare_tables(gt_file, extracted_file):
     """Compare tables between Azure and extracted files."""
@@ -126,35 +132,32 @@ def compare_tables(gt_file, extracted_file):
         extracted_tables = json.load(f)
     
     # Normalize tables
-    gt_tables_norm = [{'original': t, 'normalized': normalize_and_format_table_html(t['sentence']), 'page': t['page']} 
-                     for t in gt_tables]
-    extracted_tables_norm = [{'original': t, 'normalized': normalize_and_format_table_html(t['sentence']), 'page': t['page']} 
-                           for t in extracted_tables]
+    gt_tables = [{'original': t, 'page': t['page']} for t in gt_tables]
+    extracted_tables = [{'original': t, 'page': t['page']} for t in extracted_tables]
     
-    # Group by page
-    extracted_by_page = {}
-    for idx, table in enumerate(extracted_tables_norm):
-        extracted_by_page.setdefault(table['page'], []).append((idx, table))
     
     # Compare tables
     total_sim = total_struct_sim = matched = 0
     detailed_matches = []
+    matched_mineru_indices = set()  # Track which MinerU tables have been matched
     
-    for i, gt in enumerate(gt_tables_norm, 1):
+    for i, gt in enumerate(gt_tables, 1):
         best_match = None
         best_sim = best_struct_sim = 0
         best_idx = None
+        best_gt_text = None
+        best_ext_text = None
         
         # Get tables to compare
-        tables_to_compare = extracted_by_page.get(gt['page'], []) or [(idx, t) for idx, t in enumerate(extracted_tables_norm)]
+        tables_to_compare = [(idx, t) for idx, t in enumerate(extracted_tables) if t['page'] == gt['page']]
         
         # Find best match
         for j, (orig_idx, ext) in enumerate(tables_to_compare, 1):
-            # sim, struct_sim = calculate_std_similarity(gt['normalized'], ext['normalized'])
-            sentence = ext['original']['sentence']
-            if not sentence.strip().startswith('<html>') and 'original_sentence' in ext['original']:
-                sentence = ext['original']['original_sentence']
-            sim, struct_sim = calculate_std_similarity(gt['original']['sentence'], sentence)
+
+            if not ext['original']['sentence'].startswith("<html>"):
+                sim, struct_sim, normalized_gt_text, normalized_ext_text = calculate_std_similarity(gt['original']['sentence'], ext['original']['original_sentence'])
+            else:
+                sim, struct_sim, normalized_gt_text, normalized_ext_text = calculate_std_similarity(gt['original']['sentence'], ext['original']['sentence'])
 
             # if struct_sim > best_struct_sim:
             if sim > best_sim:
@@ -162,11 +165,23 @@ def compare_tables(gt_file, extracted_file):
                 best_sim = sim
                 best_match = ext
                 best_idx = orig_idx + 1
+                best_gt_text = normalized_gt_text
+                best_ext_text = normalized_ext_text
         
         if best_match:
             total_sim += best_sim
             total_struct_sim += best_struct_sim
             matched += 1
+            
+            # Track the actual index in the original extracted_tables list
+            actual_mineru_idx = None
+            for idx, table in enumerate(extracted_tables):
+                if table is best_match:
+                    actual_mineru_idx = idx
+                    break
+            
+            if actual_mineru_idx is not None:
+                matched_mineru_indices.add(actual_mineru_idx)
             
             detailed_matches.append({
                 "azure_table_index": i,
@@ -178,13 +193,13 @@ def compare_tables(gt_file, extracted_file):
                 # Full original text
                 "mineru_text": best_match['original']['sentence'],
                 "azure_text": gt['original']['sentence'],
-                # Full normalized HTML
-                "mineru_normalized_html": best_match['normalized'],
-                "azure_normalized_html": gt['normalized']
+                "mineru_text_normalized": best_ext_text,
+                "azure_text_normalized": best_gt_text,
             })
     
     return {
-        "total_matched_tables": matched,
+        "total_matched_tables": matched,  # Number of Azure tables that found a match
+        "unique_mineru_tables_matched": len(matched_mineru_indices),  # Number of unique MinerU tables matched
         "average_similarity": total_sim / matched if matched > 0 else 0,
         "average_structure_similarity": total_struct_sim / matched if matched > 0 else 0,
         "total_similarity": total_sim,
@@ -216,6 +231,7 @@ def process_single_file(azure_file, mineru_folder, azure_folder):
                 return base_name, {
                     "error": str(e),
                     "total_matched_tables": 0,
+                    "unique_mineru_tables_matched": 0,
                     "average_similarity": 0,
                     "average_structure_similarity": 0,
                     "total_similarity": 0,
@@ -283,6 +299,12 @@ def process_folders(mineru_folder: str,
     total_similarity_with_tables = 0
     total_structure_similarity_with_tables = 0
     
+    # Track table counts across all files
+    total_azure_tables = 0
+    total_mineru_tables = 0
+    total_compared_tables = 0
+    total_unique_mineru_matched = 0
+    
     with tqdm(total=len(files_to_process), desc="Processing files", file=sys.stdout) as pbar:
         for result in pool.imap_unordered(process_file, files_to_process):
             if result:
@@ -291,6 +313,12 @@ def process_folders(mineru_folder: str,
                 total_avg_similarity += file_results['average_similarity']
                 total_avg_structure_similarity += file_results['average_structure_similarity']
                 total_files += 1
+                
+                # Add table counts
+                total_azure_tables += file_results['azure_table_count']
+                total_mineru_tables += file_results['mineru_table_count']
+                total_compared_tables += file_results['total_matched_tables']
+                total_unique_mineru_matched += file_results['unique_mineru_tables_matched']
                 
                 # Count only files that have tables in both Azure and MinerU
                 if file_results['azure_table_count'] > 0 and file_results['mineru_table_count'] > 0:
@@ -311,6 +339,12 @@ def process_folders(mineru_folder: str,
         "files_with_tables": files_with_tables,
         "overall_average_similarity_tables_only": total_similarity_with_tables / files_with_tables if files_with_tables > 0 else 0,
         "overall_average_structure_similarity_tables_only": total_structure_similarity_with_tables / files_with_tables if files_with_tables > 0 else 0,
+        "total_azure_tables": total_azure_tables,
+        "total_mineru_tables": total_mineru_tables,
+        "total_compared_tables": total_compared_tables,
+        "total_unique_mineru_matched": total_unique_mineru_matched,
+        "comparison_coverage_azure": (total_compared_tables / total_azure_tables * 100) if total_azure_tables > 0 else 0,
+        "comparison_coverage_mineru": (total_unique_mineru_matched / total_mineru_tables * 100) if total_mineru_tables > 0 else 0,
         "timestamp": timestamp
     }
     
@@ -318,6 +352,14 @@ def process_folders(mineru_folder: str,
     print("\nSummary Statistics:")
     print(f"Total files processed: {total_files}")
     print(f"Files with tables in both Azure and MinerU: {files_with_tables}")
+    print(f"\nTable Statistics:")
+    print(f"Total Azure tables: {total_azure_tables}")
+    print(f"Total MinerU tables: {total_mineru_tables}")
+    print(f"Azure tables that found matches: {total_compared_tables}")
+    print(f"Unique MinerU tables matched: {total_unique_mineru_matched}")
+    print(f"Comparison coverage (Azure): {overall_stats['comparison_coverage_azure']:.2f}%")
+    print(f"Comparison coverage (MinerU): {overall_stats['comparison_coverage_mineru']:.2f}%")
+    print(f"\nSimilarity Scores:")
     print(f"Overall average similarity (all files): {overall_stats['overall_average_similarity']:.4f}")
     print(f"Overall average structure similarity (all files): {overall_stats['overall_average_structure_similarity']:.4f}")
     print(f"Overall average similarity (files with tables only): {overall_stats['overall_average_similarity_tables_only']:.4f}")
