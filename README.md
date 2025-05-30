@@ -16,7 +16,8 @@ This repository contains the code for the MinerU Protago project, which is adopt
 | ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    69.64  |      79.67       |      | 
 | ～176 (v1)    |  Marker (1.6.2)  |    67.19  |      78.89       |    80.15  |
 | ～176 (v1)    |  Marker (1.6.2) + vlm |      |             |      |
-| ～176 (v1)    |  OlmOCR  |      |             |      |
+| ～176 (v1)    |  OmOCR  |      |            |      |
+| ～176 (v1)    |  Dolphin  |    70.38  |    78.87         |      |
 
 [^1]: MinerU (1.3.3) + OlmOCR refers to refine the HTML output of MinerU by [OlmOCR](https://github.com/allenai/olmocr). The output is in Markdown format and the score calculation is based on an HTML2Markdown transformation.
 
