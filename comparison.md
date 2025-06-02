@@ -209,3 +209,39 @@ MinerU+OlmOCR:
 | a. Discount rate (per annum)                                                | 8.00%            | 8%               | —                | 7.67%              |
 | b. Estimated rate of return of plan assets (per annum)                      | 9.00%            | —                | —                | —                  |
 | c. Rate of escalation in salary                                            | 5.00%            | 5.0%             | —                | 5.0%               |
+
+
+| Description | 2009-10 | 2008-09 |
+|-------------|---------|---------|
+|             | Funded  | Unfunded| Funded  | Unfunded|
+|             | (Rs. in lacs) | (Rs. in lacs) | (Rs. in lacs) | (Rs. in lacs) |
+| 1. Reconciliation of opening and closing balance of obligation | | | |
+| a. Obligation as at 01.04.2009 | 32.94 | 84.49 | \u2014 | 101.40 |
+| b. Current service cost | 2.18 | 14.65 | \u2014 | 15.61 |
+| c. Interest cost | 2.69 | 6.76 | \u2014 | 8.24 |
+| d. Actuarial (gain)/loss | 0.01 | (3.07) | \u2014 | 16.79 |
+| e. Benefits paid | (0.90) | (6.41) | \u2014 | (24.61) |
+| f. Obligation as at 31.03.2010 | 36.92 | 96.42 | \u2014 | 117.43 |
+| 2. Change in fair value of plan assets | | | |
+| a. Fair value of plan assets as at 01.04.2009 | \u2014 | \u2014 | \u2014 | \u2014 |
+| b. Expected return on plan assets | 0.70 | \u2014 | \u2014 | \u2014 |
+| c. Actuarial gain / (loss) | \u2014 | \u2014 | \u2014 | \u2014 |
+| d. Contributions / refunds made by / to the company | 10.38 | \u2014 | \u2014 | \u2014 |
+| e. Benefits paid | (0.90) | \u2014 | \u2014 | \u2014 |
+| f. Fair value of plan assets as at 31.03.2010 | 10.18 | \u2014 | \u2014 | \u2014 |
+| 3. Reconciliation of fair value of plan assets and obligations | | | |
+| a. Fair value of plan assets as at 31.03.2010 | 10.18 | \u2014 | \u2014 | \u2014 |
+| b. Present value of obligation as at 31.03.2010 | (36.92) | 96.42 | \u2014 | 117.43 |
+| c. Amount recognized in the balance sheet | 26.74 | 96.42 | \u2014 | 117.43 |
+| 4. Expenses recognised during the year | | | |
+| a. Current service cost | 2.18 | 14.65 | \u2014 | 15.61 |
+| b. Interest cost | 2.69 | 6.76 | \u2014 | 8.24 |
+| c. Expected return on plan assets | (0.70) | \u2014 | \u2014 | \u2014 |
+| d. Actuarial (gain)/loss | 0.01 | (3.07) | \u2014 | 16.79 |
+| e. Expenses recognised during the year | 4.18 | 18.34 | \u2014 | 40.64 |
+| 5. Investment details | | | |
+| a. Others (fund with Life Insurance Corpn. of India) | 10.18 | \u2014 | \u2014 | \u2014 |
+| 6. Assumptions | | | |
+| a. Discount rate (per annum) | 8.00% | 8% | \u2014 | 7.67% |
+| b. Estimated rate of return of plan assets (per annum) | 9.00% | \u2014 | \u2014 | \u2014 |
+| c. Rate of escalation in salary | 5.00% | 5% | \u2014 | 5% |
