@@ -1,19 +1,19 @@
-# python comparison_tables.py \
-#     --mineru-tables comparison/orbit_v1_marker_outputs_tables \
-#     --azure-tables comparison/orbit_v1_azure_outputs_tables \
-#     --output-dir comparison/comparison_orbit_v1_marker_azure_original \
-#     --processes 8
+python comparison_tables.py \
+    --mineru-tables comparison/orbit_v1_marker_outputs_tables \
+    --azure-tables comparison/orbit_v1_azure_outputs_tables \
+    --output-dir comparison/results_orbit_v1_marker_azure \
+    --processes 8
 
-# python comparison_tables.py \
-#     --mineru-tables comparison/orbit_v1_mineru133_outputs_tables \
-#     --azure-tables comparison/orbit_v1_azure_outputs_tables \
-#     --output-dir comparison/comparison_orbit_v1_mineru133_azure_original \
-#     --processes 8
+python comparison_tables.py \
+    --mineru-tables comparison/orbit_v1_mineru133_outputs_tables \
+    --azure-tables comparison/orbit_v1_azure_outputs_tables \
+    --output-dir comparison/results_orbit_v1_mineru133_azure \
+    --processes 8
 
 python comparison_refined_tables.py \
     --mineru-tables comparison/orbit_v1_mineru133_outputs_refined_tables \
     --azure-tables comparison/orbit_v1_azure_outputs_tables \
-    --output-dir comparison/comparison_orbit_v1_refined_mineru133_azure \
+    --output-dir comparison/results_orbit_v1_refined_mineru133_azure \
     --processes 8
 
 # python comparison_refined_tables_md.py \
@@ -28,11 +28,6 @@ python comparison_refined_tables.py \
 #     --output-dir comparison/comparison_orbit_v1_refined_mineru133_azure_md \
 #     --processes 1
 
-# python comparison_tables_grits.py \
-#     --mineru-tables comparison/orbit_v1_mineru133_outputs_tables \
-#     --azure-tables comparison/orbit_v1_azure_outputs_tables \
-#     --output-dir comparison/comparison_orbit_v1_mineru133_azure_grits \
-#     --processes 8
 
 ########################################## compare markdown files ##########################################
 

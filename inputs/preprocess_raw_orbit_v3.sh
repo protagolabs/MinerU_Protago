@@ -7,7 +7,17 @@ mkdir -p "$dest_dir"  # create destination if it doesn't exist
 mkdir -p "$dest_dir/azure_pkl"
 mkdir -p "$dest_dir/pdf"
 
+# Initialize counter
+count=0
+max_files=5000
+
 for subdir in "$src_dir"/*/; do
+    # Check if we've reached the limit
+    if [ $count -ge $max_files ]; then
+        echo "Reached limit of $max_files files. Stopping."
+        break
+    fi
+    
     full_dirname=$(basename "$subdir")
     base_name="${full_dirname%.pdf}"  # strip the .pdf extension
 
@@ -27,6 +37,10 @@ for subdir in "$src_dir"/*/; do
     else
         echo "Warning: No PDF file found in $subdir."
     fi
+    
+    # Increment counter
+    ((count++))
+    echo "Processed file $count of $max_files"
 done
 
 # Check if each .pkl file has a corresponding .pdf file

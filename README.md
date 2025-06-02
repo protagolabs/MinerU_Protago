@@ -10,14 +10,17 @@ This repository contains the code for the MinerU Protago project, which is adopt
 * we adopt the Heuristic score from [marker](https://github.com/VikParuchuri/marker) to measure the text alignment with ground truth text segments.
 * we use the results from microsoft azure as the ground-truth.
 
-| Sample Size  | Tools (version)  |    TED ↑     | TED-struct ↑ | Heuristic ↑ | 
-|------------- |------------------|------------|---------------|----------| 
-| ～176 (v1)    |  MinerU (1.3.3)  |    69.71  |       82.18       |    61.95       | 
-| ～176 (v1)    |  MinerU (1.3.3) + OlmOCR[^1] |    69.64  |      79.67       |      | 
-| ～176 (v1)    |  Marker (1.6.2)  |    67.19  |      78.89       |    80.15  |
-| ～176 (v1)    |  Marker (1.6.2) + vlm |      |             |      |
-| ～176 (v1)    |  OmOCR  |      |            |      |
-| ～176 (v1)    |  Dolphin  |    70.38  |    78.87         |      |
+| Sample Size  | Tools (version)  |  \# Tables | TED ↑     | TED-struct ↑ | Heuristic ↑ | 
+|-------------|------------------|------------|-----------|--------------|-------------|
+| ～176 (v1)   | Azure            | 18341      |      |         |        |
+| ～176 (v1)   | MinerU (1.3.3)   | 17712      | 69.71     | 82.18        | 61.95       |
+| ～176 (v1)   | Marker (1.6.2)   | 18004      | 67.19     | 78.89        | 80.15       |
+|=============|==================|============|===========|==============|=============|
+| ～176 (v1)   | MinerU (1.3.3) + Dolphin[^1] | 17712   |  68.67    |   77.71      |             |
+| ～176 (v1)   | MinerU (1.3.3) + OlmOCR[^1]  | 17712   | 69.64     | 79.67        |             |
+| ～176 (v1)   | Marker (1.6.2) + vlm         |          |           |              |             |
+| ～176 (v1)   | OmOCR                        |          |           |              |             |
+| ～176 (v1)   | Dolphin                      | 16052    | 70.38     | 78.87        |             |
 
 [^1]: MinerU (1.3.3) + OlmOCR refers to refine the HTML output of MinerU by [OlmOCR](https://github.com/allenai/olmocr). The output is in Markdown format and the score calculation is based on an HTML2Markdown transformation.
 
