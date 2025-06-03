@@ -397,9 +397,9 @@ Synced with dev branch updates:
 #### 1. Install magic-pdf
 
 ```bash
-conda create -n mineru 'python>=3.10' -y
-conda activate mineru
-pip install -U "magic-pdf[full]"
+conda create -n mineru1310 'python>=3.10' -y
+conda activate mineru1310
+pip install -e ".[full]"
 ```
 
 #### 2. Download model weight files
