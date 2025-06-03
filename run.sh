@@ -1,0 +1,1 @@
+magic-pdf -p demo/pdfs/small_ocr.pdf -o output/ -m auto

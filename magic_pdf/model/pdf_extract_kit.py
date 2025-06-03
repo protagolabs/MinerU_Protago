@@ -241,6 +241,10 @@ class CustomPEKModel:
                     html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
                         new_image
                     )
+                elif self.table_model_name == MODEL_NAME.CUSTOM_TABLE:
+                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                        new_image
+                    )
                 run_time = time.time() - single_table_start_time
                 if run_time > self.table_max_time:
                     logger.warning(

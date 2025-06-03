@@ -6,3 +6,4 @@ weights:
   struct_eqtable: TabRec/StructEqTable
   tablemaster: TabRec/TableMaster
   rapid_table: TabRec/RapidTable
+  custom_table: ""

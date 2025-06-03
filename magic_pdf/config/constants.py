@@ -51,6 +51,9 @@ class MODEL_NAME:
     UniMerNet_v2_Small = 'unimernet_small'
 
     RAPID_TABLE = 'rapid_table'
+    
+    # Custom table model
+    CUSTOM_TABLE = 'custom_table'
 
     YOLO_V11_LangDetect = 'yolo_v11n_langdetect'
 
