@@ -1,258 +1,349 @@
+"""
+Custom Table Model following Surya's Table Recognition patterns
+Integrates Marker's high-performance table extraction with MinerU's pipeline
+"""
+
+import os
 import time
-import cv2
 import numpy as np
+from pathlib import Path
 from PIL import Image
+from typing import List, Dict, Any, Optional, Tuple
 from loguru import logger
+
+# Import Marker's table converter
+try:
+    from marker.converters.table import TableConverter
+    from marker.models import create_model_dict
+    from marker.output import text_from_rendered
+    MARKER_AVAILABLE = True
+except ImportError:
+    logger.warning("Marker not available, falling back to basic OCR")
+    MARKER_AVAILABLE = False
 
 
 class CustomTableModel:
     """
-    Example custom table model implementation
-    This is a template you can modify for your own table processing needs
+    Custom table model using Marker's TableConverter for table extraction.
+    Follows Surya's TableRecPredictor patterns for consistent API.
     """
     
-    def __init__(self, ocr_engine, model_path=None, confidence_threshold=0.5, **kwargs):
+    def __init__(self, ocr_engine, model_path=None, **kwargs):
         """
-        Initialize your custom table model
+        Initialize table model following Surya's predictor pattern
+        
         Args:
-            ocr_engine: OCR engine for text recognition
-            model_path: Path to your model weights (if needed)
-            confidence_threshold: Confidence threshold for filtering results
-            **kwargs: Additional configuration
+            ocr_engine: OCR engine from MinerU
+            model_path: Path to model weights (optional, for interface compatibility)
+            **kwargs: Configuration options
         """
+        # Store configuration
         self.ocr_engine = ocr_engine
         self.model_path = model_path
-        self.confidence_threshold = confidence_threshold
+        self.confidence_threshold = kwargs.get('confidence_threshold', 0.5)
+        self.use_llm = kwargs.get('use_llm', False)
+        self.output_format = kwargs.get('output_format', 'html')
         
-        # Initialize your custom model here
-        logger.info(f"Initializing CustomTableModel with confidence_threshold={confidence_threshold}")
+        # Initialize table converter
+        self.table_converter = self._load_table_converter()
         
-        # Example: Load your custom model weights
-        if model_path:
-            logger.info(f"Loading custom model from: {model_path}")
-            # self.model = load_your_custom_model(model_path)
+        # Model metadata
+        self.model_name = "CustomTableModel"
+        self.backend = "Marker (Surya OCR)" if MARKER_AVAILABLE else "Fallback OCR"
         
-    def predict(self, image):
+        logger.info(f"{self.model_name} initialized with backend: {self.backend}")
+
+    def _load_table_converter(self):
+        """Load table converter with proper error handling"""
+        if not MARKER_AVAILABLE:
+            logger.info("Marker not available, using fallback mode")
+            return None
+            
+        try:
+            model_dict = create_model_dict()
+            converter = TableConverter(artifact_dict=model_dict)
+            logger.info("Marker TableConverter loaded successfully")
+            return converter
+        except Exception as e:
+            logger.error(f"Failed to load Marker TableConverter: {e}")
+            return None
+
+    def __call__(self, images, **kwargs):
         """
-        Process table image and return HTML
+        Main prediction method following Surya's callable pattern
+        
         Args:
-            image: PIL Image or numpy array
+            images: Single image or list of images (PIL Images or numpy arrays)
+            **kwargs: Additional parameters
             
         Returns:
-            tuple: (html_code, table_cell_bboxes, logic_points, elapse_time)
+            List of prediction results, one per image
+        """
+        # Ensure images is a list
+        if not isinstance(images, list):
+            images = [images]
+        
+        results = []
+        for image in images:
+            result = self.predict_single(image, **kwargs)
+            results.append(result)
+        
+        return results
+
+    def predict(self, image, **kwargs) -> Tuple[str, List, List, float]:
+        """
+        Legacy predict method for backward compatibility
+        Matches rapid_table.py output format exactly
+        
+        Args:
+            image: PIL Image or numpy array
+            **kwargs: Additional parameters
+            
+        Returns:
+            tuple: (html_code, table_cell_bboxes, logic_points, elapse)
+        """
+        result = self.predict_single(image, **kwargs)
+        
+        if result.get('success', False):
+            html_code = result.get('html_code', '')
+            table_cell_bboxes = result.get('cells', [])
+            logic_points = result.get('rows', [])  # Use rows as logic_points for structure info
+            elapse = result.get('processing_time', 0.0)
+            return html_code, table_cell_bboxes, logic_points, elapse
+        else:
+            # Match rapid_table.py format when no results
+            return None, None, None, None
+
+    def predict_single(self, image, **kwargs) -> Dict[str, Any]:
+        """
+        Predict table structure for a single image
+        
+        Args:
+            image: PIL Image or numpy array
+            **kwargs: Additional parameters
+            
+        Returns:
+            Dict with prediction results following Surya's result format
         """
         start_time = time.time()
         
+        # Convert and validate image
+        pil_image = self._convert_image(image)
+        if pil_image is None:
+            return self._create_error_result("Invalid image format", start_time)
+        
+        # Extract table
+        if self.table_converter is not None:
+            result = self._extract_with_marker(pil_image)
+        else:
+            result = self._extract_with_fallback(pil_image)
+        
+        # Add timing information
+        processing_time = time.time() - start_time
+        result['processing_time'] = processing_time
+        
+        logger.debug(f"Table extraction completed in {processing_time:.3f}s")
+        return result
+
+    def _convert_image(self, image) -> Optional[Image.Image]:
+        """Convert input to PIL Image with validation"""
         try:
-            # Convert image to proper format
-            if isinstance(image, Image.Image):
-                image_array = np.array(image)
+            if isinstance(image, np.ndarray):
+                return Image.fromarray(image)
+            elif isinstance(image, Image.Image):
+                return image
             else:
-                image_array = image
-                
-            # Process the table
-            html_code = self.process_table(image_array)
+                logger.error(f"Unsupported image type: {type(image)}")
+                return None
+        except Exception as e:
+            logger.error(f"Image conversion failed: {e}")
+            return None
+
+    def _extract_with_marker(self, image: Image.Image) -> Dict[str, Any]:
+        """Extract table using Marker's TableConverter"""
+        temp_path = self._get_temp_path()
+        
+        try:
+            # Save image for Marker processing
+            image.save(temp_path)
             
-            # Extract additional information (optional)
-            table_cell_bboxes = self.extract_cell_bboxes(image_array)
-            logic_points = self.extract_logic_points(image_array)
+            # Process with Marker
+            rendered = self.table_converter(temp_path)
+            text, _, _ = text_from_rendered(rendered)
             
-            elapse_time = time.time() - start_time
+            # Convert to desired format
+            html_code = self._convert_to_html(text)
             
-            logger.info(f"CustomTableModel processing completed in {elapse_time:.3f}s")
-            
-            return html_code, table_cell_bboxes, logic_points, elapse_time
+            return {
+                'html_code': html_code,
+                'markdown_text': text,
+                'cells': [],  # Marker doesn't provide detailed cell info in this interface
+                'rows': [],
+                'cols': [],
+                'extraction_method': 'marker',
+                'success': True
+            }
             
         except Exception as e:
-            logger.error(f"Error in CustomTableModel.predict: {e}")
-            return None, None, None, time.time() - start_time
-    
-    def process_table(self, image_array):
-        """
-        Main table processing logic - customize this for your needs
-        """
-        # Method 1: OCR-based approach
-        return self._ocr_based_table_extraction(image_array)
-        
-        # Method 2: Vision-based approach (uncomment to use)
-        # return self._vision_based_table_extraction(image_array)
-        
-        # Method 3: Hybrid approach (uncomment to use)
-        # return self._hybrid_table_extraction(image_array)
-    
-    def _ocr_based_table_extraction(self, image_array):
-        """
-        Extract table structure using OCR + heuristics
-        This is a simple example - you can make it more sophisticated
-        """
-        # Convert to BGR for OCR
-        if len(image_array.shape) == 3 and image_array.shape[2] == 3:
-            bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-        else:
-            bgr_image = image_array
+            logger.error(f"Marker extraction failed: {e}")
+            return self._extract_with_fallback(image)
+        finally:
+            self._cleanup_temp_file(temp_path)
+
+    def _extract_with_fallback(self, image: Image.Image) -> Dict[str, Any]:
+        """Fallback extraction using OCR"""
+        try:
+            logger.debug("Using fallback OCR extraction")
             
-        # Run OCR to get text and positions
-        ocr_result = self.ocr_engine.ocr(bgr_image)[0]
-        
-        if not ocr_result:
-            return "<table><tr><td>No text detected</td></tr></table>"
-        
-        # Extract text and bounding boxes
-        text_boxes = []
-        for item in ocr_result:
-            if len(item) == 2 and isinstance(item[1], tuple):
-                bbox = item[0]
-                text = item[1][0]
-                confidence = item[1][1]
-                
-                if confidence >= self.confidence_threshold:
-                    text_boxes.append({
-                        'text': text,
-                        'bbox': bbox,
-                        'confidence': confidence
-                    })
-        
-        # Simple table structure detection
-        html_table = self._build_html_from_text_boxes(text_boxes)
-        return html_table
-    
-    def _build_html_from_text_boxes(self, text_boxes):
-        """
-        Build HTML table from detected text boxes
-        This is a simplified approach - you can implement more sophisticated logic
-        """
-        if not text_boxes:
-            return "<table><tr><td>No content detected</td></tr></table>"
-        
-        # Sort text boxes by vertical position (top to bottom)
-        text_boxes.sort(key=lambda x: x['bbox'][0][1])
-        
-        # Group text boxes into rows based on Y-coordinate proximity
-        rows = self._group_into_rows(text_boxes)
-        
-        # Build HTML
-        html_parts = ["<table border='1'>"]
-        
-        for row_idx, row in enumerate(rows):
-            html_parts.append("<tr>")
+            # Convert to numpy array for OCR
+            image_array = np.array(image)
             
-            # Sort cells in row by X-coordinate (left to right)
-            row.sort(key=lambda x: x['bbox'][0][0])
+            # Use OCR engine
+            ocr_result = self.ocr_engine.ocr(image_array)
             
-            for cell in row:
-                # Clean text
-                clean_text = self._clean_text(cell['text'])
-                html_parts.append(f"<td>{clean_text}</td>")
+            # Process OCR results
+            texts = self._extract_texts_from_ocr(ocr_result)
+            html_code = self._create_table_from_texts(texts)
             
-            html_parts.append("</tr>")
+            return {
+                'html_code': html_code,
+                'markdown_text': '\n'.join(texts) if texts else 'No text detected',
+                'cells': self._create_cell_data(texts),
+                'rows': [],
+                'cols': [],
+                'extraction_method': 'ocr_fallback',
+                'success': len(texts) > 0
+            }
+            
+        except Exception as e:
+            logger.error(f"Fallback extraction failed: {e}")
+            return self._create_error_result("All extraction methods failed", time.time())
+
+    def _extract_texts_from_ocr(self, ocr_result) -> List[str]:
+        """Extract text strings from OCR result structure"""
+        texts = []
+        if ocr_result and len(ocr_result) > 0:
+            for line in ocr_result[0]:
+                if len(line) >= 2 and isinstance(line[1], tuple):
+                    text = line[1][0].strip()
+                    if text:  # Only add non-empty text
+                        texts.append(text)
+        return texts
+
+    def _create_table_from_texts(self, texts: List[str]) -> str:
+        """Create HTML table from text list"""
+        if not texts:
+            return '<table border="1"><tr><td>No text detected</td></tr></table>'
         
-        html_parts.append("</table>")
-        
-        return "".join(html_parts)
-    
-    def _group_into_rows(self, text_boxes, y_threshold=20):
-        """
-        Group text boxes into rows based on Y-coordinate proximity
-        """
-        if not text_boxes:
-            return []
-        
+        # Simple table creation - one text per row
         rows = []
-        current_row = [text_boxes[0]]
-        current_y = text_boxes[0]['bbox'][0][1]
+        for text in texts:
+            rows.append(f'<tr><td>{self._escape_html(text)}</td></tr>')
         
-        for box in text_boxes[1:]:
-            box_y = box['bbox'][0][1]
+        return f'<table border="1">\n{"".join(rows)}\n</table>'
+
+    def _create_cell_data(self, texts: List[str]) -> List[Dict]:
+        """Create cell data structure following Surya's format"""
+        cells = []
+        for i, text in enumerate(texts):
+            cells.append({
+                'text': text,
+                'bbox': [0, i*20, 100, (i+1)*20],  # Dummy bbox
+                'row_id': i,
+                'col_id': 0,
+                'colspan': 1,
+                'rowspan': 1,
+                'is_header': i == 0  # First row as header
+            })
+        return cells
+
+    def _convert_to_html(self, markdown_text: str) -> str:
+        """Convert markdown table to HTML format"""
+        try:
+            lines = [line.strip() for line in markdown_text.split('\n') if line.strip()]
+            html_lines = ['<table border="1">']
             
-            # If Y-coordinate is close to current row, add to current row
-            if abs(box_y - current_y) <= y_threshold:
-                current_row.append(box)
-            else:
-                # Start new row
-                rows.append(current_row)
-                current_row = [box]
-                current_y = box_y
-        
-        # Add the last row
-        if current_row:
-            rows.append(current_row)
-        
-        return rows
-    
-    def _clean_text(self, text):
-        """
-        Clean and normalize text content
-        """
-        if not text:
-            return ""
-        
-        # Remove extra whitespace
-        cleaned = " ".join(text.split())
-        
-        # Escape HTML special characters
-        cleaned = cleaned.replace("&", "&amp;")
-        cleaned = cleaned.replace("<", "&lt;")
-        cleaned = cleaned.replace(">", "&gt;")
-        cleaned = cleaned.replace('"', "&quot;")
-        cleaned = cleaned.replace("'", "&#x27;")
-        
-        return cleaned
-    
-    def _vision_based_table_extraction(self, image_array):
-        """
-        Extract table structure using computer vision techniques
-        Implement this if you have a vision-based table detection model
-        """
-        # Placeholder for vision-based approach
-        # You can implement:
-        # - Line detection for table borders
-        # - Cell segmentation
-        # - Structure analysis
-        
-        logger.info("Vision-based table extraction not implemented yet")
-        return "<table><tr><td>Vision-based extraction placeholder</td></tr></table>"
-    
-    def _hybrid_table_extraction(self, image_array):
-        """
-        Combine OCR and vision-based approaches
-        """
-        # Get OCR results
-        ocr_html = self._ocr_based_table_extraction(image_array)
-        
-        # Get vision results (if implemented)
-        # vision_html = self._vision_based_table_extraction(image_array)
-        
-        # Combine or choose best result
-        return ocr_html
-    
-    def extract_cell_bboxes(self, image_array):
-        """
-        Extract cell bounding boxes (optional)
-        """
-        # Implement if you need cell-level bounding boxes
-        return []
-    
-    def extract_logic_points(self, image_array):
-        """
-        Extract logical structure points (optional)
-        """
-        # Implement if you need logical structure information
-        return []
-    
-    def set_confidence_threshold(self, threshold):
-        """
-        Update confidence threshold
-        """
-        self.confidence_threshold = threshold
-        logger.info(f"Updated confidence threshold to {threshold}")
-    
-    def get_model_info(self):
-        """
-        Get model information
-        """
+            for i, line in enumerate(lines):
+                if '|' not in line:
+                    continue
+                    
+                # Process table row
+                cells = [cell.strip() for cell in line.split('|') if cell.strip()]
+                
+                # Skip separator lines
+                if all(set(cell) <= {'-', ' '} for cell in cells):
+                    continue
+                
+                # Determine cell type
+                tag = 'th' if i == 0 else 'td'
+                
+                # Build HTML row
+                cell_html = ''.join(f'<{tag}>{self._escape_html(cell)}</{tag}>' for cell in cells)
+                html_lines.append(f'<tr>{cell_html}</tr>')
+            
+            html_lines.append('</table>')
+            
+            # Return original if no table found
+            if len(html_lines) <= 2:
+                return f'<pre>{self._escape_html(markdown_text)}</pre>'
+            
+            return '\n'.join(html_lines)
+            
+        except Exception as e:
+            logger.warning(f"HTML conversion failed: {e}")
+            return f'<pre>{self._escape_html(markdown_text)}</pre>'
+
+    def _escape_html(self, text: str) -> str:
+        """Escape HTML special characters"""
+        return (text.replace('&', '&amp;')
+                   .replace('<', '&lt;')
+                   .replace('>', '&gt;')
+                   .replace('"', '&quot;')
+                   .replace("'", '&#x27;'))
+
+    def _get_temp_path(self) -> str:
+        """Get temporary file path"""
+        return f"temp_table_image_{os.getpid()}.png"
+
+    def _cleanup_temp_file(self, temp_path: str):
+        """Clean up temporary file"""
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except Exception as e:
+            logger.warning(f"Failed to cleanup temp file {temp_path}: {e}")
+
+    def _create_error_result(self, error_message: str, start_time: float) -> Dict[str, Any]:
+        """Create standardized error result"""
         return {
-            "model_name": "CustomTableModel",
-            "version": "1.0.0",
-            "model_path": self.model_path,
-            "confidence_threshold": self.confidence_threshold
+            'html_code': f'<table border="1"><tr><td>Error: {error_message}</td></tr></table>',
+            'markdown_text': f'Error: {error_message}',
+            'cells': [],
+            'rows': [],
+            'cols': [],
+            'processing_time': time.time() - start_time,
+            'extraction_method': 'error',
+            'success': False,
+            'error': error_message
+        }
+
+    def get_model_info(self) -> Dict[str, Any]:
+        """Get comprehensive model information"""
+        return {
+            "name": self.model_name,
+            "backend": self.backend,
+            "version": "1.1.0",
+            "marker_available": MARKER_AVAILABLE,
+            "confidence_threshold": self.confidence_threshold,
+            "use_llm": self.use_llm,
+            "output_format": self.output_format,
+            "capabilities": [
+                "Multi-language table extraction",
+                "Complex table structure detection",
+                "Markdown and HTML output",
+                "OCR fallback support",
+                "High accuracy table recognition"
+            ],
+            "supported_formats": ["PNG", "JPG", "JPEG", "TIFF", "BMP"],
+            "max_image_size": "2048x2048 recommended"
         } 

@@ -160,10 +160,31 @@ Add to your `magic-pdf.json`:
         "model": "your_custom_table",
         "enable": true,
         "max_time": 400,
-        "model_path": "/path/to/your/model/weights"
     }
 }
 ```
+
+### Step 4: Update Model weights Configuration
+add to "magic_pdf/resources/model_config/model_configs.yaml"
+```YAML
+  custom_table: TabRec/CustomTable
+```
+
+### Step 5: Update model usage
+`magic_pdf/model/pdf_extract_kit.py`
+```PYTHON
+                elif self.table_model_name == MODEL_NAME.RAPID_TABLE:
+                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                        new_image
+                    )
+                elif self.table_model_name == MODEL_NAME.CUSTOM_TABLE:
+                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                        new_image
+                    )
+```
+
+
+
 
 ## 🔍 Method 3: Modify Existing RapidTable
 

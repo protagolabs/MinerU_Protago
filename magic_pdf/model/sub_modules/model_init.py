@@ -68,6 +68,17 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
             lang=lang
         )
         table_model = CustomTableModel(ocr_engine, model_path)
+    elif table_model_type == MODEL_NAME.MARKER_TABLE:
+        from magic_pdf.model.sub_modules.table.marker_table.marker_table_model import MarkerTableModel
+        atom_model_manager = AtomModelSingleton()
+        ocr_engine = atom_model_manager.get_atom_model(
+            atom_model_name='ocr',
+            ocr_show_log=False,
+            det_db_box_thresh=0.5,
+            det_db_unclip_ratio=1.6,
+            lang=lang
+        )
+        table_model = MarkerTableModel(ocr_engine, model_path)
     else:
         logger.error('table model type not allow')
         exit(1)

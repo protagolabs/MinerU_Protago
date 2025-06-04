@@ -55,6 +55,9 @@ class MODEL_NAME:
     # Custom table model
     CUSTOM_TABLE = 'custom_table'
 
+    # Custom table model
+    MARKER_TABLE = 'marker_table'
+
     YOLO_V11_LangDetect = 'yolo_v11n_langdetect'
 
 

@@ -6,4 +6,5 @@ weights:
   struct_eqtable: TabRec/StructEqTable
   tablemaster: TabRec/TableMaster
   rapid_table: TabRec/RapidTable
-  custom_table: ""
+  custom_table: TabRec/CustomTable
+  marker_table: datalab/models/table_recognition/2025_02_18
