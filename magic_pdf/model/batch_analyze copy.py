@@ -161,21 +161,16 @@ class BatchAnalyze:
             for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
                 _lang = table_res_dict['lang']
                 atom_model_manager = AtomModelSingleton()
-                if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                    from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-                    table_model = MarkerTableWrapper()
-                    html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                else:
-                    table_model = atom_model_manager.get_atom_model(
-                        atom_model_name='table',
-                        table_model_name='rapid_table',
-                        table_model_path='',
-                        table_max_time=400,
-                        device='cpu',
-                        lang=_lang,
-                        table_sub_model_name='slanet_plus'
-                    )
-                    html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                table_model = atom_model_manager.get_atom_model(
+                    atom_model_name='table',
+                    table_model_name='rapid_table',
+                    table_model_path='',
+                    table_max_time=400,
+                    device='cpu',
+                    lang=_lang,
+                    table_sub_model_name='slanet_plus'
+                )
+                html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
                 # 判断是否返回正常
                 if html_code:
                     expected_ending = html_code.strip().endswith(
@@ -183,12 +178,10 @@ class BatchAnalyze:
                     ) or html_code.strip().endswith('</table>')
                     if expected_ending:
                         table_res_dict['table_res']['html'] = html_code
-
                     else:
-                        # logger.warning(
-                        #     'table recognition processing fails, not found expected HTML table end'
-                        # )
-                        table_res_dict['table_res']['markdown'] = html_code
+                        logger.warning(
+                            'table recognition processing fails, not found expected HTML table end'
+                        )
                 else:
                     logger.warning(
                         'table recognition processing fails, not get html return'

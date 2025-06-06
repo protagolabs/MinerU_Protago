@@ -9,6 +9,8 @@ from magic_pdf.model.sub_modules.mfd.yolov8.YOLOv8 import YOLOv8MFDModel
 from magic_pdf.model.sub_modules.mfr.unimernet.Unimernet import UnimernetModel
 from magic_pdf.model.sub_modules.ocr.paddleocr2pytorch.pytorch_paddle import PytorchPaddleOCR
 from magic_pdf.model.sub_modules.table.rapidtable.rapid_table import RapidTableModel
+
+
 # try:
 #     from magic_pdf_ascend_plugin.libs.license_verifier import (
 #         LicenseExpiredError, LicenseFormatError, LicenseSignatureError,
@@ -69,16 +71,25 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
         )
         table_model = CustomTableModel(ocr_engine, model_path)
     elif table_model_type == MODEL_NAME.MARKER_TABLE:
-        from magic_pdf.model.sub_modules.table.marker_table.marker_table_model import MarkerTableModel
-        atom_model_manager = AtomModelSingleton()
-        ocr_engine = atom_model_manager.get_atom_model(
-            atom_model_name='ocr',
-            ocr_show_log=False,
-            det_db_box_thresh=0.5,
-            det_db_unclip_ratio=1.6,
-            lang=lang
-        )
-        table_model = MarkerTableModel(ocr_engine, model_path)
+        # from magic_pdf.model.sub_modules.table.marker_table.marker_table_model import MarkerTableModel
+        # atom_model_manager = AtomModelSingleton()
+        # ocr_engine = atom_model_manager.get_atom_model(
+        #     atom_model_name='ocr',
+        #     ocr_show_log=False,
+        #     det_db_box_thresh=0.5,
+        #     det_db_unclip_ratio=1.6,
+        #     lang=lang
+        # )
+        # table_model = MarkerTableModel(ocr_engine, model_path)
+        from marker.converters.table import TableConverter
+        from marker.models import create_model_dict
+        # from marker.config.parser import ConfigParser
+        config = {
+                "output_format": "html",
+                "force_layout_block": "Table"
+            }
+        # config_parser = ConfigParser(config)
+        table_model = TableConverter(config=config, artifact_dict=create_model_dict())
     else:
         logger.error('table model type not allow')
         exit(1)

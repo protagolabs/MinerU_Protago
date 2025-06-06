@@ -6,6 +6,7 @@ import cv2
 import torch
 import yaml
 from loguru import logger
+from tqdm import tqdm
 
 os.environ['NO_ALBUMENTATIONS_UPDATE'] = '1'  # 禁止albumentations检查更新
 
@@ -59,6 +60,7 @@ class CustomPEKModel:
         self.apply_table = self.table_config.get('enable', False)
         self.table_max_time = self.table_config.get('max_time', TABLE_MAX_TIME_VALUE)
         self.table_model_name = self.table_config.get('model', MODEL_NAME.RAPID_TABLE)
+        logger.info(f'table_model_name: {self.table_model_name}')
         self.table_sub_model_name = self.table_config.get('sub_model', None)
 
         # ocr config
@@ -150,16 +152,43 @@ class CustomPEKModel:
         )
         # init table model
         if self.apply_table:
-            table_model_dir = self.configs['weights'][self.table_model_name]
-            self.table_model = atom_model_manager.get_atom_model(
-                atom_model_name=AtomicModel.Table,
-                table_model_name=self.table_model_name,
-                table_model_path=str(os.path.join(models_dir, table_model_dir)),
-                table_max_time=self.table_max_time,
-                device=self.device,
-                ocr_engine=self.ocr_model,
-                table_sub_model_name=self.table_sub_model_name
-            )
+                
+                # table_model_dir = self.configs['weights'][self.table_model_name]
+                # self.table_model = atom_model_manager.get_atom_model(
+                #     atom_model_name=AtomicModel.Table,
+                #     table_model_name=self.table_model_name,
+                #     table_model_path=str(os.path.join(models_dir, table_model_dir)),
+                #     table_max_time=self.table_max_time,
+                #     device=self.device,
+                #     ocr_engine=self.ocr_model,
+                #     table_sub_model_name=self.table_sub_model_name
+                # )            
+
+            logger.info(f'table_model_name: {MODEL_NAME.MARKER_TABLE}')
+            if self.table_model_name == MODEL_NAME.MARKER_TABLE:
+                # from marker.converters.table import TableConverter
+                # from marker.models import create_model_dict
+                # # from marker.config.parser import ConfigParser
+                # config = {
+                #         "output_format": "markdown",
+                #         "force_layout_block": "Table"
+                #     }
+                # # config_parser = ConfigParser(config)
+                # self.table_model = TableConverter(config=config, artifact_dict=create_model_dict())
+                from magic_pdf.model.sub_modules.model_init import table_model_init
+                self.table_model = table_model_init(self.table_model_name, models_dir, self.table_max_time, self.device, self.lang, self.table_sub_model_name)
+                logger.info(f'table_model config: {self.table_model.config}')
+            else:
+                table_model_dir = self.configs['weights'][self.table_model_name]
+                self.table_model = atom_model_manager.get_atom_model(
+                    atom_model_name=AtomicModel.Table,
+                    table_model_name=self.table_model_name,
+                    table_model_path=str(os.path.join(models_dir, table_model_dir)),
+                    table_max_time=self.table_max_time,
+                    device=self.device,
+                    ocr_engine=self.ocr_model,
+                    table_sub_model_name=self.table_sub_model_name
+                )
 
         logger.info('DocAnalysis init done!')
 
@@ -226,7 +255,7 @@ class CustomPEKModel:
         # 表格识别 table recognition
         if self.apply_table:
             table_start = time.time()
-            for res in table_res_list:
+            for res in tqdm(table_res_list):
                 new_image, _ = crop_img(res, image)
                 single_table_start_time = time.time()
                 html_code = None
@@ -237,18 +266,22 @@ class CustomPEKModel:
                             html_code = table_result[0]
                 elif self.table_model_name == MODEL_NAME.TABLE_MASTER:
                     html_code = self.table_model.img2html(new_image)
-                elif self.table_model_name == MODEL_NAME.RAPID_TABLE:
-                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                        new_image
-                    )
-                elif self.table_model_name == MODEL_NAME.CUSTOM_TABLE:
-                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                        new_image
-                    )
+                # elif self.table_model_name == MODEL_NAME.RAPID_TABLE:
+                #     html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                #         new_image
+                #     )
+                # elif self.table_model_name == MODEL_NAME.CUSTOM_TABLE:
+                #     html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                #         new_image
+                #     )
                 elif self.table_model_name == MODEL_NAME.MARKER_TABLE:
-                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                        new_image
-                    )
+                    # html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                    #     new_image
+                    # )
+                    # logger.info(f'using table_model: {self.table_model_name}')
+                    html_code = self.table_model(new_image)
+                    
+                    # logger.info(f'html_code: {html_code}')
                 run_time = time.time() - single_table_start_time
                 if run_time > self.table_max_time:
                     logger.warning(
