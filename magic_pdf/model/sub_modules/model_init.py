@@ -85,7 +85,7 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
         from marker.models import create_model_dict
         # from marker.config.parser import ConfigParser
         config = {
-                "output_format": "html",
+                "output_format": "json",
                 "force_layout_block": "Table"
             }
         # config_parser = ConfigParser(config)

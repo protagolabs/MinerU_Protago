@@ -66,14 +66,15 @@ class MarkerTableWrapper:
             # Process with Marker's TableConverter
             rendered = self.converter(temp_path)
             
+
             # Extract text and convert to HTML
-            text, _, _ = text_from_rendered(rendered)
+            # text, _, _ = text_from_rendered(rendered)
             # if self.config['output_format'] == 'html':
             #     html_code = self._convert_to_html(text)
             # else:
             #     html_code = text
-            html_code = text
-            
+            # html_code = text
+            html_code = self.extract_table_html_from_json_output(rendered)[0]
             # Calculate elapsed time
             elapse = time.time() - start_time
             
@@ -88,39 +89,56 @@ class MarkerTableWrapper:
             if os.path.exists(temp_path):
                 os.remove(temp_path)
                 
-    def _convert_to_html(self, text):
-        """Convert markdown table text to HTML"""
-        if not text:
-            return None
-            
-        lines = text.strip().split('\n')
-        if len(lines) < 2:  # Need at least header and separator
-            return None
-            
-        html = ['<table border="1" style="border-collapse: collapse;">']
+    def extract_table_html_from_json_output(self,json_output):
+        """
+        Extract HTML content from blocks with block_type "Table" from a JSONOutput object
         
-        # Process each line
-        is_header = True
-        for line in lines:
-            line = line.strip()
-            if not line or line.startswith('|---'):  # Skip separator lines
-                is_header = False
-                continue
+        Args:
+            json_output: JSONOutput object containing the document structure
+            
+        Returns:
+            list: List of HTML contents from Table blocks
+        """
+        table_htmls = []
+        
+        def traverse_blocks(block):
+            """Recursively traverse blocks to find Table blocks"""
+            # Skip if None
+            if block is None:
+                return
                 
-            # Split and clean cells
-            cells = [cell.strip() for cell in line.split('|')]
-            cells = [cell for cell in cells if cell]  # Remove empty cells
-            
-            if not cells:
-                continue
+            # Handle both Pydantic models and dicts
+            if hasattr(block, '__dict__'):
+                # For Pydantic models, access attributes directly
+                block_type = getattr(block, 'block_type', None)
+                html_content = getattr(block, 'html', None)
+                children = getattr(block, 'children', [])
                 
-            # Create row
-            row = []
-            tag = 'th' if is_header else 'td'
-            for cell in cells:
-                row.append(f'<{tag} style="border: 1px solid black; padding: 8px;">{cell}</{tag}>')
-            
-            html.append(f"<tr>{''.join(row)}</tr>")
-            
-        html.append('</table>')
-        return '\n'.join(html) 
+                # Check if current block is a Table
+                if block_type == 'Table' and html_content:
+                    table_htmls.append(html_content)
+                    
+                # Traverse children if they exist
+                if children:
+                    for child in children:
+                        traverse_blocks(child)
+            elif isinstance(block, dict):
+                # For regular dictionaries
+                block_type = block.get('block_type')
+                html_content = block.get('html')
+                children = block.get('children', [])
+                
+                if block_type == 'Table' and html_content:
+                    table_htmls.append(html_content)
+                    
+                if children:
+                    for child in children:
+                        traverse_blocks(child)
+            elif isinstance(block, list):
+                # If block is a list, traverse each item
+                for item in block:
+                    traverse_blocks(item)
+        
+        # Start traversing from the root
+        traverse_blocks(json_output)
+        return table_htmls

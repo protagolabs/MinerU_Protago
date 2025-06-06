@@ -185,10 +185,10 @@ class BatchAnalyze:
                         table_res_dict['table_res']['html'] = html_code
 
                     else:
-                        # logger.warning(
-                        #     'table recognition processing fails, not found expected HTML table end'
-                        # )
-                        table_res_dict['table_res']['markdown'] = html_code
+                        logger.warning(
+                            'table recognition processing fails, not found expected HTML table end'
+                        )
+                        # table_res_dict['table_res']['markdown'] = html_code
                 else:
                     logger.warning(
                         'table recognition processing fails, not get html return'
