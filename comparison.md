@@ -5,8 +5,13 @@ Azure:
 Marker:
 <html><body><table><tbody><tr><th></th><th></th><th colspan=2>全体</th></tr><tr><td></td><th></th><td></td><td>女性</td><td>中途採用者</td></tr><tr><td colspan=2></td><td>2,623人</td><td>1,575人(60.0%)</td><td>2,408人(91.8%)</td></tr><tr><td>社員</td><th>管理職</th><td>362人</td><td>67人(18.5%)</td><td>300人(82.8%)</td></tr><tr><td colspan=2>取締役</td><td>9人</td><td>2人(22.2%)</td><td>9人(100.0%)</td></tr></tbody></table></body></html>
 
+
 MinerU:
 <html><body><table><tr><td colspan=\"2\"></td><td colspan=\"3\">全体</td></tr><tr><td colspan=\"2\"></td><td></td><td>女性</td><td>中途用者</td></tr><tr><td rowspan=\"2\">社員</td><td></td><td>2,623人</td><td>1,575人（60.0%）</td><td>2,408人（91.8%）</td></tr><tr><td>管理職</td><td>362人</td><td>67人（18.5%）</td><td>300人（82.8%）</td></tr><tr><td colspan=\"2\">取役</td><td>9人</td><td>2人（22.2%）</td><td>9人（100.0%）</td></tr></table></body></html>
+
+MinerU + Marker:
+
+<table><tbody><tr><th rowspan=2 colspan=2></th><th colspan=3>全体</th></tr><tr><td></td><td>女性</td><td>中途採用者</td></tr><tr><td>社員</td><td></td><td>2,623人</td><td>1,575<math>\\\\lambda</math> (60.0%)</td><td><math>2,408\\\\land</math> (91.8%)</td></tr><tr><td></td><td>管理職</td><td><math>362\\\\lambda</math></td><td><math>67\\\\lambda</math> (18.5%)</td><td>300人 (82.8%)</td></tr><tr><td>取締役</td><td></td><td><math>9\\\\lambda</math></td><td><math>2\\\\lambda</math> (22.2%)</td><td><math>(100.0\\\\%)</math><br>9А</td></tr></tbody></table>
 
 MinerU + OlmOCR:
 
