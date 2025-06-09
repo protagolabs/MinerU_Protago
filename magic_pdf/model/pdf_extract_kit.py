@@ -152,43 +152,16 @@ class CustomPEKModel:
         )
         # init table model
         if self.apply_table:
-                
-                # table_model_dir = self.configs['weights'][self.table_model_name]
-                # self.table_model = atom_model_manager.get_atom_model(
-                #     atom_model_name=AtomicModel.Table,
-                #     table_model_name=self.table_model_name,
-                #     table_model_path=str(os.path.join(models_dir, table_model_dir)),
-                #     table_max_time=self.table_max_time,
-                #     device=self.device,
-                #     ocr_engine=self.ocr_model,
-                #     table_sub_model_name=self.table_sub_model_name
-                # )            
-
-            logger.info(f'table_model_name: {MODEL_NAME.MARKER_TABLE}')
-            if self.table_model_name == MODEL_NAME.MARKER_TABLE:
-                # from marker.converters.table import TableConverter
-                # from marker.models import create_model_dict
-                # # from marker.config.parser import ConfigParser
-                # config = {
-                #         "output_format": "markdown",
-                #         "force_layout_block": "Table"
-                #     }
-                # # config_parser = ConfigParser(config)
-                # self.table_model = TableConverter(config=config, artifact_dict=create_model_dict())
-                from magic_pdf.model.sub_modules.model_init import table_model_init
-                self.table_model = table_model_init(self.table_model_name, models_dir, self.table_max_time, self.device, self.lang, self.table_sub_model_name)
-                logger.info(f'table_model config: {self.table_model.config}')
-            else:
-                table_model_dir = self.configs['weights'][self.table_model_name]
-                self.table_model = atom_model_manager.get_atom_model(
-                    atom_model_name=AtomicModel.Table,
-                    table_model_name=self.table_model_name,
-                    table_model_path=str(os.path.join(models_dir, table_model_dir)),
-                    table_max_time=self.table_max_time,
-                    device=self.device,
-                    ocr_engine=self.ocr_model,
-                    table_sub_model_name=self.table_sub_model_name
-                )
+            table_model_dir = self.configs['weights'][self.table_model_name]
+            self.table_model = atom_model_manager.get_atom_model(
+                atom_model_name=AtomicModel.Table,
+                table_model_name=self.table_model_name,
+                table_model_path=str(os.path.join(models_dir, table_model_dir)),
+                table_max_time=self.table_max_time,
+                device=self.device,
+                ocr_engine=self.ocr_model,
+                table_sub_model_name=self.table_sub_model_name
+            )            
 
         logger.info('DocAnalysis init done!')
 

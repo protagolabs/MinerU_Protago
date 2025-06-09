@@ -59,37 +59,13 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
             lang=lang
         )
         table_model = RapidTableModel(ocr_engine, table_sub_model_name)
-    elif table_model_type == MODEL_NAME.CUSTOM_TABLE:
-        from magic_pdf.model.sub_modules.table.custom_table.custom_table_model import CustomTableModel
-        atom_model_manager = AtomModelSingleton()
-        ocr_engine = atom_model_manager.get_atom_model(
-            atom_model_name='ocr',
-            ocr_show_log=False,
-            det_db_box_thresh=0.5,
-            det_db_unclip_ratio=1.6,
-            lang=lang
-        )
-        table_model = CustomTableModel(ocr_engine, model_path)
     elif table_model_type == MODEL_NAME.MARKER_TABLE:
-        # from magic_pdf.model.sub_modules.table.marker_table.marker_table_model import MarkerTableModel
-        # atom_model_manager = AtomModelSingleton()
-        # ocr_engine = atom_model_manager.get_atom_model(
-        #     atom_model_name='ocr',
-        #     ocr_show_log=False,
-        #     det_db_box_thresh=0.5,
-        #     det_db_unclip_ratio=1.6,
-        #     lang=lang
-        # )
-        # table_model = MarkerTableModel(ocr_engine, model_path)
-        from marker.converters.table import TableConverter
-        from marker.models import create_model_dict
-        # from marker.config.parser import ConfigParser
+        from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
         config = {
                 "output_format": "json",
                 "force_layout_block": "Table"
             }
-        # config_parser = ConfigParser(config)
-        table_model = TableConverter(config=config, artifact_dict=create_model_dict())
+        table_model = MarkerTableWrapper(config=config)
     else:
         logger.error('table model type not allow')
         exit(1)

@@ -8,6 +8,7 @@ conda activate mineru1310
 pip install -e ".[full]"
 magic-pdf --version # check the version, should be 1.3.10
 pip install -U "marker-pdf[full]==1.6.2" # install marker-pdf for table rec
+pip install -U "transformers==4.45.2"
 ```
 
 #### 2. Download model weight files
@@ -20,7 +21,7 @@ python download_models_hf.py
 
 #### 3. Modify the Configuration File for Additional Configuration
 
-After completing the [2. Download model weight files](#2-download-model-weight-files) step, the script will automatically generate a `magic-pdf.json` file in the user directory and configure the default model path.
+After completing previous step, the script will automatically generate a `magic-pdf.json` file in the user directory and configure the default model path.
 You can find the `magic-pdf.json` file in your 【user directory】.
 
 > [!TIP]
@@ -43,12 +44,17 @@ You can modify certain configurations in this file to enable or disable features
         "mfr_model": "unimernet_small",
         "enable": true  // The formula recognition feature is enabled by default. If you need to disable it, please change the value here to "false".
     },
+    // "table-config": {
+    //     "model": "rapid_table", 
+    //     "sub_model": "slanet_plus",
+    //     "enable": true, // The table recognition feature is enabled by default. If you need to disable it, please change the value here to "false".
+    //     "max_time": 400
+    // }
     "table-config": {
-        "model": "rapid_table", 
-        "sub_model": "slanet_plus",
+        "model": "marker_table", 
         "enable": true, // The table recognition feature is enabled by default. If you need to disable it, please change the value here to "false".
         "max_time": 400
-    }
+    }    
 }
 ```
 
@@ -116,104 +122,3 @@ These projects may offer more features and a better user experience.
 For specific deployment methods, please refer to the [Derived Project README](projects/README.md)
 
 
-### Development Guide
-
-TODO
-
-# TODO
-
-- [x] Reading order based on the model  
-- [x] Recognition of `index` and `list` in the main text  
-- [x] Table recognition
-- [x] Heading Classification
-- [ ] Code block recognition in the main text
-- [ ] [Chemical formula recognition](docs/chemical_knowledge_introduction/introduction.pdf)
-- [ ] Geometric shape recognition
-
-# Known Issues
-
-- Reading order is determined by the model based on the spatial distribution of readable content, and may be out of order in some areas under extremely complex layouts.
-- Vertical text is not supported.
-- Tables of contents and lists are recognized through rules, and some uncommon list formats may not be recognized.
-- Code blocks are not yet supported in the layout model.
-- Comic books, art albums, primary school textbooks, and exercises cannot be parsed well.
-- Table recognition may result in row/column recognition errors in complex tables.
-- OCR recognition may produce inaccurate characters in PDFs of lesser-known languages (e.g., diacritical marks in Latin script, easily confused characters in Arabic script).
-- Some formulas may not render correctly in Markdown.
-
-# FAQ
-
-[FAQ in Chinese](docs/FAQ_zh_cn.md)
-
-[FAQ in English](docs/FAQ_en_us.md)
-
-# All Thanks To Our Contributors
-
-<a href="https://github.com/opendatalab/MinerU/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=opendatalab/MinerU" />
-</a>
-
-# License Information
-
-[LICENSE.md](LICENSE.md)
-
-This project currently uses PyMuPDF to achieve advanced functionality. However, since it adheres to the AGPL license, it may impose restrictions on certain usage scenarios. In future iterations, we plan to explore and replace it with a more permissive PDF processing library to enhance user-friendliness and flexibility.
-
-# Acknowledgments
-
-- [PDF-Extract-Kit](https://github.com/opendatalab/PDF-Extract-Kit)
-- [DocLayout-YOLO](https://github.com/opendatalab/DocLayout-YOLO)
-- [StructEqTable](https://github.com/UniModal4Reasoning/StructEqTable-Deploy)
-- [RapidTable](https://github.com/RapidAI/RapidTable)
-- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
-- [RapidOCR](https://github.com/RapidAI/RapidOCR)
-- [PaddleOCR2Pytorch](https://github.com/frotms/PaddleOCR2Pytorch)
-- [PyMuPDF](https://github.com/pymupdf/PyMuPDF)
-- [layoutreader](https://github.com/ppaanngggg/layoutreader)
-- [fast-langdetect](https://github.com/LlmKira/fast-langdetect)
-- [pdfminer.six](https://github.com/pdfminer/pdfminer.six)
-
-# Citation
-
-```bibtex
-@misc{wang2024mineruopensourcesolutionprecise,
-      title={MinerU: An Open-Source Solution for Precise Document Content Extraction}, 
-      author={Bin Wang and Chao Xu and Xiaomeng Zhao and Linke Ouyang and Fan Wu and Zhiyuan Zhao and Rui Xu and Kaiwen Liu and Yuan Qu and Fukai Shang and Bo Zhang and Liqun Wei and Zhihao Sui and Wei Li and Botian Shi and Yu Qiao and Dahua Lin and Conghui He},
-      year={2024},
-      eprint={2409.18839},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2409.18839}, 
-}
-
-@article{he2024opendatalab,
-  title={Opendatalab: Empowering general artificial intelligence with open datasets},
-  author={He, Conghui and Li, Wei and Jin, Zhenjiang and Xu, Chao and Wang, Bin and Lin, Dahua},
-  journal={arXiv preprint arXiv:2407.13773},
-  year={2024}
-}
-```
-
-# Star History
-
-<a>
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=opendatalab/MinerU&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=opendatalab/MinerU&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=opendatalab/MinerU&type=Date" />
- </picture>
-</a>
-
-# Magic-doc
-
-[Magic-Doc](https://github.com/InternLM/magic-doc) Fast speed ppt/pptx/doc/docx/pdf extraction tool
-
-# Magic-html
-
-[Magic-HTML](https://github.com/opendatalab/magic-html) Mixed web page extraction tool
-
-# Links
-
-- [LabelU (A Lightweight Multi-modal Data Annotation Tool)](https://github.com/opendatalab/labelU)
-- [LabelLLM (An Open-source LLM Dialogue Annotation Platform)](https://github.com/opendatalab/LabelLLM)
-- [PDF-Extract-Kit (A Comprehensive Toolkit for High-Quality PDF Content Extraction)](https://github.com/opendatalab/PDF-Extract-Kit)
