@@ -4,18 +4,18 @@
 
 ```bash
 conda create -n minerumarker 'python=3.10' -y
-conda activate mineru1310
+conda activate minerumarker
 pip install -e ".[full]"
 magic-pdf --version # check the version, should be 1.3.10
 pip install -U "marker-pdf[full]==1.6.2" # install marker-pdf for table rec
-pip install -U "transformers==4.45.2"
+pip install -U "transformers==4.49.0"
 ```
 
 #### 2. Download model weight files
 
 ```bash
 pip install huggingface_hub
-wget https://github.com/protagolabs/MinerU_Protago/blob/dev_tables/download_models_hf.py -O download_models_hf.py
+wget https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev_tables/download_models_hf.py -O download_models_hf.py
 python download_models_hf.py
 ```
 
@@ -51,10 +51,10 @@ You can modify certain configurations in this file to enable or disable features
     //     "max_time": 400
     // }
     "table-config": {
-        "model": "marker_table", 
-        "enable": true, // The table recognition feature is enabled by default. If you need to disable it, please change the value here to "false".
+        "model": "marker_table",
+        "enable": true,
         "max_time": 400
-    }    
+    },  
 }
 ```
 
