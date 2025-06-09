@@ -132,33 +132,8 @@ Alternatively, you can use gdown to download the datasets (requires Google Drive
 ```bash
 # Install gdown if you haven't already
 pip install gdown
-
-
-gdown "https://drive.google.com/uc?id=1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct"
-
-# Unzip the datasets
-unzip export_pdf.zip -d inputs/
-mv inputs/export_pdf inputs/orbit_v1
-rm -r inputs/__MACOSX # clean up
-rm export_pdf.zip
-
-gdown "https://drive.google.com/uc?id=11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ"
-mkdir -p inputs/raw_orbit_v2
-unzip pdf4.zip -d inputs/raw_orbit_v2
-cd inputs
-bash preprocess_raw_orbit_v2.sh
-cd ..
-rm -r inputs/raw_orbit_v2
-rm pdf4.zip
-
-gdown "https://drive.google.com/uc?id=1Uyb-ImPfH6UirS33mSHGkAyC836pwrgf"
-unzip raw_pdf5000.zip -d inputs/
-mv inputs/raw_pdf5000 inputs/raw_orbit_v3
-cd inputs
-bash preprocess_raw_orbit_v3.sh
-cd ..
-rm -r inputs/raw_orbit_v3
-rm raw_pdf5000.zip
+cd inputs/
+bash ./download_datasets.sh
 
 ```
 
