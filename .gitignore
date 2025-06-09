@@ -52,4 +52,4 @@ _build/
 
 output/
 
-models
+local_models/
