@@ -181,7 +181,7 @@ magic_pdf/model/sub_modules/table/table_utils.py
 magic_pdf/model/sub_modules/table/custom_table/__init__.py
 magic_pdf/model/sub_modules/table/custom_table/custom_table_model.py
 magic_pdf/model/sub_modules/table/marker_table/__init__.py
-magic_pdf/model/sub_modules/table/marker_table/marker_table_model.py
+magic_pdf/model/sub_modules/table/marker_table/marker_table_wrapper.py
 magic_pdf/model/sub_modules/table/rapidtable/__init__.py
 magic_pdf/model/sub_modules/table/rapidtable/rapid_table.py
 magic_pdf/operators/__init__.py
