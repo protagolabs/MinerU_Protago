@@ -182,6 +182,7 @@ class BatchAnalyze:
             # for table_res_list_dict in table_res_list_all_page:
             for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
                 _lang = table_res_dict['lang']
+                # print(_lang)
                 # atom_model_manager = AtomModelSingleton()
                 # if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
                 #     from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper

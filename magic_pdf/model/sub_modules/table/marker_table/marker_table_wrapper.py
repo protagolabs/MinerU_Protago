@@ -31,6 +31,7 @@ class MarkerTableWrapper:
             }
         config_parser = ConfigParser(config)    
         self.config = config
+        
         try:
             self.converter = TableConverter(config=config_parser.generate_config_dict(), artifact_dict=create_model_dict(),renderer=config_parser.get_renderer())
             # logger.debug("MarkerTableWrapper initialized")
@@ -55,6 +56,20 @@ class MarkerTableWrapper:
         if isinstance(image, np.ndarray):
             image = Image.fromarray(image)
         
+        # image = image.resize((2048, 2048))
+        w, h = image.size
+
+
+        if w < 2048 or h < 2048:
+            # Calculate scale factor to make the larger dimension 2048
+            scale_factor = 2048 / max(w, h)
+            new_w = int(w * scale_factor)
+            new_h = int(h * scale_factor)
+            image = image.resize((new_w, new_h))
+        
+
+
+
         # Get current working directory for temp file
         current_dir = os.getcwd()
         temp_path = os.path.join(current_dir, f"temp_marker_table_{os.getpid()}_{int(time.time())}.png")
@@ -66,7 +81,7 @@ class MarkerTableWrapper:
             # Process with Marker's TableConverter
             rendered = self.converter(temp_path)
             
-
+            # print(rendered)
             # Extract text and convert to HTML
             # text, _, _ = text_from_rendered(rendered)
             # if self.config['output_format'] == 'html':
