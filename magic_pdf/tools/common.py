@@ -314,7 +314,7 @@ def batch_do_parse(
             dss.append(v)
 
     infer_results = batch_doc_analyze(dss, parse_method, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable)
-    for idx, infer_result in enumerate(infer_results):
+    for idx, infer_result in enumerate(infer98_results):
         _do_parse(
             output_dir = output_dir,
             pdf_file_name = pdf_file_names[idx],
