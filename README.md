@@ -26,21 +26,6 @@ This repository contains the code for the MinerU Protago project, which is adopt
 
 * More cherry-pick samples can be found in [here](./comparison.md)
 
-
-## Devlog (Deprecated)
-
-| Sample Size | Version | TED     | TED structure |
-|-------------|---------|---------|----------------|
-| ~176 (v1)        | 1.2.2   | 48.36  | 92.66         |
-| ~176 (v1)        | 1.3.3   | **53.77** | **92.99**     |
-| ~176 (v1)        | 1.3.10   | 53.48 | 92.84     |
-| ~176 (v1)        | 1.3.3 + vlm (md2html)   | **61.24** | **94.71**     |
-| ~1063 (v2)       | 1.2.2   | 45.77  | 92.17         |
-| ~1063 (v2)     | 1.3.3   | **52.97** | **92.39**     |
-| ~1063 (v2)     | 1.3.10   | 52.16 | 92.20     |
-
-
-
 ## Installation
 
 please check the [MinerU](https://github.com/opendatalab/MinerU) for the detailed installation. We use the this [tutorial](https://github.com/opendatalab/MinerU/blob/master/docs/README_Ubuntu_CUDA_Acceleration_en_US.md) to install the environment.
