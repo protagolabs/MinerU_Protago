@@ -49,10 +49,14 @@ debug_utils/
 # sphinx docs
 _build/
 
+datasets/
 
 outputs/
 
+output/
+
 models/
+local_models/
 
 inputs/orbit_v1/
 inputs/orbit_v2/
