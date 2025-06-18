@@ -16,4 +16,4 @@
 
 
 
-magic-pdf -p ./demo/pdfs/demo_xy.pdf  -o output -m auto
+magic-pdf -p ./demo/pdfs/demo5.pdf  -o output -m auto
