@@ -247,7 +247,9 @@ def may_batch_image_analyze(
 
     from magic_pdf.model.batch_analyze import BatchAnalyze
 
-    model_manager = ModelSingleton()
+    model_manager = ModelSingleton() # here we initialize the model first time
+
+
 
     # images = [image for image, _, _ in images_with_extra_info]
     batch_ratio = 1

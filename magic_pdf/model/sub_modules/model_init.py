@@ -63,7 +63,8 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
         from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
         config = {
                 "output_format": "json",
-                "force_layout_block": "Table"
+                "force_layout_block": "Table",
+                "disable_tqdm": True,
             }
         table_model = MarkerTableWrapper(config=config)
     else:

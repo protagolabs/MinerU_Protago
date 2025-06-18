@@ -16,4 +16,4 @@
 
 
 
-magic-pdf -p /home/xing/marker/demo_xy.pdf  -o output/demo_xy -m auto
+magic-pdf -p ./demo/pdfs/demo_xy.pdf  -o output -m auto

@@ -56,16 +56,16 @@ class MarkerTableWrapper:
         if isinstance(image, np.ndarray):
             image = Image.fromarray(image)
         
-        # image = image.resize((2048, 2048))
-        w, h = image.size
+        # # image = image.resize((2048, 2048))
+        # w, h = image.size
 
 
-        if w < 2048 or h < 2048:
-            # Calculate scale factor to make the larger dimension 2048
-            scale_factor = 2048 / max(w, h)
-            new_w = int(w * scale_factor)
-            new_h = int(h * scale_factor)
-            image = image.resize((new_w, new_h))
+        # if w < 2048 or h < 2048:
+        #     # Calculate scale factor to make the larger dimension 2048
+        #     scale_factor = 2048 / max(w, h)
+        #     new_w = int(w * scale_factor)
+        #     new_h = int(h * scale_factor)
+        #     image = image.resize((new_w, new_h))
         
 
 

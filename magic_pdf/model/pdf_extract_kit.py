@@ -60,7 +60,7 @@ class CustomPEKModel:
         self.apply_table = self.table_config.get('enable', False)
         self.table_max_time = self.table_config.get('max_time', TABLE_MAX_TIME_VALUE)
         self.table_model_name = self.table_config.get('model', MODEL_NAME.RAPID_TABLE)
-        logger.info(f'table_model_name: {self.table_model_name}')
+        # logger.info(f'table_model_name: {self.table_model_name}')
         self.table_sub_model_name = self.table_config.get('sub_model', None)
 
         # ocr config
@@ -152,6 +152,8 @@ class CustomPEKModel:
         )
         # init table model
         if self.apply_table:
+            # logger.info(f'table_model_name: {self.table_model_name}')
+            start_time = time.time()
             table_model_dir = self.configs['weights'][self.table_model_name]
             self.table_model = atom_model_manager.get_atom_model(
                 atom_model_name=AtomicModel.Table,
@@ -162,6 +164,9 @@ class CustomPEKModel:
                 ocr_engine=self.ocr_model,
                 table_sub_model_name=self.table_sub_model_name
             )            
+            table_cost = round(time.time() - start_time, 2)
+            logger.info(f'table init time: {table_cost}')
+
 
         logger.info('DocAnalysis init done!')
 
@@ -239,22 +244,14 @@ class CustomPEKModel:
                             html_code = table_result[0]
                 elif self.table_model_name == MODEL_NAME.TABLE_MASTER:
                     html_code = self.table_model.img2html(new_image)
-                # elif self.table_model_name == MODEL_NAME.RAPID_TABLE:
-                #     html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                #         new_image
-                #     )
-                # elif self.table_model_name == MODEL_NAME.CUSTOM_TABLE:
-                #     html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                #         new_image
-                #     )
+                elif self.table_model_name == MODEL_NAME.RAPID_TABLE:
+                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                        new_image
+                    )
                 elif self.table_model_name == MODEL_NAME.MARKER_TABLE:
-                    # html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
-                    #     new_image
-                    # )
-                    # logger.info(f'using table_model: {self.table_model_name}')
-                    html_code = self.table_model(new_image)
-                    
-                    # logger.info(f'html_code: {html_code}')
+                    html_code, table_cell_bboxes, logic_points, elapse = self.table_model.predict(
+                        new_image
+                    )
                 run_time = time.time() - single_table_start_time
                 if run_time > self.table_max_time:
                     logger.warning(

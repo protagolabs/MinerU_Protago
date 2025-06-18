@@ -16,7 +16,7 @@ MFR_BASE_BATCH_SIZE = 16
 
 
 class BatchAnalyze:
-    def __init__(self, model_manager, batch_ratio: int, show_log, layout_model, formula_enable, table_enable, layout_only=True):
+    def __init__(self, model_manager, batch_ratio: int, show_log, layout_model, formula_enable, table_enable, layout_only=False):
         self.model_manager = model_manager
         self.batch_ratio = batch_ratio
         self.show_log = show_log
@@ -31,6 +31,7 @@ class BatchAnalyze:
     
         images_layout_res = []
         layout_start_time = time.time()
+        # here we initialize the model second time
         self.model = self.model_manager.get_model(
             ocr=True,
             show_log=self.show_log,
@@ -58,67 +59,73 @@ class BatchAnalyze:
                 layout_images, YOLO_LAYOUT_BASE_BATCH_SIZE
             )
 
-        # logger.info(
-        #     f'layout time: {round(time.time() - layout_start_time, 2)}, image num: {len(images)}'
-        # )
+        logger.info(
+            f'layout time: {round(time.time() - layout_start_time, 2)}, image num: {len(images)}'
+        )
+        if self.layout_only:
 
-        if self.model.apply_formula:
-            # 公式检测
-            mfd_start_time = time.time()
-            images_mfd_res = self.model.mfd_model.batch_predict(
-                # images, self.batch_ratio * MFD_BASE_BATCH_SIZE
-                images, MFD_BASE_BATCH_SIZE
-            )
-            # logger.info(
-            #     f'mfd time: {round(time.time() - mfd_start_time, 2)}, image num: {len(images)}'
-            # )
+            logger.info(f'layout_only: {self.layout_only}, skip formula and table process')
+        
+        else:
 
-            # 公式识别
-            mfr_start_time = time.time()
-            images_formula_list = self.model.mfr_model.batch_predict(
-                images_mfd_res,
-                images,
-                batch_size=self.batch_ratio * MFR_BASE_BATCH_SIZE,
-            )
-            mfr_count = 0
-            for image_index in range(len(images)):
-                images_layout_res[image_index] += images_formula_list[image_index]
-                mfr_count += len(images_formula_list[image_index])
-            # logger.info(
-            #     f'mfr time: {round(time.time() - mfr_start_time, 2)}, image num: {mfr_count}'
-            # )
+            if self.model.apply_formula:
+                # 公式检测
+                mfd_start_time = time.time()
+                images_mfd_res = self.model.mfd_model.batch_predict(
+                    # images, self.batch_ratio * MFD_BASE_BATCH_SIZE
+                    images, MFD_BASE_BATCH_SIZE
+                )
+                logger.info(
+                    f'mfd time: {round(time.time() - mfd_start_time, 2)}, image num: {len(images)}'
+                )
 
-        # 清理显存
-        # clean_vram(self.model.device, vram_threshold=8)
+                # 公式识别
+                mfr_start_time = time.time()
+                images_formula_list = self.model.mfr_model.batch_predict(
+                    images_mfd_res,
+                    images,
+                    batch_size=self.batch_ratio * MFR_BASE_BATCH_SIZE,
+                )
+                mfr_count = 0
+                for image_index in range(len(images)):
+                    images_layout_res[image_index] += images_formula_list[image_index]
+                    mfr_count += len(images_formula_list[image_index])
+                logger.info(
+                    f'mfr time: {round(time.time() - mfr_start_time, 2)}, image num: {mfr_count}'
+                )
 
-        ocr_res_list_all_page = []
-        table_res_list_all_page = []
-        for index in range(len(images)):
-            _, ocr_enable, _lang = images_with_extra_info[index]
-            layout_res = images_layout_res[index]
-            np_array_img = images[index]
+            # 清理显存
+            # clean_vram(self.model.device, vram_threshold=8)
 
-            ocr_res_list, table_res_list, single_page_mfdetrec_res = (
-                get_res_list_from_layout_res(layout_res)
-            )
 
-            ocr_res_list_all_page.append({'ocr_res_list':ocr_res_list,
-                                          'lang':_lang,
-                                          'ocr_enable':ocr_enable,
-                                          'np_array_img':np_array_img,
-                                          'single_page_mfdetrec_res':single_page_mfdetrec_res,
-                                          'layout_res':layout_res,
-                                          })
+            # 获取ocr和表格识别结果
+            ocr_res_list_all_page = []
+            table_res_list_all_page = []
+            for index in range(len(images)):
+                _, ocr_enable, _lang = images_with_extra_info[index]
+                layout_res = images_layout_res[index]
+                np_array_img = images[index]
 
-            for table_res in table_res_list:
-                table_img, _ = crop_img(table_res, np_array_img)
-                table_res_list_all_page.append({'table_res':table_res,
-                                                'lang':_lang,
-                                                'table_img':table_img,
-                                              })
+                ocr_res_list, table_res_list, single_page_mfdetrec_res = (
+                    get_res_list_from_layout_res(layout_res)
+                )
 
-        # 文本框检测
-        if not self.layout_only:
+                ocr_res_list_all_page.append({'ocr_res_list':ocr_res_list,
+                                            'lang':_lang,
+                                            'ocr_enable':ocr_enable,
+                                            'np_array_img':np_array_img,
+                                            'single_page_mfdetrec_res':single_page_mfdetrec_res,
+                                            'layout_res':layout_res,
+                                            })
+
+                for table_res in table_res_list:
+                    table_img, _ = crop_img(table_res, np_array_img) # crop the table image
+                    table_res_list_all_page.append({'table_res':table_res,
+                                                    'lang':_lang,
+                                                    'table_img':table_img,
+                                                })
+
+            # 文本框检测
             det_start = time.time()
             det_count = 0
             # for ocr_res_list_dict in ocr_res_list_all_page:
@@ -126,13 +133,14 @@ class BatchAnalyze:
                 # Process each area that requires OCR processing
                 _lang = ocr_res_list_dict['lang']
                 # Get OCR results for this language's images
-                atom_model_manager = AtomModelSingleton()
-                ocr_model = atom_model_manager.get_atom_model(
-                    atom_model_name='ocr',
-                    ocr_show_log=False,
-                    det_db_box_thresh=0.3,
-                    lang=_lang
-                )
+                # atom_model_manager = AtomModelSingleton()
+                # ocr_model = atom_model_manager.get_atom_model(
+                #     atom_model_name='ocr',
+                #     ocr_show_log=False,
+                #     det_db_box_thresh=0.3,
+                #     lang=_lang
+                # )
+
                 for res in ocr_res_list_dict['ocr_res_list']:
                     new_image, useful_list = crop_img(
                         res, ocr_res_list_dict['np_array_img'], crop_paste_x=50, crop_paste_y=50
@@ -143,7 +151,10 @@ class BatchAnalyze:
 
                     # OCR-det
                     new_image = cv2.cvtColor(new_image, cv2.COLOR_RGB2BGR)
-                    ocr_res = ocr_model.ocr(
+                    # ocr_res = ocr_model.ocr(
+                    #     new_image, mfd_res=adjusted_mfdetrec_res, rec=False
+                    # )[0]
+                    ocr_res = self.model.ocr_model.ocr(
                         new_image, mfd_res=adjusted_mfdetrec_res, rec=False
                     )[0]
 
@@ -156,39 +167,21 @@ class BatchAnalyze:
             # logger.info(f'ocr-det time: {round(time.time()-det_start, 2)}, image num: {det_count}')
 
 
-        # 表格识别 table recognition
-        if self.model.apply_table:
-            table_start = time.time()
-            if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-                config = {
-                        "output_format": "json",
-                        "force_layout_block": "Table",
-                        "disable_tqdm": True,
-                    }
-                table_model = MarkerTableWrapper(config=config)            
-            else:
-                atom_model_manager = AtomModelSingleton()
-                table_model = atom_model_manager.get_atom_model(
-                    atom_model_name='table',
-                    table_model_name='rapid_table',
-                    table_model_path='',
-                    table_max_time=400,
-                    device='cpu',
-                    lang=_lang,
-                    table_sub_model_name='slanet_plus'
-                )                
+            # 表格识别 table recognition
+            if self.model.apply_table:
+                table_start = time.time()
 
-            # for table_res_list_dict in table_res_list_all_page:
-            for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
-                _lang = table_res_dict['lang']
-                # print(_lang)
-                # atom_model_manager = AtomModelSingleton()
+
                 # if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
                 #     from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-                #     table_model = MarkerTableWrapper()
-                #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                #     config = {
+                #             "output_format": "json",
+                #             "force_layout_block": "Table",
+                #             "disable_tqdm": True,
+                #         }
+                #     table_model = MarkerTableWrapper(config=config)            
                 # else:
+                #     atom_model_manager = AtomModelSingleton()
                 #     table_model = atom_model_manager.get_atom_model(
                 #         atom_model_name='table',
                 #         table_model_name='rapid_table',
@@ -197,27 +190,48 @@ class BatchAnalyze:
                 #         device='cpu',
                 #         lang=_lang,
                 #         table_sub_model_name='slanet_plus'
-                #     )
-                #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                # 判断是否返回正常
-                if html_code:
-                    expected_ending = html_code.strip().endswith(
-                        '</html>'
-                    ) or html_code.strip().endswith('</table>')
-                    if expected_ending:
-                        table_res_dict['table_res']['html'] = html_code
+                #     )                
 
+                # for table_res_list_dict in table_res_list_all_page:
+                for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
+                    _lang = table_res_dict['lang']
+                    # print(_lang)
+                    # atom_model_manager = AtomModelSingleton()
+                    # if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
+                    #     from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
+                    #     table_model = MarkerTableWrapper()
+                    #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                    # else:
+                    #     table_model = atom_model_manager.get_atom_model(
+                    #         atom_model_name='table',
+                    #         table_model_name='rapid_table',
+                    #         table_model_path='',
+                    #         table_max_time=400,
+                    #         device='cpu',
+                    #         lang=_lang,
+                    #         table_sub_model_name='slanet_plus'
+                    #     )
+                    #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                    # html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                    html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                    # 判断是否返回正常
+                    if html_code:
+                        expected_ending = html_code.strip().endswith(
+                            '</html>'
+                        ) or html_code.strip().endswith('</table>')
+                        if expected_ending:
+                            table_res_dict['table_res']['html'] = html_code
+
+                        else:
+                            logger.warning(
+                                'table recognition processing fails, not found expected HTML table end'
+                            )
+                            # table_res_dict['table_res']['markdown'] = html_code
                     else:
                         logger.warning(
-                            'table recognition processing fails, not found expected HTML table end'
+                            'table recognition processing fails, not get html return'
                         )
-                        # table_res_dict['table_res']['markdown'] = html_code
-                else:
-                    logger.warning(
-                        'table recognition processing fails, not get html return'
-                    )
-            # logger.info(f'table time: {round(time.time() - table_start, 2)}, image num: {len(table_res_list_all_page)}')
+                # logger.info(f'table time: {round(time.time() - table_start, 2)}, image num: {len(table_res_list_all_page)}')
 
         # Create dictionaries to store items by language
         need_ocr_lists_by_lang = {}  # Dict of lists for each language
