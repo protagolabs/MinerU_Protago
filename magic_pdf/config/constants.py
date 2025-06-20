@@ -52,8 +52,9 @@ class MODEL_NAME:
 
     RAPID_TABLE = 'rapid_table'
 
-    # Custom table model
     MARKER_TABLE = 'marker_table'
+
+    SURYA_TABLE = 'surya_table'
 
     YOLO_V11_LangDetect = 'yolo_v11n_langdetect'
 

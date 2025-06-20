@@ -213,7 +213,24 @@ class BatchAnalyze:
                     #     )
                     #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
                     # html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                    html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                    if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
+                        html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'], language=_lang)
+                    elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
+                        html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                    else:
+                        atom_model_manager = AtomModelSingleton()
+                        table_model = atom_model_manager.get_atom_model(
+                            atom_model_name='table',
+                            table_model_name='rapid_table',
+                            table_model_path='',
+                            table_max_time=400,
+                            device='cpu',
+                            lang=_lang,
+                            table_sub_model_name='slanet_plus'
+                        )
+                        html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
+                else:
+                    # print(html_code)
                     # 判断是否返回正常
                     if html_code:
                         expected_ending = html_code.strip().endswith(

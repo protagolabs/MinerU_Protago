@@ -67,6 +67,9 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
                 "disable_tqdm": True,
             }
         table_model = MarkerTableWrapper(config=config)
+    elif table_model_type == MODEL_NAME.SURYA_TABLE:
+        from magic_pdf.model.sub_modules.table.surya_table.surya_table_wrapper import SuryaTableWrapper
+        table_model = SuryaTableWrapper()
     else:
         logger.error('table model type not allow')
         exit(1)
