@@ -1,4 +1,5 @@
 import os
+import json
 
 import click
 import fitz
@@ -91,6 +92,7 @@ def _do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    layout_only=False,
 ):
     from magic_pdf.operators.models import InferenceResult
     if debug_able:
@@ -123,6 +125,7 @@ def _do_parse(
                         layout_model=layout_model,
                         formula_enable=formula_enable,
                         table_enable=table_enable,
+                        layout_only=layout_only,
                     )
                     pipe_result = infer_result.pipe_txt_mode(
                         image_writer, debug_mode=True, lang=ds._lang
@@ -135,6 +138,7 @@ def _do_parse(
                         layout_model=layout_model,
                         formula_enable=formula_enable,
                         table_enable=table_enable,
+                        layout_only=layout_only,
                     )
                     pipe_result = infer_result.pipe_ocr_mode(
                         image_writer, debug_mode=True, lang=ds._lang
@@ -148,6 +152,7 @@ def _do_parse(
                     layout_model=layout_model,
                     formula_enable=formula_enable,
                     table_enable=table_enable,
+                    layout_only=layout_only,
                 )
                 pipe_result = infer_result.pipe_txt_mode(
                     image_writer, debug_mode=True, lang=ds._lang
@@ -160,6 +165,7 @@ def _do_parse(
                     layout_model=layout_model,
                     formula_enable=formula_enable,
                     table_enable=table_enable,
+                    layout_only=layout_only,
                 )
                 pipe_result = infer_result.pipe_ocr_mode(
                     image_writer, debug_mode=True, lang=ds._lang
@@ -183,6 +189,15 @@ def _do_parse(
             )
         else:
             if ds.classify() == SupportedPdfParseMethod.TXT:
+                infer_result = ds.apply(
+                    doc_analyze,
+                    ocr=False,
+                    lang=ds._lang,
+                    layout_model=layout_model,
+                    formula_enable=formula_enable,
+                    table_enable=table_enable,
+                    layout_only=layout_only,
+                )
                 pipe_result = infer_result.pipe_txt_mode(
                         image_writer, debug_mode=True, lang=ds._lang
                     )
@@ -240,6 +255,36 @@ def _do_parse(
             image_dir
         )
 
+    content_list_path = f'{local_md_dir}/{pdf_file_name}_content_list.json'
+    logger.info(content_list_path)
+    
+    # Read the JSON file and count tables and images
+    try:
+        with open(content_list_path, 'r', encoding='utf-8') as f:
+            content_data = json.load(f)
+        
+        table_count = 0
+        image_count = 0
+        
+        # Recursively search for "type": "table" and "type": "image"
+        def count_types(obj):
+            nonlocal table_count, image_count
+            if isinstance(obj, dict):
+                if obj.get('type') == 'table':
+                    table_count += 1
+                elif obj.get('type') == 'image':
+                    image_count += 1
+                for value in obj.values():
+                    count_types(value)
+            elif isinstance(obj, list):
+                for item in obj:
+                    count_types(item)
+        
+        count_types(content_data)
+        logger.info(f'Found {table_count} tables and {image_count} images in {pdf_file_name}')
+        
+    except Exception as e:
+        logger.warning(f'Could not read or parse {content_list_path}: {e}')
     logger.info(f'local output dir is {local_md_dir}')
 
 def do_parse(
@@ -266,6 +311,7 @@ def do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    layout_only=False,
 ):
     parallel_count = 1
     if os.environ.get('MINERU_PARALLEL_INFERENCE_COUNT'):
@@ -279,9 +325,9 @@ def do_parse(
             ds = PymuDocDataset(pdf_bytes, lang=lang)
         else:
             ds = pdf_bytes_or_dataset
-        batch_do_parse(output_dir, [pdf_file_name], [ds], parse_method, debug_able, f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox, lang=lang)
+        batch_do_parse(output_dir, [pdf_file_name], [ds], parse_method, debug_able, f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox, lang=lang, layout_only=layout_only)
     else:
-        _do_parse(output_dir, pdf_file_name, pdf_bytes_or_dataset, model_list, parse_method, debug_able, start_page_id=start_page_id, end_page_id=end_page_id, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable,  f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox)
+        _do_parse(output_dir, pdf_file_name, pdf_bytes_or_dataset, model_list, parse_method, debug_able, start_page_id=start_page_id, end_page_id=end_page_id, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable, layout_only=layout_only, f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox)
 
 
 def batch_do_parse(
@@ -305,6 +351,7 @@ def batch_do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    layout_only=False,
 ):
     dss = []
     for v in pdf_bytes_or_datasets:
@@ -313,8 +360,8 @@ def batch_do_parse(
         else:
             dss.append(v)
 
-    infer_results = batch_doc_analyze(dss, parse_method, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable)
-    for idx, infer_result in enumerate(infer98_results):
+    infer_results = batch_doc_analyze(dss, parse_method, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable, layout_only=layout_only)
+    for idx, infer_result in enumerate(infer_results):
         _do_parse(
             output_dir = output_dir,
             pdf_file_name = pdf_file_names[idx],
