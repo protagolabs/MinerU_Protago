@@ -13,6 +13,31 @@ from magic_pdf.model.sub_modules.ocr.paddleocr2pytorch.ocr_utils import (
 YOLO_LAYOUT_BASE_BATCH_SIZE = 1
 MFD_BASE_BATCH_SIZE = 1
 MFR_BASE_BATCH_SIZE = 16
+TABLE_BASE_BATCH_SIZE = 1  # Optimized for 24GB GPU - try 4-6 if stable
+
+
+def format_html_output(html_code: str) -> str:
+    """
+    Format HTML output by replacing escaped double quotes with regular double quotes.
+    
+    Args:
+        html_code (str): The HTML code to format
+        
+    Returns:
+        str: The formatted HTML code
+    """
+    if html_code:
+        # Replace escaped double quotes with regular double quotes
+        html_code = html_code.replace('\\"', '"')
+        # Replace escaped single quotes with regular single quotes
+        html_code = html_code.replace("\\'", "'")
+        # Replace newlines with spaces for cleaner output
+        html_code = html_code.replace('\n', ' ')
+        # Remove any extra whitespace
+        html_code = ' '.join(html_code.split())
+        
+        return html_code
+    return html_code
 
 
 class BatchAnalyze:
@@ -170,54 +195,107 @@ class BatchAnalyze:
             # 表格识别 table recognition
             if self.model.apply_table:
                 table_start = time.time()
+                
+                if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
+                    # Group tables by language for batch processing
+                    tables_by_lang = {}
+                    for table_res_dict in table_res_list_all_page:
+                        _lang = table_res_dict['lang']
+                        if _lang not in tables_by_lang:
+                            tables_by_lang[_lang] = []
+                        tables_by_lang[_lang].append(table_res_dict)
+                    
+                    # Process each language group in batches
+                    # Use batch_ratio like other models for consistent scaling
+                    batch_size = self.batch_ratio * TABLE_BASE_BATCH_SIZE
+                    # batch_size = TABLE_BASE_BATCH_SIZE
+                    for _lang, lang_tables in tables_by_lang.items():
+                        # logger.info(f"Processing {len(lang_tables)} tables for language: {_lang}")
+                        # Process in batches
+                        for batch_start in tqdm(range(0, len(lang_tables), batch_size), desc=f"Table Predict"):
+                            batch_start_time = time.time()
+                            batch_end = min(batch_start + batch_size, len(lang_tables))
+                            batch_tables = lang_tables[batch_start:batch_end]
+                            
+                            # Prepare batch inputs
+                            batch_images = [table_dict['table_img'] for table_dict in batch_tables]
+                            batch_languages = [_lang] * len(batch_images)
+                            
+                            # Process batch
+                            batch_results = self.model.table_model.predict_batch(batch_images, batch_languages)
+                            batch_time = time.time() - batch_start_time
+                            # logger.info(f"Batch of {len(batch_images)} tables processed in {batch_time:.2f}s ({batch_time/len(batch_images):.3f}s per table)")
+                            
+                            # Process results
+                            for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(batch_tables, batch_results):
+                                # 判断是否返回正常
+                                if html_code:
+                                    expected_ending = html_code.strip().endswith(
+                                        '</html>'
+                                    ) or html_code.strip().endswith('</table>')
+                                    if expected_ending:
+                                        table_res_dict['table_res']['html'] = format_html_output(html_code)
+                                        # logger.info(f"table_res_dict['table_res']['html']: {table_res_dict['table_res']['html']}")
+                                    else:
+                                        logger.warning(
+                                            'table recognition processing fails, not found expected HTML table end'
+                                        )
+                                        # table_res_dict['table_res']['markdown'] = html_code
+                                else:
+                                    logger.warning(
+                                        'table recognition processing fails, not get html return'
+                                    )
 
 
-                # if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                #     from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-                #     config = {
-                #             "output_format": "json",
-                #             "force_layout_block": "Table",
-                #             "disable_tqdm": True,
-                #         }
-                #     table_model = MarkerTableWrapper(config=config)            
-                # else:
-                #     atom_model_manager = AtomModelSingleton()
-                #     table_model = atom_model_manager.get_atom_model(
-                #         atom_model_name='table',
-                #         table_model_name='rapid_table',
-                #         table_model_path='',
-                #         table_max_time=400,
-                #         device='cpu',
-                #         lang=_lang,
-                #         table_sub_model_name='slanet_plus'
-                #     )                
-
-                # for table_res_list_dict in table_res_list_all_page:
-                for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
-                    _lang = table_res_dict['lang']
-                    # print(_lang)
-                    # atom_model_manager = AtomModelSingleton()
-                    # if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                    #     from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-                    #     table_model = MarkerTableWrapper()
-                    #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                    # else:
-                    #     table_model = atom_model_manager.get_atom_model(
-                    #         atom_model_name='table',
-                    #         table_model_name='rapid_table',
-                    #         table_model_path='',
-                    #         table_max_time=400,
-                    #         device='cpu',
-                    #         lang=_lang,
-                    #         table_sub_model_name='slanet_plus'
-                    #     )
-                    #     html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                    # html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                    if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
-                        html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'], language=_lang)
-                    elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                        html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
-                    else:
+                                    
+                elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
+                    # Group tables by language for batch processing (similar to SURYA)
+                    tables_by_lang = {}
+                    for table_res_dict in table_res_list_all_page:
+                        _lang = table_res_dict['lang']
+                        if _lang not in tables_by_lang:
+                            tables_by_lang[_lang] = []
+                        tables_by_lang[_lang].append(table_res_dict)
+                    
+                    # Process each language group in batches
+                    batch_size = self.batch_ratio * TABLE_BASE_BATCH_SIZE  # Reuse same batch size logic
+                    for _lang, lang_tables in tables_by_lang.items():
+                        # Process in batches
+                        for batch_start in tqdm(range(0, len(lang_tables), batch_size), desc=f"Marker Table Predict"):
+                            batch_start_time = time.time()
+                            batch_end = min(batch_start + batch_size, len(lang_tables))
+                            batch_tables = lang_tables[batch_start:batch_end]
+                            
+                            # Prepare batch inputs
+                            batch_images = [table_dict['table_img'] for table_dict in batch_tables]
+                            batch_languages = [_lang] * len(batch_images)
+                            
+                            # Process batch
+                            batch_results = self.model.table_model.predict_batch(batch_images, batch_languages)
+                            batch_time = time.time() - batch_start_time
+                            
+                            # Process results
+                            for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(batch_tables, batch_results):
+                                # 判断是否返回正常
+                                if html_code:
+                                    expected_ending = html_code.strip().endswith(
+                                        '</html>'
+                                    ) or html_code.strip().endswith('</table>')
+                                    if expected_ending:
+                                        table_res_dict['table_res']['html'] = format_html_output(html_code)
+                                    else:
+                                        logger.warning(
+                                            'table recognition processing fails, not found expected HTML table end'
+                                        )
+                                        # table_res_dict['table_res']['markdown'] = html_code
+                                else:
+                                    logger.warning(
+                                        'table recognition processing fails, not get html return'
+                                    )
+                else:
+                    # Original single-image processing for other non-SURYA/non-MARKER models
+                    for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
+                        _lang = table_res_dict['lang']
                         atom_model_manager = AtomModelSingleton()
                         table_model = atom_model_manager.get_atom_model(
                             atom_model_name='table',
@@ -229,26 +307,25 @@ class BatchAnalyze:
                             table_sub_model_name='slanet_plus'
                         )
                         html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
-                else:
-                    # print(html_code)
-                    # 判断是否返回正常
-                    if html_code:
-                        expected_ending = html_code.strip().endswith(
-                            '</html>'
-                        ) or html_code.strip().endswith('</table>')
-                        if expected_ending:
-                            table_res_dict['table_res']['html'] = html_code
 
+                        # 判断是否返回正常
+                        if html_code:
+                            expected_ending = html_code.strip().endswith(
+                                '</html>'
+                            ) or html_code.strip().endswith('</table>')
+                            if expected_ending:
+                                table_res_dict['table_res']['html'] = format_html_output(html_code)
+                            else:
+                                logger.warning(
+                                    'table recognition processing fails, not found expected HTML table end'
+                                )
+                                # table_res_dict['table_res']['markdown'] = html_code
                         else:
                             logger.warning(
-                                'table recognition processing fails, not found expected HTML table end'
+                                'table recognition processing fails, not get html return'
                             )
-                            # table_res_dict['table_res']['markdown'] = html_code
-                    else:
-                        logger.warning(
-                            'table recognition processing fails, not get html return'
-                        )
-                # logger.info(f'table time: {round(time.time() - table_start, 2)}, image num: {len(table_res_list_all_page)}')
+                
+                logger.info(f'table time: {round(time.time() - table_start, 2)}, image num: {len(table_res_list_all_page)}')
 
         # Create dictionaries to store items by language
         need_ocr_lists_by_lang = {}  # Dict of lists for each language

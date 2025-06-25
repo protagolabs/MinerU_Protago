@@ -14,6 +14,11 @@
 # execution_time=$((end_time - start_time))
 # echo "Execution time: $execution_time seconds" | tee -a logs/$(date +%Y%m%d_%H%M%S)_magic_pdf.log
 
+# export LOGURU_LEVEL=INFO
+
+# magic-pdf -p demo/pdfs/demo5.pdf  -o output/mineru1310_surya0131 -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S).log
 
 
-magic-pdf -p ./demo/pdfs/demo5.pdf  -o output -m auto
+# magic-pdf -p demo/pdfs/f_0AibR1dz_samples.pdf  -o output/mineru1310_surya0131 -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S).log
+
+magic-pdf -p demo/pdfs/small_ocr.pdf -o output/ -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S).log

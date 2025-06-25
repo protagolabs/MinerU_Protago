@@ -157,3 +157,23 @@ class MarkerTableWrapper:
         # Start traversing from the root
         traverse_blocks(json_output)
         return table_htmls
+
+    def predict_batch(self, images, languages=None):
+        """
+        Predict table structure from a batch of images
+        
+        Args:
+            images: List of PIL Images or numpy arrays
+            languages: List of languages (optional, for compatibility)
+            
+        Returns:
+            list: List of tuples (html_code, table_cell_bboxes, logic_points, elapse)
+                  Following the same interface as other table models
+        """
+        batch_results = []
+        
+        for image in images:
+            result = self.predict(image)
+            batch_results.append(result)
+            
+        return batch_results
