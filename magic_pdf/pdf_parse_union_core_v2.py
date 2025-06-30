@@ -14,6 +14,10 @@ import numpy as np
 from loguru import logger
 from tqdm import tqdm
 
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
+
 from magic_pdf.config.enums import SupportedPdfParseMethod
 from magic_pdf.config.ocr_content_type import BlockType, ContentType
 from magic_pdf.data.dataset import Dataset, PageableData
@@ -349,9 +353,9 @@ def model_init(model_name: str):
                 'hantian/layoutreader'
             )
         if bf_16_support:
-            model.to(device).eval().bfloat16()
+            model.to_empty(device=device).eval().bfloat16()
         else:
-            model.to(device).eval()
+            model.to_empty(device=device).eval()
     else:
         logger.error('model name not allow')
         exit(1)
@@ -907,6 +911,7 @@ def parse_page_core(
     return page_info
 
 
+
 def pdf_parse_union(
     model_list,
     dataset: Dataset,
@@ -922,6 +927,7 @@ def pdf_parse_union(
 
     """初始化空的pdf_info_dict"""
     pdf_info_dict = {}
+    dict_lock = Lock()  # 添加锁来保护共享字典
 
     """用model_list和docs对象初始化magic_model"""
     magic_model = MagicModel(model_list, dataset)
@@ -940,17 +946,13 @@ def pdf_parse_union(
     # """初始化启动时间"""
     # start_time = time.time()
 
-    # for page_id, page in enumerate(dataset):
-    for page_id, page in tqdm(enumerate(dataset), total=len(dataset), desc="Processing pages"):
-        # """debug时输出每页解析的耗时."""
-        # if debug_mode:
-            # time_now = time.time()
-            # logger.info(
-            #     f'page_id: {page_id}, last_page_cost_time: {round(time.time() - start_time, 2)}'
-            # )
-            # start_time = time_now
-
-        """解析pdf中的每一页"""
+    def process_single_page(page_id_page_tuple):
+        """处理单个页面的函数"""
+        page_id, page = page_id_page_tuple
+        
+        # 为每个线程创建独立的magic_model副本（如果需要的话）
+        # 注意：这里可能需要根据MagicModel的线程安全性来调整
+        
         if start_page_id <= page_id <= end_page_id:
             page_info = parse_page_core(
                 page, magic_model, page_id, pdf_bytes_md5, imageWriter, parse_mode, lang
@@ -962,7 +964,26 @@ def pdf_parse_union(
             page_info = ocr_construct_page_component_v2(
                 [], [], page_id, page_w, page_h, [], [], [], [], [], True, 'skip page'
             )
-        pdf_info_dict[f'page_{page_id}'] = page_info
+        
+        return page_id, page_info
+
+    with ThreadPoolExecutor(max_workers=int(os.getenv("PARSE_PAGE_CORE_WORKERS", 4))) as executor:
+        # 提交所有任务
+        future_to_page = {
+            executor.submit(process_single_page, (page_id, page)): page_id
+            for page_id, page in enumerate(dataset)
+        }
+        
+        # 使用tqdm显示进度
+        with tqdm(total=len(dataset), desc="Processing pages") as pbar:
+            for future in as_completed(future_to_page):
+                page_id, page_info = future.result()
+                
+                # 使用锁保护共享资源
+                with dict_lock:
+                    pdf_info_dict[f'page_{page_id}'] = page_info
+                
+                pbar.update(1)
 
     need_ocr_list = []
     img_crop_list = []

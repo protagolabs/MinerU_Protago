@@ -130,6 +130,7 @@ def doc_analyze(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    layout_only=False,
 ):
     end_page_id = (
         end_page_id
@@ -157,7 +158,7 @@ def doc_analyze(
 
     results = []
     for batch_image in batch_images:
-        result = may_batch_image_analyze(batch_image, ocr, show_log,layout_model, formula_enable, table_enable)
+        result = may_batch_image_analyze(batch_image, ocr, show_log,layout_model, formula_enable, table_enable, layout_only)
         results.extend(result)
 
     model_json = []
@@ -185,6 +186,7 @@ def batch_doc_analyze(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    layout_only=False,
 ):
     MIN_BATCH_INFERENCE_SIZE = int(os.environ.get('MINERU_MIN_BATCH_INFERENCE_SIZE', 200))
     batch_size = MIN_BATCH_INFERENCE_SIZE
@@ -218,7 +220,7 @@ def batch_doc_analyze(
     for index, batch_image in enumerate(batch_images):
         processed_images_count += len(batch_image)
         logger.info(f'Batch {index + 1}/{len(batch_images)}: {processed_images_count} pages/{len(images_with_extra_info)} pages')
-        result = may_batch_image_analyze(batch_image, True, show_log, layout_model, formula_enable, table_enable)
+        result = may_batch_image_analyze(batch_image, True, show_log, layout_model, formula_enable, table_enable, layout_only)
         results.extend(result)
 
     infer_results = []
@@ -242,7 +244,8 @@ def may_batch_image_analyze(
         show_log: bool = False,
         layout_model=None,
         formula_enable=None,
-        table_enable=None):
+        table_enable=None,
+        layout_only=False):
     # os.environ['CUDA_VISIBLE_DEVICES'] = str(idx)
 
     from magic_pdf.model.batch_analyze import BatchAnalyze
@@ -283,7 +286,7 @@ def may_batch_image_analyze(
 
     # doc_analyze_start = time.time()
 
-    batch_model = BatchAnalyze(model_manager, batch_ratio, show_log, layout_model, formula_enable, table_enable)
+    batch_model = BatchAnalyze(model_manager, batch_ratio, show_log, layout_model, formula_enable, table_enable, layout_only)
     results = batch_model(images_with_extra_info)
 
     # gc_start = time.time()
