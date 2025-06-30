@@ -20,13 +20,19 @@ python download_models_hf.py
 ```
 
 
+
 ## Usage
 
 ### Command Line
 
 [Using MinerU via Command Line](https://mineru.readthedocs.io/en/latest/user_guide/usage/command_line.html)
 
-#### Layout-Only Mode
+#### dev_log
+
+* [x] 06/30/2025 add the multithread features
+* [x] 06/23/2025 add the layout_only features
+* [x] 06/16/2025 add the "marker" table features
+* [ ] speed up the "marker" table features
 
 If you only need layout detection without OCR, formula recognition, or table recognition, you can use the `--layout_only` option for faster processing:
 
