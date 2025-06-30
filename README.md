@@ -29,7 +29,7 @@ python download_models_hf.py
 
 #### dev_log
 
-* [x] 06/30/2025 add the multithread features
+* [x] 06/30/2025 add the multithread features, special thanks to [@finger92](https://github.com/finger92)
 * [x] 06/23/2025 add the layout_only features
 * [x] 06/16/2025 add the "marker" table features
 * [ ] speed up the "marker" table features
