@@ -67,6 +67,38 @@ def convert_pdf_bytes_to_bytes_by_pymupdf(pdf_bytes, start_page_id=0, end_page_i
     return output_bytes
 
 
+def fix_html_in_json_file(file_path: str):
+    """
+    Fix HTML attribute quotes in JSON files after they've been written.
+    This addresses the issue where json.dumps() re-escapes HTML quotes.
+    
+    Args:
+        file_path (str): Path to the JSON file to fix
+    """
+    try:
+        import re
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Fix HTML attributes that got double-escaped during JSON serialization
+        # Pattern matches: "html": "<table><tr><td colspan=\"2\">content</td></tr></table>"
+        # And converts to: "html": "<table><tr><td colspan="2">content</td></tr></table>"
+        pattern = r'("html":\s*"[^"]*?)\\\"([^"]*?)\\\"([^"]*?")'
+        content = re.sub(pattern, r'\1"\2"\3', content)
+        
+        # More general pattern for any HTML attributes
+        pattern = r'(\w+)=\\"([^"]*)\\"'
+        content = re.sub(pattern, r'\1="\2"', content)
+        
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+            
+        logger.info(f"Fixed HTML quotes in JSON file: {file_path}")
+        
+    except Exception as e:
+        logger.warning(f"Failed to fix HTML quotes in {file_path}: {e}")
+
+
 def _do_parse(
     output_dir,
     pdf_file_name,
@@ -223,9 +255,13 @@ def _do_parse(
 
     if f_dump_middle_json:
         pipe_result.dump_middle_json(md_writer, f'{pdf_file_name}_middle.json')
+        # Fix HTML quotes in the generated JSON file
+        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_middle.json'))
 
     if f_dump_model_json:
         infer_result.dump_model(md_writer, f'{pdf_file_name}_model.json')
+        # Fix HTML quotes in the generated JSON file  
+        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_model.json'))
 
     if f_dump_orig_pdf:
         md_writer.write(
@@ -239,6 +275,8 @@ def _do_parse(
             f'{pdf_file_name}_content_list.json',
             image_dir
         )
+        # Fix HTML quotes in the generated JSON file
+        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_content_list.json'))
 
     logger.info(f'local output dir is {local_md_dir}')
 

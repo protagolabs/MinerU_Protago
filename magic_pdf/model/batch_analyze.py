@@ -249,49 +249,53 @@ class BatchAnalyze:
 
                                     
                 elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-                    # Group tables by language for batch processing (similar to SURYA)
-                    tables_by_lang = {}
+
+                    # for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
+                    #     _lang = table_res_dict['lang']
+                    #     html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                    #     # 判断是否返回正常
+                    #     if html_code:
+                    #         expected_ending = html_code.strip().endswith(
+                    #             '</html>'
+                    #         ) or html_code.strip().endswith('</table>')
+                    #         if expected_ending:
+                    #             table_res_dict['table_res']['html'] = format_html_output(html_code)
+                    #         else:
+                    #             logger.warning(
+                    #                 'table recognition processing fails, not found expected HTML table end'
+                    #             )
+                    #             # table_res_dict['table_res']['markdown'] = html_code
+                    #     else:
+                    #         logger.warning(
+                    #             'table recognition processing fails, not get html return'
+                    #         )
+
+                    images = []
                     for table_res_dict in table_res_list_all_page:
-                        _lang = table_res_dict['lang']
-                        if _lang not in tables_by_lang:
-                            tables_by_lang[_lang] = []
-                        tables_by_lang[_lang].append(table_res_dict)
-                    
-                    # Process each language group in batches
-                    batch_size = self.batch_ratio * TABLE_BASE_BATCH_SIZE  # Reuse same batch size logic
-                    for _lang, lang_tables in tables_by_lang.items():
-                        # Process in batches
-                        for batch_start in tqdm(range(0, len(lang_tables), batch_size), desc=f"Marker Table Predict"):
-                            batch_start_time = time.time()
-                            batch_end = min(batch_start + batch_size, len(lang_tables))
-                            batch_tables = lang_tables[batch_start:batch_end]
-                            
-                            # Prepare batch inputs
-                            batch_images = [table_dict['table_img'] for table_dict in batch_tables]
-                            batch_languages = [_lang] * len(batch_images)
-                            
-                            # Process batch
-                            batch_results = self.model.table_model.predict_batch(batch_images, batch_languages)
-                            batch_time = time.time() - batch_start_time
-                            
-                            # Process results
-                            for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(batch_tables, batch_results):
-                                # 判断是否返回正常
-                                if html_code:
-                                    expected_ending = html_code.strip().endswith(
-                                        '</html>'
-                                    ) or html_code.strip().endswith('</table>')
-                                    if expected_ending:
-                                        table_res_dict['table_res']['html'] = format_html_output(html_code)
-                                    else:
-                                        logger.warning(
-                                            'table recognition processing fails, not found expected HTML table end'
-                                        )
-                                        # table_res_dict['table_res']['markdown'] = html_code
-                                else:
-                                    logger.warning(
-                                        'table recognition processing fails, not get html return'
-                                    )
+                        images.append(table_res_dict['table_img'])
+
+                    batch_results = self.model.table_model.predict_batch(images)
+
+                    for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(table_res_list_all_page, batch_results):
+
+                        # 判断是否返回正常
+                        if html_code:
+                            expected_ending = html_code.strip().endswith(
+                                '</html>'
+                            ) or html_code.strip().endswith('</table>')
+                            if expected_ending:
+                                table_res_dict['table_res']['html'] = format_html_output(html_code)
+                            else:
+                                logger.warning(
+                                    'table recognition processing fails, not found expected HTML table end'
+                                )
+                                # table_res_dict['table_res']['markdown'] = html_code
+                        else:
+                            logger.warning(
+                                'table recognition processing fails, not get html return'
+                            )
+
+
                 else:
                     # Original single-image processing for other non-SURYA/non-MARKER models
                     for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
@@ -306,6 +310,7 @@ class BatchAnalyze:
                             lang=_lang,
                             table_sub_model_name='slanet_plus'
                         )
+                        # print(f"table_res_dict['table_img'].shape: {table_res_dict['table_img'].shape}")
                         html_code, table_cell_bboxes, logic_points, elapse = table_model.predict(table_res_dict['table_img'])
 
                         # 判断是否返回正常
