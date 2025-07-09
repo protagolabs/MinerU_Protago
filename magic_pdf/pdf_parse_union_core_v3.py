@@ -367,9 +367,9 @@ def model_init(model_name: str):
                 'hantian/layoutreader'
             )
         if bf_16_support:
-            model.to_empty(device=device).eval().bfloat16()
+            model.to(device).eval().bfloat16()
         else:
-            model.to_empty(device=device).eval()
+            model.to(device).eval()
     else:
         logger.error('model name not allow')
         exit(1)
@@ -937,10 +937,7 @@ def pdf_parse_union(
     lang=None,
 ):
 
-    # Clear indication that we're using the v3 multithreaded implementation
-    logger.info("🚀 Using pdf_parse_union_core_v3.py - MULTITHREADED VERSION")
-    logger.info(f"📊 Processing {len(dataset)} pages with {os.getenv('PARSE_PAGE_CORE_WORKERS', 4)} workers")
-    logger.info(f"🔧 Parse mode: {parse_mode}")
+
     
     start_time = time.time()
     pdf_bytes_md5 = compute_md5(dataset.data_bits())
@@ -985,7 +982,7 @@ def pdf_parse_union(
         return page_id, page_info
 
     # Phase 1: Parallel page processing
-    page_processing_start = time.time()
+    # page_processing_start = time.time()
     with ThreadPoolExecutor(max_workers=int(os.getenv("PARSE_PAGE_CORE_WORKERS", 4))) as executor:
         # 提交所有任务
         future_to_page = {
@@ -1004,11 +1001,11 @@ def pdf_parse_union(
                 
                 pbar.update(1)
     
-    page_processing_time = time.time() - page_processing_start
-    logger.info(f"⏱️  Page processing time: {page_processing_time:.2f}s")
+    # page_processing_time = time.time() - page_processing_start
+    # logger.info(f"⏱️  Page processing time: {page_processing_time:.2f}s")
 
     # Phase 2: Collect all OCR tasks
-    ocr_collection_start = time.time()
+    # ocr_collection_start = time.time()
     need_ocr_list = []
     img_crop_list = []
     text_block_list = []
@@ -1030,12 +1027,12 @@ def pdf_parse_union(
                     img_crop_list.append(span['np_img'])
                     span.pop('np_img')
     
-    ocr_collection_time = time.time() - ocr_collection_start
-    logger.info(f"📋 OCR collection time: {ocr_collection_time:.2f}s, found {len(img_crop_list)} images")
+    # ocr_collection_time = time.time() - ocr_collection_start
+    # logger.info(f"📋 OCR collection time: {ocr_collection_time:.2f}s, found {len(img_crop_list)} images")
 
     # Phase 3: Parallel OCR processing (if any images need OCR)
     if len(img_crop_list) > 0:
-        ocr_processing_start = time.time()
+        # ocr_processing_start = time.time()
         # Get OCR results for this language's images
         atom_model_manager = AtomModelSingleton()
         ocr_model = atom_model_manager.get_atom_model(
@@ -1063,11 +1060,11 @@ def pdf_parse_union(
             span['content'] = ocr_text
             span['score'] = float(f"{ocr_score:.3f}")
         
-        ocr_processing_time = time.time() - ocr_processing_start
-        logger.info(f"🔍 OCR processing time: {ocr_processing_time:.2f}s, processed {len(img_crop_list)} images")
+        # ocr_processing_time = time.time() - ocr_processing_start
+        # logger.info(f"🔍 OCR processing time: {ocr_processing_time:.2f}s, processed {len(img_crop_list)} images")
 
     # Phase 4: Post-processing (sequential for now)
-    post_processing_start = time.time()
+    # post_processing_start = time.time()
     
     """分段"""
     para_split(pdf_info_dict)
@@ -1097,8 +1094,8 @@ def pdf_parse_union(
                 llm_aided_title(pdf_info_dict, title_aided_config)
                 logger.info(f'llm aided title time: {round(time.time() - llm_aided_title_start_time, 2)}')
 
-    post_processing_time = time.time() - post_processing_start
-    logger.info(f"🔄 Post-processing time: {post_processing_time:.2f}s")
+    # post_processing_time = time.time() - post_processing_start
+    # logger.info(f"🔄 Post-processing time: {post_processing_time:.2f}s")
 
     """dict转list"""
     pdf_info_list = dict_to_list(pdf_info_dict)
@@ -1110,9 +1107,9 @@ def pdf_parse_union(
 
     clean_memory(get_device())
     
-    total_time = time.time() - start_time
-    logger.info(f"⏱️  Total processing time: {total_time:.2f}s")
-    logger.info("✅ pdf_parse_union_core_v3.py - MULTITHREADED VERSION completed successfully")
+    # total_time = time.time() - start_time
+    # logger.info(f"⏱️  Total processing time: {total_time:.2f}s")
+    # logger.info("✅ pdf_parse_union_core_v3.py - MULTITHREADED VERSION completed successfully")
 
     return new_pdf_info_dict
 
