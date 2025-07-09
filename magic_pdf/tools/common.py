@@ -256,12 +256,12 @@ def _do_parse(
     if f_dump_middle_json:
         pipe_result.dump_middle_json(md_writer, f'{pdf_file_name}_middle.json')
         # Fix HTML quotes in the generated JSON file
-        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_middle.json'))
+        # fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_middle.json'))
 
     if f_dump_model_json:
         infer_result.dump_model(md_writer, f'{pdf_file_name}_model.json')
         # Fix HTML quotes in the generated JSON file  
-        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_model.json'))
+        # fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_model.json'))
 
     if f_dump_orig_pdf:
         md_writer.write(
@@ -276,7 +276,7 @@ def _do_parse(
             image_dir
         )
         # Fix HTML quotes in the generated JSON file
-        fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_content_list.json'))
+        # fix_html_in_json_file(os.path.join(local_md_dir, f'{pdf_file_name}_content_list.json'))
 
     logger.info(f'local output dir is {local_md_dir}')
 
