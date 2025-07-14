@@ -295,59 +295,60 @@ class BatchAnalyze:
             if self.model.apply_table:
                 table_start = time.time()
                 
-                if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
-                    # Group tables by language for batch processing
-                    tables_by_lang = {}
-                    for table_res_dict in table_res_list_all_page:
-                        _lang = table_res_dict['lang']
-                        if _lang not in tables_by_lang:
-                            tables_by_lang[_lang] = []
-                        tables_by_lang[_lang].append(table_res_dict)
+                # if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
+                #     # Group tables by language for batch processing
+                #     tables_by_lang = {}
+                #     for table_res_dict in table_res_list_all_page:
+                #         _lang = table_res_dict['lang']
+                #         if _lang not in tables_by_lang:
+                #             tables_by_lang[_lang] = []
+                #         tables_by_lang[_lang].append(table_res_dict)
                     
-                    # Process each language group in batches
-                    # Use batch_ratio like other models for consistent scaling
-                    batch_size = self.batch_ratio * TABLE_BASE_BATCH_SIZE
-                    # batch_size = TABLE_BASE_BATCH_SIZE
-                    for _lang, lang_tables in tables_by_lang.items():
-                        # logger.info(f"Processing {len(lang_tables)} tables for language: {_lang}")
-                        # Process in batches
-                        for batch_start in tqdm(range(0, len(lang_tables), batch_size), desc=f"Table Predict"):
-                            batch_start_time = time.time()
-                            batch_end = min(batch_start + batch_size, len(lang_tables))
-                            batch_tables = lang_tables[batch_start:batch_end]
+                #     # Process each language group in batches
+                #     # Use batch_ratio like other models for consistent scaling
+                #     batch_size = self.batch_ratio * TABLE_BASE_BATCH_SIZE
+                #     # batch_size = TABLE_BASE_BATCH_SIZE
+                #     for _lang, lang_tables in tables_by_lang.items():
+                #         # logger.info(f"Processing {len(lang_tables)} tables for language: {_lang}")
+                #         # Process in batches
+                #         for batch_start in tqdm(range(0, len(lang_tables), batch_size), desc=f"Table Predict"):
+                #             batch_start_time = time.time()
+                #             batch_end = min(batch_start + batch_size, len(lang_tables))
+                #             batch_tables = lang_tables[batch_start:batch_end]
                             
-                            # Prepare batch inputs
-                            batch_images = [table_dict['table_img'] for table_dict in batch_tables]
-                            batch_languages = [_lang] * len(batch_images)
+                #             # Prepare batch inputs
+                #             batch_images = [table_dict['table_img'] for table_dict in batch_tables]
+                #             batch_languages = [_lang] * len(batch_images)
                             
-                            # Process batch
-                            batch_results = self.model.table_model.predict_batch(batch_images, batch_languages)
-                            batch_time = time.time() - batch_start_time
-                            # logger.info(f"Batch of {len(batch_images)} tables processed in {batch_time:.2f}s ({batch_time/len(batch_images):.3f}s per table)")
+                #             # Process batch
+                #             batch_results = self.model.table_model.predict_batch(batch_images, batch_languages)
+                #             batch_time = time.time() - batch_start_time
+                #             # logger.info(f"Batch of {len(batch_images)} tables processed in {batch_time:.2f}s ({batch_time/len(batch_images):.3f}s per table)")
                             
-                            # Process results
-                            for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(batch_tables, batch_results):
-                                # 判断是否返回正常
-                                if html_code:
-                                    expected_ending = html_code.strip().endswith(
-                                        '</html>'
-                                    ) or html_code.strip().endswith('</table>')
-                                    if expected_ending:
-                                        table_res_dict['table_res']['html'] = format_html_output(html_code)
-                                        # logger.info(f"table_res_dict['table_res']['html']: {table_res_dict['table_res']['html']}")
-                                    else:
-                                        logger.warning(
-                                            'table recognition processing fails, not found expected HTML table end'
-                                        )
-                                        # table_res_dict['table_res']['markdown'] = html_code
-                                else:
-                                    logger.warning(
-                                        'table recognition processing fails, not get html return'
-                                    )
+                #             # Process results
+                #             for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(batch_tables, batch_results):
+                #                 # 判断是否返回正常
+                #                 if html_code:
+                #                     expected_ending = html_code.strip().endswith(
+                #                         '</html>'
+                #                     ) or html_code.strip().endswith('</table>')
+                #                     if expected_ending:
+                #                         table_res_dict['table_res']['html'] = format_html_output(html_code)
+                #                         # logger.info(f"table_res_dict['table_res']['html']: {table_res_dict['table_res']['html']}")
+                #                     else:
+                #                         logger.warning(
+                #                             'table recognition processing fails, not found expected HTML table end'
+                #                         )
+                #                         # table_res_dict['table_res']['markdown'] = html_code
+                #                 else:
+                #                     logger.warning(
+                #                         'table recognition processing fails, not get html return'
+                #                     )
 
 
                                     
-                elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
+                # elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
+                if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
 
                     images = []
                     for table_res_dict in table_res_list_all_page:
