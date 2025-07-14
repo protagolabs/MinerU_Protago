@@ -63,34 +63,14 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
         from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
         config = {
                 "output_format": "json",
-                "force_layout_block": "Table",
-                "disable_tqdm": True,
+                "disable_tqdm": False,
             }
-        
-        # Determine optimal number of workers based on device
-        if _device_ == 'cpu':
-            max_workers = 2  # Conservative for CPU
-        else:
-            # For GPU, create more workers for better parallelization
-            # You can adjust this based on your GPU memory capacity
-            try:
-                import torch
-                if torch.cuda.is_available():
-                    # Get GPU memory info to determine optimal worker count
-                    gpu_memory_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-                    if gpu_memory_gb >= 16:
-                        max_workers = 6  # High-end GPU
-                    elif gpu_memory_gb >= 8:
-                        max_workers = 3  # Mid-range GPU
-                    else:
-                        max_workers = 2  # Lower-end GPU
-                else:
-                    max_workers = 2
-            except Exception:
-                max_workers = 2  # Safe fallback
-        
-        logger.info(f"Initializing MarkerTable with {max_workers} table workers")
-        table_model = MarkerTableWrapper(config=config, max_workers=max_workers)
+        # config = {
+        #         "output_format": "json",
+        #         "force_layout_block": "Table",
+        #         "disable_tqdm": False,
+        #     }
+        table_model = MarkerTableWrapper(config=config)
     elif table_model_type == MODEL_NAME.SURYA_TABLE:
         from magic_pdf.model.sub_modules.table.surya_table.surya_table_wrapper import SuryaTableWrapper
         table_model = SuryaTableWrapper()

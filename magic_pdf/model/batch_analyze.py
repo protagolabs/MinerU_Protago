@@ -2,6 +2,12 @@ import time
 import cv2
 from loguru import logger
 from tqdm import tqdm
+import os
+import tempfile
+from PIL import Image
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+import subprocess
 
 from magic_pdf.config.constants import MODEL_NAME
 from magic_pdf.model.sub_modules.model_init import AtomModelSingleton
@@ -13,7 +19,6 @@ from magic_pdf.model.sub_modules.ocr.paddleocr2pytorch.ocr_utils import (
 YOLO_LAYOUT_BASE_BATCH_SIZE = 1
 MFD_BASE_BATCH_SIZE = 1
 MFR_BASE_BATCH_SIZE = 16
-TABLE_BASE_BATCH_SIZE = 1  # Optimized for 24GB GPU - try 4-6 if stable
 
 
 def format_html_output(html_code: str) -> str:
@@ -38,6 +43,100 @@ def format_html_output(html_code: str) -> str:
         
         return html_code
     return html_code
+
+
+def save_table_images_as_pdf(table_images, output_path, dpi=96):
+    """
+    Save all table images as a single PDF file with specified DPI.
+    
+    Args:
+        table_images (list): List of numpy arrays representing table images
+        output_path (str): Path where to save the PDF file
+        dpi (int): DPI for the PDF (default: 96)
+        
+    Returns:
+        str: Path to the saved PDF file
+    """
+    if not table_images:
+        logger.warning("No table images provided")
+        return None
+    
+    # Create PDF with reportlab
+    c = canvas.Canvas(output_path, pagesize=A4)
+    
+    for i, img_array in enumerate(table_images):
+        # Convert numpy array to PIL Image
+        if len(img_array.shape) == 3:
+            pil_image = Image.fromarray(img_array)
+        else:
+            # Handle grayscale images
+            pil_image = Image.fromarray(img_array, mode='L').convert('RGB')
+            
+        # # Calculate scale factor to make larger dimension 2048
+        # target_size = 2048
+        # width, height = pil_image.size
+        # scale_factor = target_size / max(width, height)
+        # new_width = int(width * scale_factor)
+        # new_height = int(height * scale_factor)
+        # pil_image = pil_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        
+        # Calculate image dimensions for the specified DPI
+        # A4 size in points: 595.276 x 841.890
+        page_width, page_height = A4
+        
+        # Convert DPI to points per inch (1 point = 1/72 inch)
+        points_per_inch = 72
+        
+        # Get image dimensions in inches
+        img_width_inch = pil_image.width / dpi
+        img_height_inch = pil_image.height / dpi
+        
+        # Convert to points
+        img_width_pt = img_width_inch * points_per_inch
+        img_height_pt = img_height_inch * points_per_inch
+        
+        # Scale image to fit on page with margins
+        margin = 50  # points
+        max_width = page_width - 2 * margin
+        max_height = page_height - 2 * margin
+        
+        # Calculate scale to fit image on page - make it as large as possible
+        scale_x = max_width / img_width_pt
+        scale_y = max_height / img_height_pt
+        scale = min(scale_x, scale_y)  # Remove the 1.0 limit to allow scaling up
+        
+        # Calculate final dimensions
+        final_width = img_width_pt * scale
+        final_height = img_height_pt * scale
+        
+        # Center image on page
+        x = (page_width - final_width) / 2
+        y = (page_height - final_height) / 2
+        
+        # Save PIL image to temporary file
+        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
+            temp_path = temp_file.name
+            pil_image.save(temp_path, 'JPEG')
+        
+        try:
+            # Add image to PDF
+            c.drawImage(temp_path, x, y, width=final_width, height=final_height)
+            
+            # Add page number
+            c.setFont("Helvetica", 12)
+            c.drawString(page_width - 100, 30, f"Table {i+1}")
+            
+            # Add new page if not the last image
+            if i < len(table_images) - 1:
+                c.showPage()
+                
+        finally:
+            # Clean up temporary file
+            os.unlink(temp_path)
+    
+    c.save()
+    logger.info(f"Saved {len(table_images)} table images to PDF: {output_path}")
+    return output_path
 
 
 class BatchAnalyze:
@@ -250,9 +349,80 @@ class BatchAnalyze:
                                     
                 elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
 
-                    # for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
-                    #     _lang = table_res_dict['lang']
-                    #     html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                    images = []
+                    for table_res_dict in table_res_list_all_page:
+                        images.append(table_res_dict['table_img'])
+
+                    # Create temporary directory for PDF
+                    temp_dir = tempfile.mkdtemp()
+                    table_pdf_path = os.path.join(temp_dir, "tables.pdf")
+                    # table_pdf_path = "tables.pdf" # for debug
+
+                    
+                    # Save table images as PDF
+                    pdf_path = save_table_images_as_pdf(images, table_pdf_path, dpi=72)
+                    
+                    if pdf_path and os.path.exists(pdf_path):
+                        # logger.info(f"Table images saved to PDF: {pdf_path}")
+                        
+                        # Use TableConverter to process the PDF
+                        try:
+                            # Process the PDF with TableConverter
+                            # Note: You may need to adjust the parameters based on TableConverter's API
+                            converter_result = self.model.table_model.predict_pdf(pdf_path)
+                            
+
+
+                            logger.info("TableConverter processing completed")
+                            
+                            # Store the converter result for later use if needed
+                            # You can access the processed tables from converter_result
+                            
+                        except Exception as e:
+                            logger.error(f"TableConverter processing failed: {e}")
+                    else:
+                        logger.warning("Failed to save table images as PDF")
+                            
+                    # logger.info(f"converter_result: {converter_result.json()}")
+                    html_codes = self.model.table_model.extract_table_html_from_json_output(converter_result)
+                    if html_codes:
+
+                        # logger.info(f"html_codes: {html_codes}")
+                        # for i, (table_res_dict, html_code) in enumerate(zip(table_res_list_all_page, html_codes)):
+                        for i, table_res_dict in enumerate(table_res_list_all_page):
+                            html_code = html_codes[i]
+                            # logger.info(f"Processing item {i}")
+                            # 判断是否返回正常
+                            
+
+                            # logger.info(f"html_code: {html_code}")
+
+                            expected_ending = html_code.strip().endswith(
+                                '</html>'
+                            ) or html_code.strip().endswith('</table>')
+                            if expected_ending:
+                                table_res_dict['table_res']['html'] = format_html_output(html_code)
+                            else:
+                                logger.warning(
+                                    'table recognition processing fails, not found expected HTML table end'
+                                )
+                                # table_res_dict['table_res']['markdown'] = html_code
+                    else:
+                        logger.warning(
+                            'table recognition processing fails, not get htmls return'
+                        )    
+                    # Clean up temporary directory
+                    try:
+                        os.remove(pdf_path)
+                        logger.info("Temporary directory cleaned up")
+                    except Exception as e:
+                        logger.warning(f"Failed to clean up temporary directory: {e}")
+                                                                   
+                    # # Continue with original batch processing as fallback
+                    # batch_results = self.model.table_model.predict_batch(images)
+
+                    # for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(table_res_list_all_page, batch_results):
+
                     #     # 判断是否返回正常
                     #     if html_code:
                     #         expected_ending = html_code.strip().endswith(
@@ -269,35 +439,19 @@ class BatchAnalyze:
                     #         logger.warning(
                     #             'table recognition processing fails, not get html return'
                     #         )
-
-                    images = []
-                    for table_res_dict in table_res_list_all_page:
-                        images.append(table_res_dict['table_img'])
-
-                    batch_results = self.model.table_model.predict_batch(images)
-
-                    for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(table_res_list_all_page, batch_results):
-
-                        # 判断是否返回正常
-                        if html_code:
-                            expected_ending = html_code.strip().endswith(
-                                '</html>'
-                            ) or html_code.strip().endswith('</table>')
-                            if expected_ending:
-                                table_res_dict['table_res']['html'] = format_html_output(html_code)
-                            else:
-                                logger.warning(
-                                    'table recognition processing fails, not found expected HTML table end'
-                                )
-                                # table_res_dict['table_res']['markdown'] = html_code
-                        else:
-                            logger.warning(
-                                'table recognition processing fails, not get html return'
-                            )
+                    
+                    # # Clean up temporary directory
+                    # try:
+                    #     if 'temp_dir' in locals():
+                    #         import shutil
+                    #         shutil.rmtree(temp_dir, ignore_errors=True)
+                    #         logger.info("Temporary directory cleaned up")
+                    # except Exception as e:
+                    #     logger.warning(f"Failed to clean up temporary directory: {e}")
 
 
                 else:
-                    # Original single-image processing for other non-SURYA/non-MARKER models
+                    
                     for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
                         _lang = table_res_dict['lang']
                         atom_model_manager = AtomModelSingleton()
