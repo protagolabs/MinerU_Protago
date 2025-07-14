@@ -275,19 +275,6 @@ def may_batch_image_analyze(
             else:
                 batch_ratio = 1
             logger.info(f'gpu_memory: {gpu_memory} GB, batch_ratio: {batch_ratio}')
-        # if vram is not None:
-        #     gpu_memory = int(os.getenv('VIRTUAL_VRAM_SIZE', round(vram)))
-        #     if gpu_memory >= 16:
-        #         batch_ratio = 8
-        #     elif gpu_memory >= 12:
-        #         batch_ratio = 6
-        #     elif gpu_memory >= 8:
-        #         batch_ratio = 4
-        #     elif gpu_memory >= 6:
-        #         batch_ratio = 2
-        #     else:
-        #         batch_ratio = 1
-        #     logger.info(f'gpu_memory: {gpu_memory} GB, batch_ratio: {batch_ratio}')
         else:
             # Default batch_ratio when VRAM can't be determined
             batch_ratio = 1

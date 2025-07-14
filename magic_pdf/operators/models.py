@@ -10,8 +10,8 @@ from magic_pdf.data.dataset import Dataset
 from magic_pdf.libs.draw_bbox import draw_model_bbox
 from magic_pdf.libs.version import __version__
 from magic_pdf.operators.pipes import PipeResult
-# from magic_pdf.pdf_parse_union_core_v2 import pdf_parse_union
-from magic_pdf.pdf_parse_union_core_v3 import pdf_parse_union
+from magic_pdf.pdf_parse_union_core_v2 import pdf_parse_union
+# from magic_pdf.pdf_parse_union_core_v3 import pdf_parse_union
 from magic_pdf.operators import InferenceResultBase
 
 class InferenceResult(InferenceResultBase):
