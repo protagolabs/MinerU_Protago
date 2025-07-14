@@ -61,15 +61,19 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
         table_model = RapidTableModel(ocr_engine, table_sub_model_name)
     elif table_model_type == MODEL_NAME.MARKER_TABLE:
         from magic_pdf.model.sub_modules.table.marker_table.marker_table_wrapper import MarkerTableWrapper
-        config = {
+
+        if table_sub_model_name == "force_layout_block":
+            config = {
+                    "output_format": "json",
+                    "force_layout_block": "Table",
+                    "disable_tqdm": True,
+                }
+        else:
+
+            config = {
                 "output_format": "json",
-                "disable_tqdm": False,
+                "disable_tqdm": True,
             }
-        # config = {
-        #         "output_format": "json",
-        #         "force_layout_block": "Table",
-        #         "disable_tqdm": False,
-        #     }
         table_model = MarkerTableWrapper(config=config)
     elif table_model_type == MODEL_NAME.SURYA_TABLE:
         from magic_pdf.model.sub_modules.table.surya_table.surya_table_wrapper import SuryaTableWrapper

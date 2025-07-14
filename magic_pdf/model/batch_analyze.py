@@ -349,107 +349,101 @@ class BatchAnalyze:
                                     
                 # elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
                 if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
-
-                    images = []
-                    for table_res_dict in table_res_list_all_page:
-                        images.append(table_res_dict['table_img'])
-
-                    # Create temporary directory for PDF
-                    temp_dir = tempfile.mkdtemp()
-                    table_pdf_path = os.path.join(temp_dir, "tables.pdf")
-                    # table_pdf_path = "tables.pdf" # for debug
-
                     
-                    # Save table images as PDF
-                    pdf_path = save_table_images_as_pdf(images, table_pdf_path, dpi=72)
-                    
-                    if pdf_path and os.path.exists(pdf_path):
-                        # logger.info(f"Table images saved to PDF: {pdf_path}")
+                    if not self.model.table_model.config["force_layout_block"] == "Table":
+                        images = []
+                        for table_res_dict in table_res_list_all_page:
+                            images.append(table_res_dict['table_img'])
+
+                        # Create temporary directory for PDF
+                        temp_dir = tempfile.mkdtemp()
+                        table_pdf_path = os.path.join(temp_dir, "tables.pdf")
+                        # table_pdf_path = "tables.pdf" # for debug
+
                         
-                        # Use TableConverter to process the PDF
+                        # Save table images as PDF
+                        pdf_path = save_table_images_as_pdf(images, table_pdf_path, dpi=72)
+                        
+                        if pdf_path and os.path.exists(pdf_path):
+                            # logger.info(f"Table images saved to PDF: {pdf_path}")
+                            
+                            # Use TableConverter to process the PDF
+                            try:
+                                # Process the PDF with TableConverter
+                                # Note: You may need to adjust the parameters based on TableConverter's API
+                                converter_result = self.model.table_model.predict_pdf(pdf_path)
+                                
+
+
+                                logger.info("TableConverter processing completed")
+                                
+                                # Store the converter result for later use if needed
+                                # You can access the processed tables from converter_result
+                                
+                            except Exception as e:
+                                logger.error(f"TableConverter processing failed: {e}")
+                        else:
+                            logger.warning("Failed to save table images as PDF")
+                                
+                        # logger.info(f"converter_result: {converter_result.json()}")
+                        html_codes = self.model.table_model.extract_table_html_from_json_output(converter_result)
+                        if html_codes:
+
+                            # logger.info(f"html_codes: {html_codes}")
+                            for i, (table_res_dict, html_code) in enumerate(zip(table_res_list_all_page, html_codes)):
+                            # for i, table_res_dict in enumerate(table_res_list_all_page):
+                                # html_code = html_codes[i]
+                                # logger.info(f"Processing item {i}")
+                                # 判断是否返回正常
+                                
+
+                                # logger.info(f"html_code: {html_code}")
+
+                                expected_ending = html_code.strip().endswith(
+                                    '</html>'
+                                ) or html_code.strip().endswith('</table>')
+                                if expected_ending:
+                                    table_res_dict['table_res']['html'] = format_html_output(html_code)
+                                else:
+                                    logger.warning(
+                                        'table recognition processing fails, not found expected HTML table end'
+                                    )
+                                    # table_res_dict['table_res']['markdown'] = html_code
+                        else:
+                            logger.warning(
+                                'table recognition processing fails, not get htmls return'
+                            )    
+                        # Clean up temporary directory
                         try:
-                            # Process the PDF with TableConverter
-                            # Note: You may need to adjust the parameters based on TableConverter's API
-                            converter_result = self.model.table_model.predict_pdf(pdf_path)
-                            
-
-
-                            logger.info("TableConverter processing completed")
-                            
-                            # Store the converter result for later use if needed
-                            # You can access the processed tables from converter_result
-                            
+                            os.remove(pdf_path)
+                            logger.info("Temporary directory cleaned up")
                         except Exception as e:
-                            logger.error(f"TableConverter processing failed: {e}")
-                    else:
-                        logger.warning("Failed to save table images as PDF")
-                            
-                    # logger.info(f"converter_result: {converter_result.json()}")
-                    html_codes = self.model.table_model.extract_table_html_from_json_output(converter_result)
-                    if html_codes:
-
-                        # logger.info(f"html_codes: {html_codes}")
-                        for i, (table_res_dict, html_code) in enumerate(zip(table_res_list_all_page, html_codes)):
-                        # for i, table_res_dict in enumerate(table_res_list_all_page):
-                            # html_code = html_codes[i]
-                            # logger.info(f"Processing item {i}")
-                            # 判断是否返回正常
-                            
-
-                            # logger.info(f"html_code: {html_code}")
-
-                            expected_ending = html_code.strip().endswith(
-                                '</html>'
-                            ) or html_code.strip().endswith('</table>')
-                            if expected_ending:
-                                table_res_dict['table_res']['html'] = format_html_output(html_code)
-                            else:
-                                logger.warning(
-                                    'table recognition processing fails, not found expected HTML table end'
-                                )
-                                # table_res_dict['table_res']['markdown'] = html_code
-                    else:
-                        logger.warning(
-                            'table recognition processing fails, not get htmls return'
-                        )    
-                    # Clean up temporary directory
-                    try:
-                        os.remove(pdf_path)
-                        logger.info("Temporary directory cleaned up")
-                    except Exception as e:
-                        logger.warning(f"Failed to clean up temporary directory: {e}")
+                            logger.warning(f"Failed to clean up temporary directory: {e}")
                                                                    
                     # # Continue with original batch processing as fallback
-                    # batch_results = self.model.table_model.predict_batch(images)
 
-                    # for table_res_dict, (html_code, table_cell_bboxes, logic_points, elapse) in zip(table_res_list_all_page, batch_results):
+                    else:
+                        for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
+                            _lang = table_res_dict['lang']
 
-                    #     # 判断是否返回正常
-                    #     if html_code:
-                    #         expected_ending = html_code.strip().endswith(
-                    #             '</html>'
-                    #         ) or html_code.strip().endswith('</table>')
-                    #         if expected_ending:
-                    #             table_res_dict['table_res']['html'] = format_html_output(html_code)
-                    #         else:
-                    #             logger.warning(
-                    #                 'table recognition processing fails, not found expected HTML table end'
-                    #             )
-                    #             # table_res_dict['table_res']['markdown'] = html_code
-                    #     else:
-                    #         logger.warning(
-                    #             'table recognition processing fails, not get html return'
-                    #         )
-                    
-                    # # Clean up temporary directory
-                    # try:
-                    #     if 'temp_dir' in locals():
-                    #         import shutil
-                    #         shutil.rmtree(temp_dir, ignore_errors=True)
-                    #         logger.info("Temporary directory cleaned up")
-                    # except Exception as e:
-                    #     logger.warning(f"Failed to clean up temporary directory: {e}")
+                            html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
 
+                            # 判断是否返回正常
+                            if html_code:
+                                expected_ending = html_code.strip().endswith(
+                                    '</html>'
+                                ) or html_code.strip().endswith('</table>')
+                                if expected_ending:
+                                    table_res_dict['table_res']['html'] = format_html_output(html_code)
+                                else:
+                                    logger.warning(
+                                        'table recognition processing fails, not found expected HTML table end'
+                                    )
+                                    # table_res_dict['table_res']['markdown'] = html_code
+                            else:
+                                logger.warning(
+                                    'table recognition processing fails, not get html return'
+                                )
 
                 else:
                     

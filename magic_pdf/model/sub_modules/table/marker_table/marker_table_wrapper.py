@@ -102,7 +102,13 @@ class MarkerTableWrapper:
             rendered = self.converter(temp_path)
             
             # Extract table HTML from the rendered output
-            html_code = self.extract_table_html_from_json_output(rendered)[0]
+            # html_code = self.extract_table_html_from_json_output(rendered)[0]
+            table_htmls = self.extract_table_html_from_json_output(rendered)
+            if not table_htmls:
+                logger.warning("No tables found in the image")
+                return None, None, None, None
+                
+            html_code = table_htmls[0]
             
             # Calculate elapsed time
             elapse = time.time() - start_time
