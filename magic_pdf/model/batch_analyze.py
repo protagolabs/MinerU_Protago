@@ -389,9 +389,9 @@ class BatchAnalyze:
                     if html_codes:
 
                         # logger.info(f"html_codes: {html_codes}")
-                        # for i, (table_res_dict, html_code) in enumerate(zip(table_res_list_all_page, html_codes)):
-                        for i, table_res_dict in enumerate(table_res_list_all_page):
-                            html_code = html_codes[i]
+                        for i, (table_res_dict, html_code) in enumerate(zip(table_res_list_all_page, html_codes)):
+                        # for i, table_res_dict in enumerate(table_res_list_all_page):
+                            # html_code = html_codes[i]
                             # logger.info(f"Processing item {i}")
                             # 判断是否返回正常
                             
