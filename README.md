@@ -37,8 +37,9 @@ python download_models_hf.py
 If you only need layout detection without OCR, formula recognition, or table recognition, you can use the `--layout_only` option for faster processing:
 
 ```bash
-magic-pdf -p your_document.pdf -o output_dir --layout_only true
+magic-pdf -p your_document.pdf -o output_dir --layout_only true # if the pdf file page number is less than 10, it will set layout_only=true by default
 ```
+
 
 This mode will:
 - Perform only layout detection on the document
