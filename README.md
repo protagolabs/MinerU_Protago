@@ -3,8 +3,8 @@
 #### 1. Install magic-pdf
 
 ```bash
-conda create -n layout_det 'python=3.10' -y
-conda activate layout_det
+conda create -n dev 'python>3.10' -y # we tested on 3.13
+conda activate dev
 pip install -e ".[full]"
 magic-pdf --version # check the version, should be 1.3.10
 # pip install -U "marker-pdf[full]==1.6.2" # install marker-pdf for table rec
@@ -15,7 +15,7 @@ magic-pdf --version # check the version, should be 1.3.10
 
 ```bash
 pip install huggingface_hub
-wget https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev_tables/download_models_hf.py -O download_models_hf.py
+wget https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev/download_models_hf.py -O download_models_hf.py
 python download_models_hf.py
 ```
 
