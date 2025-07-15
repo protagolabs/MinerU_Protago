@@ -350,7 +350,7 @@ class BatchAnalyze:
                 # elif self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
                 if self.model.table_model_name == MODEL_NAME.MARKER_TABLE:
                     
-                    if not self.model.table_model.config["force_layout_block"] == "Table":
+                    if not self.model.table_model.config.get("force_layout_block", False):
                         images = []
                         for table_res_dict in table_res_list_all_page:
                             images.append(table_res_dict['table_img'])
