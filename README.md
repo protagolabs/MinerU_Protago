@@ -15,9 +15,11 @@ pip install -U "transformers==4.49.0"
 
 ```bash
 pip install huggingface_hub
-wget https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev/download_models_hf.py -O download_models_hf.py
+wget https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev_tables/download_models_hf.py -O download_models_hf.py
 python download_models_hf.py
 ```
+
+
 
 
 

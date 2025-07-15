@@ -129,33 +129,34 @@ def cli(path, output_dir, method, lang, debug_able, start_page_id, end_page_id, 
             
             # Check page count and automatically set layout_only=True for PDFs with < 10 pages
             current_layout_only = layout_only
-            try:
-                if dataset is not None:
-                    # If we have a dataset, get page count from it
-                    page_count = len(dataset)
-                else:
-                    # If we have raw PDF data, open it to get page count
-                    if isinstance(pdf_data_or_dataset, bytes):
-                        doc = fitz.open('pdf', pdf_data_or_dataset)
-                        page_count = len(doc)
-                        doc.close()
-                    else:
-                        # Fallback: try to read the PDF file directly
-                        if doc_path.suffix in pdf_suffixes:
-                            doc = fitz.open(str(doc_path))
-                            page_count = len(doc)
-                            doc.close()
-                        else:
-                            page_count = 1  # For converted files, assume single page if we can't determine
+            
+            # try:
+            #     if dataset is not None:
+            #         # If we have a dataset, get page count from it
+            #         page_count = len(dataset)
+            #     else:
+            #         # If we have raw PDF data, open it to get page count
+            #         if isinstance(pdf_data_or_dataset, bytes):
+            #             doc = fitz.open('pdf', pdf_data_or_dataset)
+            #             page_count = len(doc)
+            #             doc.close()
+            #         else:
+            #             # Fallback: try to read the PDF file directly
+            #             if doc_path.suffix in pdf_suffixes:
+            #                 doc = fitz.open(str(doc_path))
+            #                 page_count = len(doc)
+            #                 doc.close()
+            #             else:
+            #                 page_count = 1  # For converted files, assume single page if we can't determine
                 
-                if page_count < 10:
-                    current_layout_only = True
-                    logger.info(f"Document {file_name} has {page_count} pages (< 10), automatically setting layout_only=True")
-                else:
-                    logger.info(f"Document {file_name} has {page_count} pages")
-            except Exception as e:
-                logger.warning(f"Could not determine page count for {file_name}, using original layout_only setting: {e}")
-                current_layout_only = layout_only
+            #     if page_count < 10:
+            #         current_layout_only = True
+            #         logger.info(f"Document {file_name} has {page_count} pages (< 10), automatically setting layout_only=True")
+            #     else:
+            #         logger.info(f"Document {file_name} has {page_count} pages")
+            # except Exception as e:
+            #     logger.warning(f"Could not determine page count for {file_name}, using original layout_only setting: {e}")
+            #     current_layout_only = layout_only
             
             do_parse(
                 output_dir,
