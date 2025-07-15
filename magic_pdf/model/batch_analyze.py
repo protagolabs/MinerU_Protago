@@ -295,6 +295,8 @@ class BatchAnalyze:
             if self.model.apply_table:
                 table_start = time.time()
                 
+                logger.info(f"table_model_name: {self.model.table_model_name}")
+                # logger.info(f"MODEL_NAME.PROTAGO_TABLE: {MODEL_NAME.PROTAGO_TABLE}")
                 # if self.model.table_model_name == MODEL_NAME.SURYA_TABLE:
                 #     # Group tables by language for batch processing
                 #     tables_by_lang = {}
@@ -419,8 +421,7 @@ class BatchAnalyze:
                             logger.info("Temporary directory cleaned up")
                         except Exception as e:
                             logger.warning(f"Failed to clean up temporary directory: {e}")
-                                                                   
-                    # # Continue with original batch processing as fallback
+
 
                     else:
                         for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
@@ -444,10 +445,31 @@ class BatchAnalyze:
                                 logger.warning(
                                     'table recognition processing fails, not get html return'
                                 )
+                elif self.model.table_model_name == MODEL_NAME.PROTAGO_TABLE:
+                    for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict using protago table"):
+                        _lang = table_res_dict['lang']
 
+                        html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
+                        # 判断是否返回正常
+                        if html_code:
+                            logger.info(f"html_code: {html_code}")
+                            expected_ending = html_code.strip().endswith(
+                                '</html>'
+                            ) or html_code.strip().endswith('</table>')
+                            if expected_ending:
+                                table_res_dict['table_res']['html'] = format_html_output(html_code)
+                            else:
+                                logger.warning(
+                                    'table recognition processing fails, not found expected HTML table end'
+                                )
+                                # table_res_dict['table_res']['markdown'] = html_code
+                        else:
+                            logger.warning(
+                                'table recognition processing fails, not get html return'
+                            )
                 else:
                     
-                    for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict"):
+                    for table_res_dict in tqdm(table_res_list_all_page, desc="Table Predict by default"):
                         _lang = table_res_dict['lang']
                         atom_model_manager = AtomModelSingleton()
                         table_model = atom_model_manager.get_atom_model(

@@ -56,6 +56,8 @@ class MODEL_NAME:
 
     SURYA_TABLE = 'surya_table'
 
+    PROTAGO_TABLE = 'protago_table'
+
     YOLO_V11_LangDetect = 'yolo_v11n_langdetect'
 
 

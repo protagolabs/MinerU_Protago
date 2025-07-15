@@ -78,6 +78,9 @@ def table_model_init(table_model_type, model_path, max_time, _device_='cpu', lan
     elif table_model_type == MODEL_NAME.SURYA_TABLE:
         from magic_pdf.model.sub_modules.table.surya_table.surya_table_wrapper import SuryaTableWrapper
         table_model = SuryaTableWrapper()
+    elif table_model_type == MODEL_NAME.PROTAGO_TABLE:
+        from magic_pdf.model.sub_modules.table.protago_table.protago_table_wrapper import ProtagoTableWrapper
+        table_model = ProtagoTableWrapper()
     else:
         logger.error('table model type not allow')
         exit(1)

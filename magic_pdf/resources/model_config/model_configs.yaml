@@ -9,3 +9,4 @@ weights:
   custom_table: TabRec/CustomTable
   marker_table: "" # TODO: add marker table model path
   surya_table: "" # TODO: add surya table model path
+  protago_table: "" # TODO: add protago table model path

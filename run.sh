@@ -19,5 +19,7 @@
 # magic-pdf -p demo/pdfs/demo5.pdf  -o output/mineru1310_surya0131 -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S).log
 
 
-magic-pdf -p ./demo/pdfs/demo6.pdf  -o output -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S)_magic_pdf.log
+# magic-pdf -p ./demo/pdfs/demo6.pdf  -o output -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S)_magic_pdf.log
 # magic-pdf -p ./demo/pdfs/f_0AibR1dz_page_9.pdf  -o output -m auto 2>&1 | tee logs/$(date +%Y%m%d_%H%M%S)_magic_pdf.log
+
+magic-pdf -p ./demo/samples_tables.pdf  -o output
