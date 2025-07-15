@@ -14,13 +14,14 @@ def download_json(url):
 
 
 def download_and_modify_json(url, local_filename, modifications):
-    if os.path.exists(local_filename):
-        data = json.load(open(local_filename))
-        config_version = data.get('config_version', '0.0.0')
-        if config_version < '1.2.0':
-            data = download_json(url)
-    else:
-        data = download_json(url)
+    # if os.path.exists(local_filename):
+    #     data = json.load(open(local_filename))
+    #     config_version = data.get('config_version', '0.0.0')
+    #     if config_version < '1.2.0':
+    #         data = download_json(url)
+    # else:
+    #     data = download_json(url)
+    data = download_json(url)
 
     # 修改内容
     for key, value in modifications.items():
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     #     shutil.rmtree(user_paddleocr_dir)
     # shutil.copytree(paddleocr_model_dir, user_paddleocr_dir)
 
-    json_url = 'https://github.com/opendatalab/MinerU/raw/master/magic-pdf.template.json'
+    json_url = 'https://raw.githubusercontent.com/protagolabs/MinerU_Protago/refs/heads/dev/magic-pdf.template.json'
     config_file_name = 'magic-pdf.json'
     home_dir = os.path.expanduser('~')
     config_file = os.path.join(home_dir, config_file_name)
