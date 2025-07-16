@@ -33,69 +33,56 @@ class ProtagoTableWrapper:
             config: Configuration dictionary for Surya models
                    If None, uses default config
         """
+
+        # Initialize all required models
+        logger.info("Initializing Protago Table models...")
+        # self.detection_model = DetectionPredictor()
+        # Initialize OCR model from AtomModelSingleton
+        atom_model_manager = AtomModelSingleton()
+        self.recognition_model = atom_model_manager.get_atom_model(
+            atom_model_name=AtomicModel.OCR,
+            ocr_show_log=True,
+            det_db_box_thresh=0.3,
+            lang=None
+        )
+        self.table_rec_model = TableRecPredictor()
+        
+        # Check device availability
         try:
-            # Initialize all required models
-            logger.info("Initializing Protago Table models...")
-            self.detection_model = DetectionPredictor()
-            # Initialize OCR model from AtomModelSingleton
-            atom_model_manager = AtomModelSingleton()
-            self.recognition_model = atom_model_manager.get_atom_model(
-                atom_model_name=AtomicModel.OCR,
-                ocr_show_log=True,
-                det_db_box_thresh=0.3,
-                lang=None
-            )
-            self.table_rec_model = TableRecPredictor()
+            import torch
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            logger.info(f"Surya models initialized on device: {device}")
+        except ImportError:
+            device = "cpu"
+            logger.info("PyTorch not available, using CPU")
+        
+        # Set configuration parameters - handle None config properly
+        if config is None:
+            config = {}
+        
+        self.disable_tqdm = config.get('disable_tqdm', True)
+        self.drop_repeated_text = config.get('drop_repeated_text', False)
+        self.format_lines = config.get('format_lines', False)
+        self.language = config.get('language', 'en')  # Default to English
+        
+        # Set table recognition batch size
+        self.table_rec_batch_size = config.get('table_rec_batch_size', None)
+        
+        # Log configuration and GPU info
+        try:
+            import torch
+            if torch.cuda.is_available():
+                gpu_name = torch.cuda.get_device_name(0)
+                gpu_memory_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+                logger.info(f"GPU: {gpu_name} ({gpu_memory_gb:.1f}GB)")
+        except ImportError:
+            pass
             
-            # Check device availability
-            try:
-                import torch
-                device = "cuda" if torch.cuda.is_available() else "cpu"
-                logger.info(f"Surya models initialized on device: {device}")
-            except ImportError:
-                device = "cpu"
-                logger.info("PyTorch not available, using CPU")
-            
-            # Set configuration parameters - handle None config properly
-            if config is None:
-                config = {}
-            
-            self.disable_tqdm = config.get('disable_tqdm', True)
-            self.drop_repeated_text = config.get('drop_repeated_text', False)
-            self.format_lines = config.get('format_lines', False)
-            self.language = config.get('language', 'en')  # Default to English
-            
-            # Set table recognition batch size
-            self.table_rec_batch_size = config.get('table_rec_batch_size', None)
-            
-            # Log configuration and GPU info
-            try:
-                import torch
-                if torch.cuda.is_available():
-                    gpu_name = torch.cuda.get_device_name(0)
-                    gpu_memory_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-                    logger.info(f"GPU: {gpu_name} ({gpu_memory_gb:.1f}GB)")
-            except ImportError:
-                pass
-                
-            logger.info(f"Table Recognition batch size: {self.get_table_rec_batch_size()}")
-            
-            # Flag to track if models are properly initialized
-            self.models_initialized = True
-        except Exception as e:
-            # Set flag to indicate models are not available
-            self.models_initialized = False
-            self.detection_model = None
-            self.recognition_model = None
-            self.table_rec_model = None
-            
-            # Still set configuration for potential fallback
-            if config is None:
-                config = {}
-            self.disable_tqdm = config.get('disable_tqdm', True)
-            self.language = config.get('language', 'en')
-            
-            raise
+        logger.info(f"Table Recognition batch size: {self.get_table_rec_batch_size()}")
+        
+        # Flag to track if models are properly initialized
+        self.models_initialized = True
+
         
     def predict(self, image, language=None):
         """

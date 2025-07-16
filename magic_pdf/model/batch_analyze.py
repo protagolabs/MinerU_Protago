@@ -452,7 +452,7 @@ class BatchAnalyze:
                         html_code, table_cell_bboxes, logic_points, elapse = self.model.table_model.predict(table_res_dict['table_img'])
                         # 判断是否返回正常
                         if html_code:
-                            logger.info(f"html_code: {html_code}")
+                            # logger.info(f"html_code: {html_code}")
                             expected_ending = html_code.strip().endswith(
                                 '</html>'
                             ) or html_code.strip().endswith('</table>')
