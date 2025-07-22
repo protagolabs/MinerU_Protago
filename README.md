@@ -27,7 +27,9 @@ python download_models_hf.py
 
 ### Command Line
 
-[Using MinerU via Command Line](https://mineru.readthedocs.io/en/latest/user_guide/usage/command_line.html)
+```bash
+magic-pdf -p demo/samples_tables.pdf -o output/mineru1310
+```
 
 #### dev_log
 
@@ -40,8 +42,6 @@ If you only need layout detection without OCR, formula recognition, or table rec
 
 ```bash
 magic-pdf -p your_document.pdf -o output_dir --layout_only true # layout_detection only
-
-magic-pdf -p your_document.pdf -o output_dir --layout_only false # all
 ```
 
 
@@ -56,4 +56,29 @@ This mode will:
 > For more information about the output files, please refer to the [Output File Description](docs/output_file_en_us.md).
 
 
+## Data Preparation
+
+### Orbit Dataset
+
+
+
+The Orbit dataset is a collection of PDF documents with tables. There are two versions, one is a small version with 176 PDF documents, and the other is the larger version with 1000 PDF documents. All the code is tested on the small version.
+
+You can download the datasets from Google Drive (requires sign-in):
+- v1 version: [Download here](https://drive.google.com/file/d/1PzmTsmBIAXAcUXQHjWwY6o6T0IjKMtct/view?usp=drive_link)
+- v2 version: [Download here](https://drive.google.com/file/d/11qRpGk8bbQfChQ6pOFdOnUqtkTZAd_yJ/view?usp=drive_link)
+- v3 version: [Download here](https://drive.google.com/file/d/1Uyb-ImPfH6UirS33mSHGkAyC836pwrgf/view?usp=drive_link)
+
+Alternatively, you can use gdown to download the datasets (requires Google Drive access):
+
+```bash
+# Install gdown if you haven't already
+pip install gdown
+cd inputs/
+bash ./download_datasets.sh
+
+```
+
+> [!NOTE]
+> Both download methods require access to the Google Drive files. If you don't have access, please contact the repository maintainers.
 
