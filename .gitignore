@@ -34,7 +34,6 @@ ocr_demo
 /magic_pdf/config/__init__.py
 source.dev.env
 
-tmp
 
 projects/web/node_modules
 projects/web/dist
