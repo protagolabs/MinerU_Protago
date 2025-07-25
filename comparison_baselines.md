@@ -1,6 +1,15 @@
+LLamaParse: we use the balanced version.
+
 ## page 9 f_0AibR1dz
 
 ![GT](./pictures/f_0AibR1dz_page9_0.jpg)
+
+LlamaPase:
+| 全体  | 女性      | 中途採用者           |
+| --- | ------- | --------------- |
+| 社員  | 2, 623人 | 1, 575人（60. 0％） |
+| 管理職 | 362人    | 67人（18. 5％）     |
+| 取締役 | 9人      | 2人（22. 2％）      |
 
 Azure:
 <html><body><table> \t<tr> \t\t<td colspan="2" rowspan="1"></td> \t\t<td colspan="3" rowspan="1">全体 女性 中途採用者</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="2">社員</td> \t\t<td colspan="1" rowspan="1"></td> \t\t<td colspan="1" rowspan="1">2,623人</td> \t\t<td colspan="1" rowspan="1">1,575人 (60.0%)</td> \t\t<td colspan="1" rowspan="1">2,408人 (91.8%)</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">管理職</td> \t\t<td colspan="1" rowspan="1">362人</td> \t\t<td colspan="1" rowspan="1">67人 (18.5%)</td> \t\t<td colspan="1" rowspan="1">300人(82.8%)</td> \t</tr> \t<tr> \t\t<td colspan="2" rowspan="1">取締役</td> \t\t<td colspan="1" rowspan="1">9人</td> \t\t<td colspan="1" rowspan="1">2人 (22.2%)</td> \t\t<td colspan="1" rowspan="1">9人 (100.0%)</td> \t</tr> </table></body></html>
@@ -20,6 +29,16 @@ Ours-v2:
 
 ![GT](./pictures/f_0AibR1dz_page33_0.jpg)
 
+LlamaParse:
+| 項目    | 1.5℃シナリオ                 | 4℃シナリオ      |
+| ----- | ------------------------ | ----------- |
+| 対象範囲  | 海外連結子会社まで                |             |
+| 対象年   | 移行リスク：2030年, 物理リスク：2050年 |             |
+| 移行面   | IEA NZE\*                | IEA STEPS\* |
+| 主な参照先 | IPCC                     | CRC         |
+| 物理面   | IPCC                     | RCP8.5\*    |
+|       | SSP1－1.9\*               |             |
+
 Azure:
 <html><body><table> \t<tr> \t\t<td colspan="2" rowspan="1">項目</td> \t\t<td colspan="1" rowspan="1">1.5℃シナリオ</td> \t\t<td colspan="1" rowspan="1">4℃シナリオ</td> \t</tr> \t<tr> \t\t<td colspan="2" rowspan="1">対象範囲</td> \t\t<td colspan="2" rowspan="1">海外連結子会社まで</td> \t</tr> \t<tr> \t\t<td colspan="2" rowspan="1">対象年</td> \t\t<td colspan="2" rowspan="1">移行リスク:2030年,物理リスク:2050年</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="2">主な参照先</td> \t\t<td colspan="1" rowspan="1">移行面</td> \t\t<td colspan="1" rowspan="1">IEA NZE*</td> \t\t<td colspan="1" rowspan="1">IEA STEPS*</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">物理面</td> \t\t<td colspan="1" rowspan="1">IPCC SSP1-1.9*</td> \t\t<td colspan="1" rowspan="1">IPCC RCP8.5*</td> \t</tr> </table></body></html>
 
@@ -37,6 +56,18 @@ Ours-v2:
 ## page 34
 
 ![GT](./pictures/f_0AibR1dz_page34_0.jpg)
+
+LlamaParse:
+| リスク/ 機会 | 項目        | 事業インパクト                                                        | 1. 5℃ | 4℃ |   |   |
+| ------- | --------- | -------------------------------------------------------------- | ----- | -- | - | - |
+| 影響度     | 発生可能性     | 影響度                                                            | 発生可能性 |    |   |   |
+| 中       | 小         | 小                                                              | 小     |    |   |   |
+| 移行リスク   | 炭素価格      | 炭素税導入に伴い、自社におけるエネルギー消費に課税され、操業コストが増加する                         | 中     | 小  | 中 | 小 |
+| 移行リスク   | プラスチック規制  | プラスチック規制によって石油由来プラスチックではなくバイオ・再生可能プラスチックを利用する必要が発生し、調達コストが増加する | 中     | 小  | 中 | 小 |
+| 移行リスク   | エネルギーミックス | エネルギーミックス（電源構成）の変化によって、電力価格が上昇し、操業コストが増加する（炭素税+再エネの比率が高まる）     | 中     | 小  | 中 | 小 |
+| 物理リスク   | 異常気象の激甚化  | 異常気象の激甚化による、人工毛髪等の取引先の製造拠点被災の影響で、商品供給に支障が出る                    | 小     | 大  | 小 | 大 |
+| 物理リスク   | 異常気象の激甚化  | 異常気象の激甚化による、ウィッグの製造拠点被災の影響で、商品製造・供給に支障が出る                      | 小     | 大  | 小 | 大 |
+| 物理リスク   | 異常気象の激甚化  | 異常気象の激甚化による、配送拠点被災の影響で、在庫被害や商品供給への支障が出る                        | 小     | 中  | 小 | 中 |
 
 Azure:
 <html><body><table> \t<tr> \t\t<td colspan="1" rowspan="1">リスク/機会</td> \t\t<td colspan="1" rowspan="1">項目</td> \t\t<td colspan="1" rowspan="1">事業インパクト</td> \t\t<td colspan="1" rowspan="1">1.5℃</td> \t\t<td colspan="1" rowspan="1">4℃</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">移行リスク</td> \t\t<td colspan="1" rowspan="1">炭素価格</td> \t\t<td colspan="1" rowspan="1">炭素税導入に伴い、自社におけるエネルギー消費に課税さ れ、操業コストが増加する</td> \t\t<td colspan="1" rowspan="1">中</td> \t\t<td colspan="1" rowspan="1">小</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">移行リスク</td> \t\t<td colspan="1" rowspan="1">プラスチック規制</td> \t\t<td colspan="1" rowspan="1">プラスチック規制によって石油由来プラスチックではなくバ イオ·再生可能プラスチックを利用する必要が発生し、調達 コストが増加する</td> \t\t<td colspan="1" rowspan="1">中</td> \t\t<td colspan="1" rowspan="1">小</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">移行リスク</td> \t\t<td colspan="1" rowspan="1">エネルギーミックス</td> \t\t<td colspan="1" rowspan="1">エネルギーミックス(電源構成)の変化によって、電力価格 が上昇し、操業コストが増加する(炭素税+再エネの比率が 高まる)</td> \t\t<td colspan="1" rowspan="1">中</td> \t\t<td colspan="1" rowspan="1">小 :selected:</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">物理リスク</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化による、人工毛髪等の取引先の製造拠点被 災の影響で、商品供給に支障が出る</td> \t\t<td colspan="1" rowspan="1">小 :selected:</td> \t\t<td colspan="1" rowspan="1">大 :selected:</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">物理リスク</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化による、ウィッグの製造拠点被災の影響 で、商品製造·供給に支障が出る</td> \t\t<td colspan="1" rowspan="1">小 :selected:</td> \t\t<td colspan="1" rowspan="1">大 :selected:</td> \t</tr> \t<tr> \t\t<td colspan="1" rowspan="1">物理リスク</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化</td> \t\t<td colspan="1" rowspan="1">異常気象の激甚化による、配送拠点被災の影響で、在庫被害 や商品供給への支障が出る</td> \t\t<td colspan="1" rowspan="1">小</td> \t\t<td colspan="1" rowspan="1">中 :selected:</td> \t</tr> </table></body></html>
