@@ -3,3 +3,5 @@
 *.html linguist-documentation
 *.css linguist-vendored
 *.scss linguist-vendored
+
+datasets

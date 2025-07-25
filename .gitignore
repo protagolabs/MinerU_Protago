@@ -59,5 +59,9 @@ inputs/orbit_v2/
 inputs/orbit_v3/
 
 comparison/
+datasets/
+local_models/
+output/
+
 
 
