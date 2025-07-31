@@ -3,8 +3,8 @@
 #### 1. Install magic-pdf
 
 ```bash
-conda create -n dev 'python>3.10' -y # we tested on 3.13
-conda activate dev
+conda create -n dev_images 'python==3.10' -y # we tested on 3.13
+conda activate dev_images
 pip install -e ".[full]"
 magic-pdf --version # check the version, should be 1.3.10
 # pip install -U "marker-pdf[full]==1.6.2" # install marker-pdf for table rec
